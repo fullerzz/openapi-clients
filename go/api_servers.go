@@ -226,18 +226,18 @@ func (a *ServersAPIService) ListExecute(r ApiListRequest) (*ListServersResponse,
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiStatusRequest struct {
+type ApiServerStatusRequest struct {
 	ctx context.Context
 	ApiService *ServersAPIService
 	serverStatusRequest *ServerStatusRequest
 }
 
-func (r ApiStatusRequest) ServerStatusRequest(serverStatusRequest ServerStatusRequest) ApiStatusRequest {
+func (r ApiServerStatusRequest) ServerStatusRequest(serverStatusRequest ServerStatusRequest) ApiServerStatusRequest {
 	r.serverStatusRequest = &serverStatusRequest
 	return r
 }
 
-func (r ApiStatusRequest) Execute() (*ServerStatusResponse, *http.Response, error) {
+func (r ApiServerStatusRequest) Execute() (*ServerStatusResponse, *http.Response, error) {
 	return r.ApiService.StatusExecute(r)
 }
 
@@ -251,10 +251,10 @@ Requires a valid game server secret as a Bearer token.
     
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @return ApiStatusRequest
+ @return ApiServerStatusRequest
 */
-func (a *ServersAPIService) Status(ctx context.Context) ApiStatusRequest {
-	return ApiStatusRequest{
+func (a *ServersAPIService) Status(ctx context.Context) ApiServerStatusRequest {
+	return ApiServerStatusRequest{
 		ApiService: a,
 		ctx: ctx,
 	}
@@ -262,7 +262,7 @@ func (a *ServersAPIService) Status(ctx context.Context) ApiStatusRequest {
 
 // Execute executes the request
 //  @return ServerStatusResponse
-func (a *ServersAPIService) StatusExecute(r ApiStatusRequest) (*ServerStatusResponse, *http.Response, error) {
+func (a *ServersAPIService) StatusExecute(r ApiServerStatusRequest) (*ServerStatusResponse, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
