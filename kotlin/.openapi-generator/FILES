@@ -60,6 +60,9 @@ docs/EnemyStats.md
 docs/FeedItem.md
 docs/FeedItemOneOf.md
 docs/FeedItemOneOf1.md
+docs/FeedbackKind.md
+docs/FeedbackSubmission.md
+docs/FeedbackTarget.md
 docs/FlashData.md
 docs/ForumPatch.md
 docs/GameMode.md
@@ -113,6 +116,11 @@ docs/ItemsApi.md
 docs/JobStatus.md
 docs/KillDeathStats.md
 docs/LaneInfo.md
+docs/LaneMatchupStat.md
+docs/LaneMatchupStats.md
+docs/LaneSoulCurve.md
+docs/LaneStatCurve.md
+docs/LastRankedMatch.md
 docs/Leaderboard.md
 docs/LeaderboardApi.md
 docs/LeaderboardEntry.md
@@ -160,8 +168,9 @@ docs/PlayerPerformanceCurvePoint.md
 docs/PlayersApi.md
 docs/Rank.md
 docs/RankImages.md
-docs/RankPredictResponse.md
-docs/RankPrediction.md
+docs/RankResponse.md
+docs/RankedSeason.md
+docs/RankedSeasonsApi.md
 docs/RanksApi.md
 docs/RawAbilityUpgrade.md
 docs/RawAbilityUpgradePropertyUpgrade.md
@@ -177,6 +186,7 @@ docs/RegionMode.md
 docs/RejuvParams.md
 docs/SQLApi.md
 docs/ScriptValues.md
+docs/SeasonInterval.md
 docs/ServerRegion.md
 docs/ServerStatusRequest.md
 docs/ServerStatusResponse.md
@@ -185,6 +195,7 @@ docs/ShopSpiritStatsDisplay.md
 docs/ShopStatDisplay.md
 docs/ShopVitalityStatsDisplay.md
 docs/ShopWeaponStatsDisplay.md
+docs/SourceLocation.md
 docs/SpreadPenalty.md
 docs/StartingStat.md
 docs/StartingStats.md
@@ -230,6 +241,7 @@ docs/UpgradeTooltipSectionAttribute.md
 docs/VariableCategory.md
 docs/VariableDescription.md
 docs/VerticalRecoil.md
+docs/Viewport.md
 docs/Weapon.md
 docs/WeaponInfo.md
 docs/ZiplanePath.md
@@ -259,6 +271,7 @@ src/main/kotlin/deadlock_api_client/apis/MiscEntitiesApi.kt
 src/main/kotlin/deadlock_api_client/apis/NPCUnitsApi.kt
 src/main/kotlin/deadlock_api_client/apis/PatchesApi.kt
 src/main/kotlin/deadlock_api_client/apis/PlayersApi.kt
+src/main/kotlin/deadlock_api_client/apis/RankedSeasonsApi.kt
 src/main/kotlin/deadlock_api_client/apis/RanksApi.kt
 src/main/kotlin/deadlock_api_client/apis/SQLApi.kt
 src/main/kotlin/deadlock_api_client/apis/ServersApi.kt
@@ -330,6 +343,9 @@ src/main/kotlin/deadlock_api_client/models/EnemyStats.kt
 src/main/kotlin/deadlock_api_client/models/FeedItem.kt
 src/main/kotlin/deadlock_api_client/models/FeedItemOneOf.kt
 src/main/kotlin/deadlock_api_client/models/FeedItemOneOf1.kt
+src/main/kotlin/deadlock_api_client/models/FeedbackKind.kt
+src/main/kotlin/deadlock_api_client/models/FeedbackSubmission.kt
+src/main/kotlin/deadlock_api_client/models/FeedbackTarget.kt
 src/main/kotlin/deadlock_api_client/models/FlashData.kt
 src/main/kotlin/deadlock_api_client/models/ForumPatch.kt
 src/main/kotlin/deadlock_api_client/models/GameMode.kt
@@ -377,6 +393,11 @@ src/main/kotlin/deadlock_api_client/models/ItemType.kt
 src/main/kotlin/deadlock_api_client/models/JobStatus.kt
 src/main/kotlin/deadlock_api_client/models/KillDeathStats.kt
 src/main/kotlin/deadlock_api_client/models/LaneInfo.kt
+src/main/kotlin/deadlock_api_client/models/LaneMatchupStat.kt
+src/main/kotlin/deadlock_api_client/models/LaneMatchupStats.kt
+src/main/kotlin/deadlock_api_client/models/LaneSoulCurve.kt
+src/main/kotlin/deadlock_api_client/models/LaneStatCurve.kt
+src/main/kotlin/deadlock_api_client/models/LastRankedMatch.kt
 src/main/kotlin/deadlock_api_client/models/Leaderboard.kt
 src/main/kotlin/deadlock_api_client/models/LeaderboardEntry.kt
 src/main/kotlin/deadlock_api_client/models/ListServersResponse.kt
@@ -415,8 +436,8 @@ src/main/kotlin/deadlock_api_client/models/PlayerMatchHistoryEntry.kt
 src/main/kotlin/deadlock_api_client/models/PlayerPerformanceCurvePoint.kt
 src/main/kotlin/deadlock_api_client/models/Rank.kt
 src/main/kotlin/deadlock_api_client/models/RankImages.kt
-src/main/kotlin/deadlock_api_client/models/RankPredictResponse.kt
-src/main/kotlin/deadlock_api_client/models/RankPrediction.kt
+src/main/kotlin/deadlock_api_client/models/RankResponse.kt
+src/main/kotlin/deadlock_api_client/models/RankedSeason.kt
 src/main/kotlin/deadlock_api_client/models/RawAbilityUpgrade.kt
 src/main/kotlin/deadlock_api_client/models/RawAbilityUpgradePropertyUpgrade.kt
 src/main/kotlin/deadlock_api_client/models/RawCustomCrosshairSettings.kt
@@ -430,6 +451,7 @@ src/main/kotlin/deadlock_api_client/models/RecoilRange.kt
 src/main/kotlin/deadlock_api_client/models/RegionMode.kt
 src/main/kotlin/deadlock_api_client/models/RejuvParams.kt
 src/main/kotlin/deadlock_api_client/models/ScriptValues.kt
+src/main/kotlin/deadlock_api_client/models/SeasonInterval.kt
 src/main/kotlin/deadlock_api_client/models/ServerRegion.kt
 src/main/kotlin/deadlock_api_client/models/ServerStatusRequest.kt
 src/main/kotlin/deadlock_api_client/models/ServerStatusResponse.kt
@@ -437,6 +459,7 @@ src/main/kotlin/deadlock_api_client/models/ShopSpiritStatsDisplay.kt
 src/main/kotlin/deadlock_api_client/models/ShopStatDisplay.kt
 src/main/kotlin/deadlock_api_client/models/ShopVitalityStatsDisplay.kt
 src/main/kotlin/deadlock_api_client/models/ShopWeaponStatsDisplay.kt
+src/main/kotlin/deadlock_api_client/models/SourceLocation.kt
 src/main/kotlin/deadlock_api_client/models/SpreadPenalty.kt
 src/main/kotlin/deadlock_api_client/models/StartingStat.kt
 src/main/kotlin/deadlock_api_client/models/StartingStats.kt
@@ -480,6 +503,7 @@ src/main/kotlin/deadlock_api_client/models/UpgradeTooltipSectionAttribute.kt
 src/main/kotlin/deadlock_api_client/models/VariableCategory.kt
 src/main/kotlin/deadlock_api_client/models/VariableDescription.kt
 src/main/kotlin/deadlock_api_client/models/VerticalRecoil.kt
+src/main/kotlin/deadlock_api_client/models/Viewport.kt
 src/main/kotlin/deadlock_api_client/models/Weapon.kt
 src/main/kotlin/deadlock_api_client/models/WeaponInfo.kt
 src/main/kotlin/deadlock_api_client/models/ZiplanePath.kt
@@ -508,6 +532,7 @@ src/test/kotlin/deadlock_api_client/apis/MiscEntitiesApiTest.kt
 src/test/kotlin/deadlock_api_client/apis/NPCUnitsApiTest.kt
 src/test/kotlin/deadlock_api_client/apis/PatchesApiTest.kt
 src/test/kotlin/deadlock_api_client/apis/PlayersApiTest.kt
+src/test/kotlin/deadlock_api_client/apis/RankedSeasonsApiTest.kt
 src/test/kotlin/deadlock_api_client/apis/RanksApiTest.kt
 src/test/kotlin/deadlock_api_client/apis/SQLApiTest.kt
 src/test/kotlin/deadlock_api_client/apis/ServersApiTest.kt
@@ -562,6 +587,9 @@ src/test/kotlin/deadlock_api_client/models/EnemyStatsTest.kt
 src/test/kotlin/deadlock_api_client/models/FeedItemOneOf1Test.kt
 src/test/kotlin/deadlock_api_client/models/FeedItemOneOfTest.kt
 src/test/kotlin/deadlock_api_client/models/FeedItemTest.kt
+src/test/kotlin/deadlock_api_client/models/FeedbackKindTest.kt
+src/test/kotlin/deadlock_api_client/models/FeedbackSubmissionTest.kt
+src/test/kotlin/deadlock_api_client/models/FeedbackTargetTest.kt
 src/test/kotlin/deadlock_api_client/models/FlashDataTest.kt
 src/test/kotlin/deadlock_api_client/models/ForumPatchTest.kt
 src/test/kotlin/deadlock_api_client/models/GameModeTest.kt
@@ -609,6 +637,11 @@ src/test/kotlin/deadlock_api_client/models/ItemTypeTest.kt
 src/test/kotlin/deadlock_api_client/models/JobStatusTest.kt
 src/test/kotlin/deadlock_api_client/models/KillDeathStatsTest.kt
 src/test/kotlin/deadlock_api_client/models/LaneInfoTest.kt
+src/test/kotlin/deadlock_api_client/models/LaneMatchupStatTest.kt
+src/test/kotlin/deadlock_api_client/models/LaneMatchupStatsTest.kt
+src/test/kotlin/deadlock_api_client/models/LaneSoulCurveTest.kt
+src/test/kotlin/deadlock_api_client/models/LaneStatCurveTest.kt
+src/test/kotlin/deadlock_api_client/models/LastRankedMatchTest.kt
 src/test/kotlin/deadlock_api_client/models/LeaderboardEntryTest.kt
 src/test/kotlin/deadlock_api_client/models/LeaderboardTest.kt
 src/test/kotlin/deadlock_api_client/models/ListServersResponseTest.kt
@@ -646,9 +679,9 @@ src/test/kotlin/deadlock_api_client/models/PlayerEntryTest.kt
 src/test/kotlin/deadlock_api_client/models/PlayerMatchHistoryEntryTest.kt
 src/test/kotlin/deadlock_api_client/models/PlayerPerformanceCurvePointTest.kt
 src/test/kotlin/deadlock_api_client/models/RankImagesTest.kt
-src/test/kotlin/deadlock_api_client/models/RankPredictResponseTest.kt
-src/test/kotlin/deadlock_api_client/models/RankPredictionTest.kt
+src/test/kotlin/deadlock_api_client/models/RankResponseTest.kt
 src/test/kotlin/deadlock_api_client/models/RankTest.kt
+src/test/kotlin/deadlock_api_client/models/RankedSeasonTest.kt
 src/test/kotlin/deadlock_api_client/models/RawAbilityUpgradePropertyUpgradeTest.kt
 src/test/kotlin/deadlock_api_client/models/RawAbilityUpgradeTest.kt
 src/test/kotlin/deadlock_api_client/models/RawCustomCrosshairSettingsTest.kt
@@ -662,6 +695,7 @@ src/test/kotlin/deadlock_api_client/models/RecoilRangeTest.kt
 src/test/kotlin/deadlock_api_client/models/RegionModeTest.kt
 src/test/kotlin/deadlock_api_client/models/RejuvParamsTest.kt
 src/test/kotlin/deadlock_api_client/models/ScriptValuesTest.kt
+src/test/kotlin/deadlock_api_client/models/SeasonIntervalTest.kt
 src/test/kotlin/deadlock_api_client/models/ServerRegionTest.kt
 src/test/kotlin/deadlock_api_client/models/ServerStatusRequestTest.kt
 src/test/kotlin/deadlock_api_client/models/ServerStatusResponseTest.kt
@@ -669,6 +703,7 @@ src/test/kotlin/deadlock_api_client/models/ShopSpiritStatsDisplayTest.kt
 src/test/kotlin/deadlock_api_client/models/ShopStatDisplayTest.kt
 src/test/kotlin/deadlock_api_client/models/ShopVitalityStatsDisplayTest.kt
 src/test/kotlin/deadlock_api_client/models/ShopWeaponStatsDisplayTest.kt
+src/test/kotlin/deadlock_api_client/models/SourceLocationTest.kt
 src/test/kotlin/deadlock_api_client/models/SpreadPenaltyTest.kt
 src/test/kotlin/deadlock_api_client/models/StartingStatTest.kt
 src/test/kotlin/deadlock_api_client/models/StartingStatsTest.kt
@@ -712,6 +747,7 @@ src/test/kotlin/deadlock_api_client/models/UpgradeTooltipSectionTest.kt
 src/test/kotlin/deadlock_api_client/models/VariableCategoryTest.kt
 src/test/kotlin/deadlock_api_client/models/VariableDescriptionTest.kt
 src/test/kotlin/deadlock_api_client/models/VerticalRecoilTest.kt
+src/test/kotlin/deadlock_api_client/models/ViewportTest.kt
 src/test/kotlin/deadlock_api_client/models/WeaponInfoTest.kt
 src/test/kotlin/deadlock_api_client/models/WeaponTest.kt
 src/test/kotlin/deadlock_api_client/models/ZiplanePathTest.kt

@@ -33,6 +33,8 @@ namespace DeadlockApiClient.Model
         /// <summary>
         /// Initializes a new instance of the <see cref="RankImages" /> class.
         /// </summary>
+        /// <param name="chalk">chalk</param>
+        /// <param name="chalkWebp">chalkWebp</param>
         /// <param name="large">large</param>
         /// <param name="largeSubrank1">largeSubrank1</param>
         /// <param name="largeSubrank1Webp">largeSubrank1Webp</param>
@@ -61,9 +63,23 @@ namespace DeadlockApiClient.Model
         /// <param name="smallSubrank6">smallSubrank6</param>
         /// <param name="smallSubrank6Webp">smallSubrank6Webp</param>
         /// <param name="smallWebp">smallWebp</param>
+        /// <param name="subrank1">Tier badge with the division numeral drawn on it, composed on demand by this API.</param>
+        /// <param name="subrank1Webp">subrank1Webp</param>
+        /// <param name="subrank2">subrank2</param>
+        /// <param name="subrank2Webp">subrank2Webp</param>
+        /// <param name="subrank3">subrank3</param>
+        /// <param name="subrank3Webp">subrank3Webp</param>
+        /// <param name="subrank4">subrank4</param>
+        /// <param name="subrank4Webp">subrank4Webp</param>
+        /// <param name="subrank5">subrank5</param>
+        /// <param name="subrank5Webp">subrank5Webp</param>
+        /// <param name="subrank6">subrank6</param>
+        /// <param name="subrank6Webp">subrank6Webp</param>
         [JsonConstructor]
-        public RankImages(Option<string?> large = default, Option<string?> largeSubrank1 = default, Option<string?> largeSubrank1Webp = default, Option<string?> largeSubrank2 = default, Option<string?> largeSubrank2Webp = default, Option<string?> largeSubrank3 = default, Option<string?> largeSubrank3Webp = default, Option<string?> largeSubrank4 = default, Option<string?> largeSubrank4Webp = default, Option<string?> largeSubrank5 = default, Option<string?> largeSubrank5Webp = default, Option<string?> largeSubrank6 = default, Option<string?> largeSubrank6Webp = default, Option<string?> largeWebp = default, Option<string?> small = default, Option<string?> smallSubrank1 = default, Option<string?> smallSubrank1Webp = default, Option<string?> smallSubrank2 = default, Option<string?> smallSubrank2Webp = default, Option<string?> smallSubrank3 = default, Option<string?> smallSubrank3Webp = default, Option<string?> smallSubrank4 = default, Option<string?> smallSubrank4Webp = default, Option<string?> smallSubrank5 = default, Option<string?> smallSubrank5Webp = default, Option<string?> smallSubrank6 = default, Option<string?> smallSubrank6Webp = default, Option<string?> smallWebp = default)
+        public RankImages(Option<string?> chalk = default, Option<string?> chalkWebp = default, Option<string?> large = default, Option<string?> largeSubrank1 = default, Option<string?> largeSubrank1Webp = default, Option<string?> largeSubrank2 = default, Option<string?> largeSubrank2Webp = default, Option<string?> largeSubrank3 = default, Option<string?> largeSubrank3Webp = default, Option<string?> largeSubrank4 = default, Option<string?> largeSubrank4Webp = default, Option<string?> largeSubrank5 = default, Option<string?> largeSubrank5Webp = default, Option<string?> largeSubrank6 = default, Option<string?> largeSubrank6Webp = default, Option<string?> largeWebp = default, Option<string?> small = default, Option<string?> smallSubrank1 = default, Option<string?> smallSubrank1Webp = default, Option<string?> smallSubrank2 = default, Option<string?> smallSubrank2Webp = default, Option<string?> smallSubrank3 = default, Option<string?> smallSubrank3Webp = default, Option<string?> smallSubrank4 = default, Option<string?> smallSubrank4Webp = default, Option<string?> smallSubrank5 = default, Option<string?> smallSubrank5Webp = default, Option<string?> smallSubrank6 = default, Option<string?> smallSubrank6Webp = default, Option<string?> smallWebp = default, Option<string?> subrank1 = default, Option<string?> subrank1Webp = default, Option<string?> subrank2 = default, Option<string?> subrank2Webp = default, Option<string?> subrank3 = default, Option<string?> subrank3Webp = default, Option<string?> subrank4 = default, Option<string?> subrank4Webp = default, Option<string?> subrank5 = default, Option<string?> subrank5Webp = default, Option<string?> subrank6 = default, Option<string?> subrank6Webp = default)
         {
+            ChalkOption = chalk;
+            ChalkWebpOption = chalkWebp;
             LargeOption = large;
             LargeSubrank1Option = largeSubrank1;
             LargeSubrank1WebpOption = largeSubrank1Webp;
@@ -92,10 +108,48 @@ namespace DeadlockApiClient.Model
             SmallSubrank6Option = smallSubrank6;
             SmallSubrank6WebpOption = smallSubrank6Webp;
             SmallWebpOption = smallWebp;
+            Subrank1Option = subrank1;
+            Subrank1WebpOption = subrank1Webp;
+            Subrank2Option = subrank2;
+            Subrank2WebpOption = subrank2Webp;
+            Subrank3Option = subrank3;
+            Subrank3WebpOption = subrank3Webp;
+            Subrank4Option = subrank4;
+            Subrank4WebpOption = subrank4Webp;
+            Subrank5Option = subrank5;
+            Subrank5WebpOption = subrank5Webp;
+            Subrank6Option = subrank6;
+            Subrank6WebpOption = subrank6Webp;
             OnCreated();
         }
 
         partial void OnCreated();
+
+        /// <summary>
+        /// Used to track the state of Chalk
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> ChalkOption { get; private set; }
+
+        /// <summary>
+        /// Gets or Sets Chalk
+        /// </summary>
+        [JsonPropertyName("chalk")]
+        public string? Chalk { get { return this.ChalkOption.Value; } set { this.ChalkOption = new(value); } }
+
+        /// <summary>
+        /// Used to track the state of ChalkWebp
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> ChalkWebpOption { get; private set; }
+
+        /// <summary>
+        /// Gets or Sets ChalkWebp
+        /// </summary>
+        [JsonPropertyName("chalk_webp")]
+        public string? ChalkWebp { get { return this.ChalkWebpOption.Value; } set { this.ChalkWebpOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of Large
@@ -121,6 +175,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets LargeSubrank1
         /// </summary>
         [JsonPropertyName("large_subrank1")]
+        [Obsolete]
         public string? LargeSubrank1 { get { return this.LargeSubrank1Option.Value; } set { this.LargeSubrank1Option = new(value); } }
 
         /// <summary>
@@ -134,6 +189,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets LargeSubrank1Webp
         /// </summary>
         [JsonPropertyName("large_subrank1_webp")]
+        [Obsolete]
         public string? LargeSubrank1Webp { get { return this.LargeSubrank1WebpOption.Value; } set { this.LargeSubrank1WebpOption = new(value); } }
 
         /// <summary>
@@ -147,6 +203,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets LargeSubrank2
         /// </summary>
         [JsonPropertyName("large_subrank2")]
+        [Obsolete]
         public string? LargeSubrank2 { get { return this.LargeSubrank2Option.Value; } set { this.LargeSubrank2Option = new(value); } }
 
         /// <summary>
@@ -160,6 +217,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets LargeSubrank2Webp
         /// </summary>
         [JsonPropertyName("large_subrank2_webp")]
+        [Obsolete]
         public string? LargeSubrank2Webp { get { return this.LargeSubrank2WebpOption.Value; } set { this.LargeSubrank2WebpOption = new(value); } }
 
         /// <summary>
@@ -173,6 +231,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets LargeSubrank3
         /// </summary>
         [JsonPropertyName("large_subrank3")]
+        [Obsolete]
         public string? LargeSubrank3 { get { return this.LargeSubrank3Option.Value; } set { this.LargeSubrank3Option = new(value); } }
 
         /// <summary>
@@ -186,6 +245,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets LargeSubrank3Webp
         /// </summary>
         [JsonPropertyName("large_subrank3_webp")]
+        [Obsolete]
         public string? LargeSubrank3Webp { get { return this.LargeSubrank3WebpOption.Value; } set { this.LargeSubrank3WebpOption = new(value); } }
 
         /// <summary>
@@ -199,6 +259,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets LargeSubrank4
         /// </summary>
         [JsonPropertyName("large_subrank4")]
+        [Obsolete]
         public string? LargeSubrank4 { get { return this.LargeSubrank4Option.Value; } set { this.LargeSubrank4Option = new(value); } }
 
         /// <summary>
@@ -212,6 +273,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets LargeSubrank4Webp
         /// </summary>
         [JsonPropertyName("large_subrank4_webp")]
+        [Obsolete]
         public string? LargeSubrank4Webp { get { return this.LargeSubrank4WebpOption.Value; } set { this.LargeSubrank4WebpOption = new(value); } }
 
         /// <summary>
@@ -225,6 +287,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets LargeSubrank5
         /// </summary>
         [JsonPropertyName("large_subrank5")]
+        [Obsolete]
         public string? LargeSubrank5 { get { return this.LargeSubrank5Option.Value; } set { this.LargeSubrank5Option = new(value); } }
 
         /// <summary>
@@ -238,6 +301,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets LargeSubrank5Webp
         /// </summary>
         [JsonPropertyName("large_subrank5_webp")]
+        [Obsolete]
         public string? LargeSubrank5Webp { get { return this.LargeSubrank5WebpOption.Value; } set { this.LargeSubrank5WebpOption = new(value); } }
 
         /// <summary>
@@ -251,6 +315,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets LargeSubrank6
         /// </summary>
         [JsonPropertyName("large_subrank6")]
+        [Obsolete]
         public string? LargeSubrank6 { get { return this.LargeSubrank6Option.Value; } set { this.LargeSubrank6Option = new(value); } }
 
         /// <summary>
@@ -264,6 +329,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets LargeSubrank6Webp
         /// </summary>
         [JsonPropertyName("large_subrank6_webp")]
+        [Obsolete]
         public string? LargeSubrank6Webp { get { return this.LargeSubrank6WebpOption.Value; } set { this.LargeSubrank6WebpOption = new(value); } }
 
         /// <summary>
@@ -290,6 +356,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets Small
         /// </summary>
         [JsonPropertyName("small")]
+        [Obsolete]
         public string? Small { get { return this.SmallOption.Value; } set { this.SmallOption = new(value); } }
 
         /// <summary>
@@ -303,6 +370,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets SmallSubrank1
         /// </summary>
         [JsonPropertyName("small_subrank1")]
+        [Obsolete]
         public string? SmallSubrank1 { get { return this.SmallSubrank1Option.Value; } set { this.SmallSubrank1Option = new(value); } }
 
         /// <summary>
@@ -316,6 +384,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets SmallSubrank1Webp
         /// </summary>
         [JsonPropertyName("small_subrank1_webp")]
+        [Obsolete]
         public string? SmallSubrank1Webp { get { return this.SmallSubrank1WebpOption.Value; } set { this.SmallSubrank1WebpOption = new(value); } }
 
         /// <summary>
@@ -329,6 +398,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets SmallSubrank2
         /// </summary>
         [JsonPropertyName("small_subrank2")]
+        [Obsolete]
         public string? SmallSubrank2 { get { return this.SmallSubrank2Option.Value; } set { this.SmallSubrank2Option = new(value); } }
 
         /// <summary>
@@ -342,6 +412,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets SmallSubrank2Webp
         /// </summary>
         [JsonPropertyName("small_subrank2_webp")]
+        [Obsolete]
         public string? SmallSubrank2Webp { get { return this.SmallSubrank2WebpOption.Value; } set { this.SmallSubrank2WebpOption = new(value); } }
 
         /// <summary>
@@ -355,6 +426,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets SmallSubrank3
         /// </summary>
         [JsonPropertyName("small_subrank3")]
+        [Obsolete]
         public string? SmallSubrank3 { get { return this.SmallSubrank3Option.Value; } set { this.SmallSubrank3Option = new(value); } }
 
         /// <summary>
@@ -368,6 +440,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets SmallSubrank3Webp
         /// </summary>
         [JsonPropertyName("small_subrank3_webp")]
+        [Obsolete]
         public string? SmallSubrank3Webp { get { return this.SmallSubrank3WebpOption.Value; } set { this.SmallSubrank3WebpOption = new(value); } }
 
         /// <summary>
@@ -381,6 +454,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets SmallSubrank4
         /// </summary>
         [JsonPropertyName("small_subrank4")]
+        [Obsolete]
         public string? SmallSubrank4 { get { return this.SmallSubrank4Option.Value; } set { this.SmallSubrank4Option = new(value); } }
 
         /// <summary>
@@ -394,6 +468,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets SmallSubrank4Webp
         /// </summary>
         [JsonPropertyName("small_subrank4_webp")]
+        [Obsolete]
         public string? SmallSubrank4Webp { get { return this.SmallSubrank4WebpOption.Value; } set { this.SmallSubrank4WebpOption = new(value); } }
 
         /// <summary>
@@ -407,6 +482,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets SmallSubrank5
         /// </summary>
         [JsonPropertyName("small_subrank5")]
+        [Obsolete]
         public string? SmallSubrank5 { get { return this.SmallSubrank5Option.Value; } set { this.SmallSubrank5Option = new(value); } }
 
         /// <summary>
@@ -420,6 +496,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets SmallSubrank5Webp
         /// </summary>
         [JsonPropertyName("small_subrank5_webp")]
+        [Obsolete]
         public string? SmallSubrank5Webp { get { return this.SmallSubrank5WebpOption.Value; } set { this.SmallSubrank5WebpOption = new(value); } }
 
         /// <summary>
@@ -433,6 +510,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets SmallSubrank6
         /// </summary>
         [JsonPropertyName("small_subrank6")]
+        [Obsolete]
         public string? SmallSubrank6 { get { return this.SmallSubrank6Option.Value; } set { this.SmallSubrank6Option = new(value); } }
 
         /// <summary>
@@ -446,6 +524,7 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets SmallSubrank6Webp
         /// </summary>
         [JsonPropertyName("small_subrank6_webp")]
+        [Obsolete]
         public string? SmallSubrank6Webp { get { return this.SmallSubrank6WebpOption.Value; } set { this.SmallSubrank6WebpOption = new(value); } }
 
         /// <summary>
@@ -459,7 +538,165 @@ namespace DeadlockApiClient.Model
         /// Gets or Sets SmallWebp
         /// </summary>
         [JsonPropertyName("small_webp")]
+        [Obsolete]
         public string? SmallWebp { get { return this.SmallWebpOption.Value; } set { this.SmallWebpOption = new(value); } }
+
+        /// <summary>
+        /// Used to track the state of Subrank1
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> Subrank1Option { get; private set; }
+
+        /// <summary>
+        /// Tier badge with the division numeral drawn on it, composed on demand by this API.
+        /// </summary>
+        /// <value>Tier badge with the division numeral drawn on it, composed on demand by this API.</value>
+        [JsonPropertyName("subrank1")]
+        public string? Subrank1 { get { return this.Subrank1Option.Value; } set { this.Subrank1Option = new(value); } }
+
+        /// <summary>
+        /// Used to track the state of Subrank1Webp
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> Subrank1WebpOption { get; private set; }
+
+        /// <summary>
+        /// Gets or Sets Subrank1Webp
+        /// </summary>
+        [JsonPropertyName("subrank1_webp")]
+        public string? Subrank1Webp { get { return this.Subrank1WebpOption.Value; } set { this.Subrank1WebpOption = new(value); } }
+
+        /// <summary>
+        /// Used to track the state of Subrank2
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> Subrank2Option { get; private set; }
+
+        /// <summary>
+        /// Gets or Sets Subrank2
+        /// </summary>
+        [JsonPropertyName("subrank2")]
+        public string? Subrank2 { get { return this.Subrank2Option.Value; } set { this.Subrank2Option = new(value); } }
+
+        /// <summary>
+        /// Used to track the state of Subrank2Webp
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> Subrank2WebpOption { get; private set; }
+
+        /// <summary>
+        /// Gets or Sets Subrank2Webp
+        /// </summary>
+        [JsonPropertyName("subrank2_webp")]
+        public string? Subrank2Webp { get { return this.Subrank2WebpOption.Value; } set { this.Subrank2WebpOption = new(value); } }
+
+        /// <summary>
+        /// Used to track the state of Subrank3
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> Subrank3Option { get; private set; }
+
+        /// <summary>
+        /// Gets or Sets Subrank3
+        /// </summary>
+        [JsonPropertyName("subrank3")]
+        public string? Subrank3 { get { return this.Subrank3Option.Value; } set { this.Subrank3Option = new(value); } }
+
+        /// <summary>
+        /// Used to track the state of Subrank3Webp
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> Subrank3WebpOption { get; private set; }
+
+        /// <summary>
+        /// Gets or Sets Subrank3Webp
+        /// </summary>
+        [JsonPropertyName("subrank3_webp")]
+        public string? Subrank3Webp { get { return this.Subrank3WebpOption.Value; } set { this.Subrank3WebpOption = new(value); } }
+
+        /// <summary>
+        /// Used to track the state of Subrank4
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> Subrank4Option { get; private set; }
+
+        /// <summary>
+        /// Gets or Sets Subrank4
+        /// </summary>
+        [JsonPropertyName("subrank4")]
+        public string? Subrank4 { get { return this.Subrank4Option.Value; } set { this.Subrank4Option = new(value); } }
+
+        /// <summary>
+        /// Used to track the state of Subrank4Webp
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> Subrank4WebpOption { get; private set; }
+
+        /// <summary>
+        /// Gets or Sets Subrank4Webp
+        /// </summary>
+        [JsonPropertyName("subrank4_webp")]
+        public string? Subrank4Webp { get { return this.Subrank4WebpOption.Value; } set { this.Subrank4WebpOption = new(value); } }
+
+        /// <summary>
+        /// Used to track the state of Subrank5
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> Subrank5Option { get; private set; }
+
+        /// <summary>
+        /// Gets or Sets Subrank5
+        /// </summary>
+        [JsonPropertyName("subrank5")]
+        public string? Subrank5 { get { return this.Subrank5Option.Value; } set { this.Subrank5Option = new(value); } }
+
+        /// <summary>
+        /// Used to track the state of Subrank5Webp
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> Subrank5WebpOption { get; private set; }
+
+        /// <summary>
+        /// Gets or Sets Subrank5Webp
+        /// </summary>
+        [JsonPropertyName("subrank5_webp")]
+        public string? Subrank5Webp { get { return this.Subrank5WebpOption.Value; } set { this.Subrank5WebpOption = new(value); } }
+
+        /// <summary>
+        /// Used to track the state of Subrank6
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> Subrank6Option { get; private set; }
+
+        /// <summary>
+        /// Gets or Sets Subrank6
+        /// </summary>
+        [JsonPropertyName("subrank6")]
+        public string? Subrank6 { get { return this.Subrank6Option.Value; } set { this.Subrank6Option = new(value); } }
+
+        /// <summary>
+        /// Used to track the state of Subrank6Webp
+        /// </summary>
+        [JsonIgnore]
+        [global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+        public Option<string?> Subrank6WebpOption { get; private set; }
+
+        /// <summary>
+        /// Gets or Sets Subrank6Webp
+        /// </summary>
+        [JsonPropertyName("subrank6_webp")]
+        public string? Subrank6Webp { get { return this.Subrank6WebpOption.Value; } set { this.Subrank6WebpOption = new(value); } }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -469,6 +706,8 @@ namespace DeadlockApiClient.Model
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("class RankImages {\n");
+            sb.Append("  Chalk: ").Append(Chalk).Append("\n");
+            sb.Append("  ChalkWebp: ").Append(ChalkWebp).Append("\n");
             sb.Append("  Large: ").Append(Large).Append("\n");
             sb.Append("  LargeSubrank1: ").Append(LargeSubrank1).Append("\n");
             sb.Append("  LargeSubrank1Webp: ").Append(LargeSubrank1Webp).Append("\n");
@@ -497,6 +736,18 @@ namespace DeadlockApiClient.Model
             sb.Append("  SmallSubrank6: ").Append(SmallSubrank6).Append("\n");
             sb.Append("  SmallSubrank6Webp: ").Append(SmallSubrank6Webp).Append("\n");
             sb.Append("  SmallWebp: ").Append(SmallWebp).Append("\n");
+            sb.Append("  Subrank1: ").Append(Subrank1).Append("\n");
+            sb.Append("  Subrank1Webp: ").Append(Subrank1Webp).Append("\n");
+            sb.Append("  Subrank2: ").Append(Subrank2).Append("\n");
+            sb.Append("  Subrank2Webp: ").Append(Subrank2Webp).Append("\n");
+            sb.Append("  Subrank3: ").Append(Subrank3).Append("\n");
+            sb.Append("  Subrank3Webp: ").Append(Subrank3Webp).Append("\n");
+            sb.Append("  Subrank4: ").Append(Subrank4).Append("\n");
+            sb.Append("  Subrank4Webp: ").Append(Subrank4Webp).Append("\n");
+            sb.Append("  Subrank5: ").Append(Subrank5).Append("\n");
+            sb.Append("  Subrank5Webp: ").Append(Subrank5Webp).Append("\n");
+            sb.Append("  Subrank6: ").Append(Subrank6).Append("\n");
+            sb.Append("  Subrank6Webp: ").Append(Subrank6Webp).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -544,6 +795,8 @@ namespace DeadlockApiClient.Model
 
             JsonTokenType startingTokenType = utf8JsonReader.TokenType;
 
+            Option<string?> chalk = default;
+            Option<string?> chalkWebp = default;
             Option<string?> large = default;
             Option<string?> largeSubrank1 = default;
             Option<string?> largeSubrank1Webp = default;
@@ -572,6 +825,18 @@ namespace DeadlockApiClient.Model
             Option<string?> smallSubrank6 = default;
             Option<string?> smallSubrank6Webp = default;
             Option<string?> smallWebp = default;
+            Option<string?> subrank1 = default;
+            Option<string?> subrank1Webp = default;
+            Option<string?> subrank2 = default;
+            Option<string?> subrank2Webp = default;
+            Option<string?> subrank3 = default;
+            Option<string?> subrank3Webp = default;
+            Option<string?> subrank4 = default;
+            Option<string?> subrank4Webp = default;
+            Option<string?> subrank5 = default;
+            Option<string?> subrank5Webp = default;
+            Option<string?> subrank6 = default;
+            Option<string?> subrank6Webp = default;
 
             while (utf8JsonReader.Read())
             {
@@ -588,6 +853,12 @@ namespace DeadlockApiClient.Model
 
                     switch (localVarJsonPropertyName)
                     {
+                        case "chalk":
+                            chalk = new Option<string?>(utf8JsonReader.GetString());
+                            break;
+                        case "chalk_webp":
+                            chalkWebp = new Option<string?>(utf8JsonReader.GetString());
+                            break;
                         case "large":
                             large = new Option<string?>(utf8JsonReader.GetString());
                             break;
@@ -672,13 +943,49 @@ namespace DeadlockApiClient.Model
                         case "small_webp":
                             smallWebp = new Option<string?>(utf8JsonReader.GetString());
                             break;
+                        case "subrank1":
+                            subrank1 = new Option<string?>(utf8JsonReader.GetString());
+                            break;
+                        case "subrank1_webp":
+                            subrank1Webp = new Option<string?>(utf8JsonReader.GetString());
+                            break;
+                        case "subrank2":
+                            subrank2 = new Option<string?>(utf8JsonReader.GetString());
+                            break;
+                        case "subrank2_webp":
+                            subrank2Webp = new Option<string?>(utf8JsonReader.GetString());
+                            break;
+                        case "subrank3":
+                            subrank3 = new Option<string?>(utf8JsonReader.GetString());
+                            break;
+                        case "subrank3_webp":
+                            subrank3Webp = new Option<string?>(utf8JsonReader.GetString());
+                            break;
+                        case "subrank4":
+                            subrank4 = new Option<string?>(utf8JsonReader.GetString());
+                            break;
+                        case "subrank4_webp":
+                            subrank4Webp = new Option<string?>(utf8JsonReader.GetString());
+                            break;
+                        case "subrank5":
+                            subrank5 = new Option<string?>(utf8JsonReader.GetString());
+                            break;
+                        case "subrank5_webp":
+                            subrank5Webp = new Option<string?>(utf8JsonReader.GetString());
+                            break;
+                        case "subrank6":
+                            subrank6 = new Option<string?>(utf8JsonReader.GetString());
+                            break;
+                        case "subrank6_webp":
+                            subrank6Webp = new Option<string?>(utf8JsonReader.GetString());
+                            break;
                         default:
                             break;
                     }
                 }
             }
 
-            return new RankImages(large, largeSubrank1, largeSubrank1Webp, largeSubrank2, largeSubrank2Webp, largeSubrank3, largeSubrank3Webp, largeSubrank4, largeSubrank4Webp, largeSubrank5, largeSubrank5Webp, largeSubrank6, largeSubrank6Webp, largeWebp, small, smallSubrank1, smallSubrank1Webp, smallSubrank2, smallSubrank2Webp, smallSubrank3, smallSubrank3Webp, smallSubrank4, smallSubrank4Webp, smallSubrank5, smallSubrank5Webp, smallSubrank6, smallSubrank6Webp, smallWebp);
+            return new RankImages(chalk, chalkWebp, large, largeSubrank1, largeSubrank1Webp, largeSubrank2, largeSubrank2Webp, largeSubrank3, largeSubrank3Webp, largeSubrank4, largeSubrank4Webp, largeSubrank5, largeSubrank5Webp, largeSubrank6, largeSubrank6Webp, largeWebp, small, smallSubrank1, smallSubrank1Webp, smallSubrank2, smallSubrank2Webp, smallSubrank3, smallSubrank3Webp, smallSubrank4, smallSubrank4Webp, smallSubrank5, smallSubrank5Webp, smallSubrank6, smallSubrank6Webp, smallWebp, subrank1, subrank1Webp, subrank2, subrank2Webp, subrank3, subrank3Webp, subrank4, subrank4Webp, subrank5, subrank5Webp, subrank6, subrank6Webp);
         }
 
         /// <summary>
@@ -705,6 +1012,18 @@ namespace DeadlockApiClient.Model
         /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, RankImages rankImages, JsonSerializerOptions jsonSerializerOptions)
         {
+            if (rankImages.ChalkOption.IsSet)
+                if (rankImages.ChalkOption.Value != null)
+                    writer.WriteString("chalk", rankImages.Chalk);
+                else
+                    writer.WriteNull("chalk");
+
+            if (rankImages.ChalkWebpOption.IsSet)
+                if (rankImages.ChalkWebpOption.Value != null)
+                    writer.WriteString("chalk_webp", rankImages.ChalkWebp);
+                else
+                    writer.WriteNull("chalk_webp");
+
             if (rankImages.LargeOption.IsSet)
                 if (rankImages.LargeOption.Value != null)
                     writer.WriteString("large", rankImages.Large);
@@ -872,6 +1191,78 @@ namespace DeadlockApiClient.Model
                     writer.WriteString("small_webp", rankImages.SmallWebp);
                 else
                     writer.WriteNull("small_webp");
+
+            if (rankImages.Subrank1Option.IsSet)
+                if (rankImages.Subrank1Option.Value != null)
+                    writer.WriteString("subrank1", rankImages.Subrank1);
+                else
+                    writer.WriteNull("subrank1");
+
+            if (rankImages.Subrank1WebpOption.IsSet)
+                if (rankImages.Subrank1WebpOption.Value != null)
+                    writer.WriteString("subrank1_webp", rankImages.Subrank1Webp);
+                else
+                    writer.WriteNull("subrank1_webp");
+
+            if (rankImages.Subrank2Option.IsSet)
+                if (rankImages.Subrank2Option.Value != null)
+                    writer.WriteString("subrank2", rankImages.Subrank2);
+                else
+                    writer.WriteNull("subrank2");
+
+            if (rankImages.Subrank2WebpOption.IsSet)
+                if (rankImages.Subrank2WebpOption.Value != null)
+                    writer.WriteString("subrank2_webp", rankImages.Subrank2Webp);
+                else
+                    writer.WriteNull("subrank2_webp");
+
+            if (rankImages.Subrank3Option.IsSet)
+                if (rankImages.Subrank3Option.Value != null)
+                    writer.WriteString("subrank3", rankImages.Subrank3);
+                else
+                    writer.WriteNull("subrank3");
+
+            if (rankImages.Subrank3WebpOption.IsSet)
+                if (rankImages.Subrank3WebpOption.Value != null)
+                    writer.WriteString("subrank3_webp", rankImages.Subrank3Webp);
+                else
+                    writer.WriteNull("subrank3_webp");
+
+            if (rankImages.Subrank4Option.IsSet)
+                if (rankImages.Subrank4Option.Value != null)
+                    writer.WriteString("subrank4", rankImages.Subrank4);
+                else
+                    writer.WriteNull("subrank4");
+
+            if (rankImages.Subrank4WebpOption.IsSet)
+                if (rankImages.Subrank4WebpOption.Value != null)
+                    writer.WriteString("subrank4_webp", rankImages.Subrank4Webp);
+                else
+                    writer.WriteNull("subrank4_webp");
+
+            if (rankImages.Subrank5Option.IsSet)
+                if (rankImages.Subrank5Option.Value != null)
+                    writer.WriteString("subrank5", rankImages.Subrank5);
+                else
+                    writer.WriteNull("subrank5");
+
+            if (rankImages.Subrank5WebpOption.IsSet)
+                if (rankImages.Subrank5WebpOption.Value != null)
+                    writer.WriteString("subrank5_webp", rankImages.Subrank5Webp);
+                else
+                    writer.WriteNull("subrank5_webp");
+
+            if (rankImages.Subrank6Option.IsSet)
+                if (rankImages.Subrank6Option.Value != null)
+                    writer.WriteString("subrank6", rankImages.Subrank6);
+                else
+                    writer.WriteNull("subrank6");
+
+            if (rankImages.Subrank6WebpOption.IsSet)
+                if (rankImages.Subrank6WebpOption.Value != null)
+                    writer.WriteString("subrank6_webp", rankImages.Subrank6Webp);
+                else
+                    writer.WriteNull("subrank6_webp");
         }
     }
 }

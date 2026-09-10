@@ -10,9 +10,12 @@ Method | HTTP request | Description
 [**match_history**](PlayersApi.md#match_history) | **GET** /v1/players/{account_id}/match-history | Match History
 [**mate_stats**](PlayersApi.md#mate_stats) | **GET** /v1/players/{account_id}/mate-stats | Mate Stats
 [**player_hero_stats**](PlayersApi.md#player_hero_stats) | **GET** /v1/players/hero-stats | Hero Stats
-[**rank_predict**](PlayersApi.md#rank_predict) | **GET** /v1/players/{account_id}/rank-predict | Rank Predict
-[**rank_predict_avg_image**](PlayersApi.md#rank_predict_avg_image) | **GET** /v1/players/rank-predict/image | Rank Predict Avg Image
-[**rank_predict_image**](PlayersApi.md#rank_predict_image) | **GET** /v1/players/{account_id}/rank-predict/image | Rank Predict Image
+[**rank**](PlayersApi.md#rank) | **GET** /v1/players/{account_id}/rank | Rank
+[**rank_avg_image**](PlayersApi.md#rank_avg_image) | **GET** /v1/players/rank/image | Rank Avg Image
+[**rank_image**](PlayersApi.md#rank_image) | **GET** /v1/players/{account_id}/rank/image | Rank Image
+[**rank_predict**](PlayersApi.md#rank_predict) | **GET** /v1/players/{account_id}/rank-predict | Rank Predict (Deprecated)
+[**rank_predict_avg_image**](PlayersApi.md#rank_predict_avg_image) | **GET** /v1/players/rank-predict/image | Rank Predict Avg Image (Deprecated)
+[**rank_predict_image**](PlayersApi.md#rank_predict_image) | **GET** /v1/players/{account_id}/rank-predict/image | Rank Predict Image (Deprecated)
 
 
 
@@ -188,7 +191,7 @@ No authorization required
 
 ## player_hero_stats
 
-> Vec<models::HeroStats> player_hero_stats(account_ids, game_mode, hero_ids, min_unix_timestamp, max_unix_timestamp, min_duration_s, max_duration_s, min_networth, max_networth, min_average_badge, max_average_badge, min_match_id, max_match_id)
+> Vec<models::HeroStats> player_hero_stats(account_ids, game_mode, match_mode, hero_ids, min_unix_timestamp, max_unix_timestamp, min_duration_s, max_duration_s, min_networth, max_networth, min_average_badge, max_average_badge, min_match_id, max_match_id)
 Hero Stats
 
  This endpoint returns statistics for each hero played by a given player account.  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 100req/s | | Key | - | | Global | - |     
@@ -200,6 +203,7 @@ Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **account_ids** | [**Vec<u32>**](U32.md) | Comma separated list of account ids, Account IDs are in `SteamID3` format. | [required] |
 **game_mode** | Option<**String**> | Filter matches based on their game mode. Valid values: `normal`, `street_brawl`. **Default:** `normal`. |  |
+**match_mode** | Option<**String**> | Filter matches based on the match mode. Valid values: `unranked`, `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`. **Default:** `ranked,unranked`. |  |
 **hero_ids** | Option<**String**> | Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes> |  |
 **min_unix_timestamp** | Option<**i64**> | Filter matches based on their start time (Unix timestamp). |  |
 **max_unix_timestamp** | Option<**i64**> | Filter matches based on their start time (Unix timestamp). |  |
@@ -228,12 +232,12 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
-## rank_predict
+## rank
 
-> models::RankPredictResponse rank_predict(account_id)
-Rank Predict
+> models::RankResponse rank(account_id)
+Rank
 
- Predicts a player's current rank badge from their last 30 ranked/unranked matches. Requires at least 30 eligible matches (Ranked or Unranked, Normal game mode) with valid badge data.  > **This is an ML prediction and may be inaccurate.** The model has no access to the player's > actual hidden MMR — it infers rank from match context signals only.  ### Model Accuracy (5-fold cross-validation)  | Metric | Value | |--------|-------| | R²     | 0.949 | | MAE    | 1.08 sub-ranks | | RMSE   | 1.89 sub-ranks | | Within ±1 sub-rank | 77.6% | | Within ±3 sub-rank | 93.9% | | Within ±5 sub-rank | 97.7% | | Within ±6 sub-rank | 98.6% | | Within ±10 sub-rank | 99.6% |  Accuracy by tier:  | Tier range | n | MAE | |------------|---|-----| | Low (1-4)  | 404 | 3.68 sub-ranks | | Mid (5-7)  | 777 | 2.91 sub-ranks | | High (8-11)| 25,556 | 0.98 sub-ranks |  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 100req/s | | Key | - | | Global | - | 
+ Returns the player's rank at the end of their latest ranked match, i.e. the rank they entered that match with plus the progress the match awarded. A subrank spans 1000 progress points, so a single match can move the badge. Eternus subranks are instead percentile cuts Valve recomputes daily, so within Eternus the badge is the one the player entered the match with.  Only ranked matches carry a rank, and it stays unset while the player is in placement games. When none of the player's recent ranked matches reports a rank, `badge`, `rank` and `subrank` are all `0`, which is the `Obscurus` (unranked) tier, and `last_match` is `null`.  `last_match` carries the rank metadata Valve reported on that match, e.g. rank progress, remaining placement games and demotion protection. 
 
 ### Parameters
 
@@ -244,7 +248,99 @@ Name | Type | Description  | Required | Notes
 
 ### Return type
 
-[**models::RankPredictResponse**](RankPredictResponse.md)
+[**models::RankResponse**](RankResponse.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## rank_avg_image
+
+> Vec<u32> rank_avg_image(account_ids, format)
+Rank Avg Image
+
+Returns the average rank badge image (binary) for a comma-separated list of account IDs. Accounts without a rank are left out of the average; if none of them has one, the `Obscurus` image is returned. Use `?format=webp` for WebP.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**account_ids** | [**Vec<u32>**](U32.md) | Comma-separated list of account IDs (max 12). | [required] |
+**format** | Option<**String**> | Image format. Defaults to `png`. Supported: `png`, `webp`. |  |
+
+### Return type
+
+**Vec<u32>**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: image/png, image/webp
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## rank_image
+
+> Vec<u32> rank_image(account_id, format)
+Rank Image
+
+Returns the rank badge image directly (binary), not a URL, with the player's I-VI division numeral drawn on it. Players whose recent ranked matches carry no rank, and players still in placement, get the plain tier badge. Use `?format=webp` for WebP.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**account_id** | **u32** | The players `SteamID3` | [required] |
+**format** | Option<**String**> | Image format. Defaults to `png`. Supported: `png`, `webp`. |  |
+
+### Return type
+
+**Vec<u32>**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: image/png, image/webp
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## rank_predict
+
+> models::RankResponse rank_predict(account_id)
+Rank Predict (Deprecated)
+
+Deprecated alias of `/v1/players/{account_id}/rank`. The rank is no longer predicted, it is read from the player's latest ranked match.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**account_id** | **u32** | The players `SteamID3` | [required] |
+
+### Return type
+
+[**models::RankResponse**](RankResponse.md)
 
 ### Authorization
 
@@ -260,10 +356,10 @@ No authorization required
 
 ## rank_predict_avg_image
 
-> Vec<u32> rank_predict_avg_image(account_ids, format, size)
-Rank Predict Avg Image
+> Vec<u32> rank_predict_avg_image(account_ids, format)
+Rank Predict Avg Image (Deprecated)
 
-Returns the average predicted rank badge image (binary) for a comma-separated list of account IDs. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
+Deprecated alias of `/v1/players/rank/image`. The rank is no longer predicted, it is read from each player's latest ranked match.
 
 ### Parameters
 
@@ -272,7 +368,6 @@ Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **account_ids** | [**Vec<u32>**](U32.md) | Comma-separated list of account IDs (max 12). | [required] |
 **format** | Option<**String**> | Image format. Defaults to `png`. Supported: `png`, `webp`. |  |
-**size** | Option<**String**> | Image size. Defaults to `large`. Supported: `large`, `small`. |  |
 
 ### Return type
 
@@ -292,10 +387,10 @@ No authorization required
 
 ## rank_predict_image
 
-> Vec<u32> rank_predict_image(account_id, format, size)
-Rank Predict Image
+> Vec<u32> rank_predict_image(account_id, format)
+Rank Predict Image (Deprecated)
 
-Returns the predicted rank badge image directly (binary), not a URL. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
+Deprecated alias of `/v1/players/{account_id}/rank/image`. The rank is no longer predicted, it is read from the player's latest ranked match.
 
 ### Parameters
 
@@ -304,7 +399,6 @@ Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **account_id** | **u32** | The players `SteamID3` | [required] |
 **format** | Option<**String**> | Image format. Defaults to `png`. Supported: `png`, `webp`. |  |
-**size** | Option<**String**> | Image size. Defaults to `large`. Supported: `large`, `small`. |  |
 
 ### Return type
 

@@ -96,6 +96,8 @@ pub struct PlayerHeroStatsParams {
     pub account_ids: Vec<u32>,
     /// Filter matches based on their game mode. Valid values: `normal`, `street_brawl`. **Default:** `normal`.
     pub game_mode: Option<String>,
+    /// Filter matches based on the match mode. Valid values: `unranked`, `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`. **Default:** `ranked,unranked`.
+    pub match_mode: Option<String>,
     /// Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes>
     pub hero_ids: Option<String>,
     /// Filter matches based on their start time (Unix timestamp).
@@ -120,6 +122,31 @@ pub struct PlayerHeroStatsParams {
     pub max_match_id: Option<u64>
 }
 
+/// struct for passing parameters to the method [`rank`]
+#[derive(Clone, Debug)]
+pub struct RankParams {
+    /// The players `SteamID3`
+    pub account_id: u32
+}
+
+/// struct for passing parameters to the method [`rank_avg_image`]
+#[derive(Clone, Debug)]
+pub struct RankAvgImageParams {
+    /// Comma-separated list of account IDs (max 12).
+    pub account_ids: Vec<u32>,
+    /// Image format. Defaults to `png`. Supported: `png`, `webp`.
+    pub format: Option<String>
+}
+
+/// struct for passing parameters to the method [`rank_image`]
+#[derive(Clone, Debug)]
+pub struct RankImageParams {
+    /// The players `SteamID3`
+    pub account_id: u32,
+    /// Image format. Defaults to `png`. Supported: `png`, `webp`.
+    pub format: Option<String>
+}
+
 /// struct for passing parameters to the method [`rank_predict`]
 #[derive(Clone, Debug)]
 pub struct RankPredictParams {
@@ -133,9 +160,7 @@ pub struct RankPredictAvgImageParams {
     /// Comma-separated list of account IDs (max 12).
     pub account_ids: Vec<u32>,
     /// Image format. Defaults to `png`. Supported: `png`, `webp`.
-    pub format: Option<String>,
-    /// Image size. Defaults to `large`. Supported: `large`, `small`.
-    pub size: Option<String>
+    pub format: Option<String>
 }
 
 /// struct for passing parameters to the method [`rank_predict_image`]
@@ -144,9 +169,7 @@ pub struct RankPredictImageParams {
     /// The players `SteamID3`
     pub account_id: u32,
     /// Image format. Defaults to `png`. Supported: `png`, `webp`.
-    pub format: Option<String>,
-    /// Image size. Defaults to `large`. Supported: `large`, `small`.
-    pub size: Option<String>
+    pub format: Option<String>
 }
 
 
@@ -209,16 +232,45 @@ pub enum PlayerHeroStatsError {
     UnknownValue(serde_json::Value),
 }
 
+/// struct for typed errors of method [`rank`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum RankError {
+    Status400(),
+    Status403(),
+    Status500(),
+    UnknownValue(serde_json::Value),
+}
+
+/// struct for typed errors of method [`rank_avg_image`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum RankAvgImageError {
+    Status400(),
+    Status403(),
+    Status404(),
+    Status500(),
+    UnknownValue(serde_json::Value),
+}
+
+/// struct for typed errors of method [`rank_image`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum RankImageError {
+    Status400(),
+    Status403(),
+    Status404(),
+    Status500(),
+    UnknownValue(serde_json::Value),
+}
+
 /// struct for typed errors of method [`rank_predict`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RankPredictError {
     Status400(),
     Status403(),
-    Status422(),
-    Status429(),
     Status500(),
-    Status503(),
     UnknownValue(serde_json::Value),
 }
 
@@ -229,10 +281,7 @@ pub enum RankPredictAvgImageError {
     Status400(),
     Status403(),
     Status404(),
-    Status422(),
-    Status429(),
     Status500(),
-    Status503(),
     UnknownValue(serde_json::Value),
 }
 
@@ -243,10 +292,7 @@ pub enum RankPredictImageError {
     Status400(),
     Status403(),
     Status404(),
-    Status422(),
-    Status429(),
     Status500(),
-    Status503(),
     UnknownValue(serde_json::Value),
 }
 
@@ -499,6 +545,9 @@ pub async fn player_hero_stats(configuration: &configuration::Configuration, par
     if let Some(ref param_value) = params.game_mode {
         req_builder = req_builder.query(&[("game_mode", &param_value.to_string())]);
     }
+    if let Some(ref param_value) = params.match_mode {
+        req_builder = req_builder.query(&[("match_mode", &param_value.to_string())]);
+    }
     if let Some(ref param_value) = params.hero_ids {
         req_builder = req_builder.query(&[("hero_ids", &param_value.to_string())]);
     }
@@ -561,8 +610,124 @@ pub async fn player_hero_stats(configuration: &configuration::Configuration, par
     }
 }
 
-///  Predicts a player's current rank badge from their last 30 ranked/unranked matches. Requires at least 30 eligible matches (Ranked or Unranked, Normal game mode) with valid badge data.  > **This is an ML prediction and may be inaccurate.** The model has no access to the player's > actual hidden MMR — it infers rank from match context signals only.  ### Model Accuracy (5-fold cross-validation)  | Metric | Value | |--------|-------| | R²     | 0.949 | | MAE    | 1.08 sub-ranks | | RMSE   | 1.89 sub-ranks | | Within ±1 sub-rank | 77.6% | | Within ±3 sub-rank | 93.9% | | Within ±5 sub-rank | 97.7% | | Within ±6 sub-rank | 98.6% | | Within ±10 sub-rank | 99.6% |  Accuracy by tier:  | Tier range | n | MAE | |------------|---|-----| | Low (1-4)  | 404 | 3.68 sub-ranks | | Mid (5-7)  | 777 | 2.91 sub-ranks | | High (8-11)| 25,556 | 0.98 sub-ranks |  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 100req/s | | Key | - | | Global | - | 
-pub async fn rank_predict(configuration: &configuration::Configuration, params: RankPredictParams) -> Result<models::RankPredictResponse, Error<RankPredictError>> {
+///  Returns the player's rank at the end of their latest ranked match, i.e. the rank they entered that match with plus the progress the match awarded. A subrank spans 1000 progress points, so a single match can move the badge. Eternus subranks are instead percentile cuts Valve recomputes daily, so within Eternus the badge is the one the player entered the match with.  Only ranked matches carry a rank, and it stays unset while the player is in placement games. When none of the player's recent ranked matches reports a rank, `badge`, `rank` and `subrank` are all `0`, which is the `Obscurus` (unranked) tier, and `last_match` is `null`.  `last_match` carries the rank metadata Valve reported on that match, e.g. rank progress, remaining placement games and demotion protection. 
+pub async fn rank(configuration: &configuration::Configuration, params: RankParams) -> Result<models::RankResponse, Error<RankError>> {
+
+    let uri_str = format!("{}/v1/players/{account_id}/rank", configuration.base_path, account_id=params.account_id);
+    let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::RankResponse`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::RankResponse`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<RankError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
+/// Returns the average rank badge image (binary) for a comma-separated list of account IDs. Accounts without a rank are left out of the average; if none of them has one, the `Obscurus` image is returned. Use `?format=webp` for WebP.
+pub async fn rank_avg_image(configuration: &configuration::Configuration, params: RankAvgImageParams) -> Result<Vec<u32>, Error<RankAvgImageError>> {
+
+    let uri_str = format!("{}/v1/players/rank/image", configuration.base_path);
+    let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
+
+    req_builder = match "multi" {
+        "multi" => req_builder.query(&params.account_ids.into_iter().map(|p| ("account_ids".to_owned(), p.to_string())).collect::<Vec<(std::string::String, std::string::String)>>()),
+        _ => req_builder.query(&[("account_ids", &params.account_ids.into_iter().map(|p| p.to_string()).collect::<Vec<String>>().join(",").to_string())]),
+    };
+    if let Some(ref param_value) = params.format {
+        req_builder = req_builder.query(&[("format", &param_value.to_string())]);
+    }
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `Vec&lt;u32&gt;`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `Vec&lt;u32&gt;`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<RankAvgImageError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
+/// Returns the rank badge image directly (binary), not a URL, with the player's I-VI division numeral drawn on it. Players whose recent ranked matches carry no rank, and players still in placement, get the plain tier badge. Use `?format=webp` for WebP.
+pub async fn rank_image(configuration: &configuration::Configuration, params: RankImageParams) -> Result<Vec<u32>, Error<RankImageError>> {
+
+    let uri_str = format!("{}/v1/players/{account_id}/rank/image", configuration.base_path, account_id=params.account_id);
+    let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
+
+    if let Some(ref param_value) = params.format {
+        req_builder = req_builder.query(&[("format", &param_value.to_string())]);
+    }
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `Vec&lt;u32&gt;`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `Vec&lt;u32&gt;`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<RankImageError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
+/// Deprecated alias of `/v1/players/{account_id}/rank`. The rank is no longer predicted, it is read from the player's latest ranked match.
+#[deprecated]
+pub async fn rank_predict(configuration: &configuration::Configuration, params: RankPredictParams) -> Result<models::RankResponse, Error<RankPredictError>> {
 
     let uri_str = format!("{}/v1/players/{account_id}/rank-predict", configuration.base_path, account_id=params.account_id);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
@@ -586,8 +751,8 @@ pub async fn rank_predict(configuration: &configuration::Configuration, params: 
         let content = resp.text().await?;
         match content_type {
             ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
-            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::RankPredictResponse`"))),
-            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::RankPredictResponse`")))),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::RankResponse`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::RankResponse`")))),
         }
     } else {
         let content = resp.text().await?;
@@ -596,7 +761,8 @@ pub async fn rank_predict(configuration: &configuration::Configuration, params: 
     }
 }
 
-/// Returns the average predicted rank badge image (binary) for a comma-separated list of account IDs. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
+/// Deprecated alias of `/v1/players/rank/image`. The rank is no longer predicted, it is read from each player's latest ranked match.
+#[deprecated]
 pub async fn rank_predict_avg_image(configuration: &configuration::Configuration, params: RankPredictAvgImageParams) -> Result<Vec<u32>, Error<RankPredictAvgImageError>> {
 
     let uri_str = format!("{}/v1/players/rank-predict/image", configuration.base_path);
@@ -608,9 +774,6 @@ pub async fn rank_predict_avg_image(configuration: &configuration::Configuration
     };
     if let Some(ref param_value) = params.format {
         req_builder = req_builder.query(&[("format", &param_value.to_string())]);
-    }
-    if let Some(ref param_value) = params.size {
-        req_builder = req_builder.query(&[("size", &param_value.to_string())]);
     }
     if let Some(ref user_agent) = configuration.user_agent {
         req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
@@ -641,7 +804,8 @@ pub async fn rank_predict_avg_image(configuration: &configuration::Configuration
     }
 }
 
-/// Returns the predicted rank badge image directly (binary), not a URL. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
+/// Deprecated alias of `/v1/players/{account_id}/rank/image`. The rank is no longer predicted, it is read from the player's latest ranked match.
+#[deprecated]
 pub async fn rank_predict_image(configuration: &configuration::Configuration, params: RankPredictImageParams) -> Result<Vec<u32>, Error<RankPredictImageError>> {
 
     let uri_str = format!("{}/v1/players/{account_id}/rank-predict/image", configuration.base_path, account_id=params.account_id);
@@ -649,9 +813,6 @@ pub async fn rank_predict_image(configuration: &configuration::Configuration, pa
 
     if let Some(ref param_value) = params.format {
         req_builder = req_builder.query(&[("format", &param_value.to_string())]);
-    }
-    if let Some(ref param_value) = params.size {
-        req_builder = req_builder.query(&[("size", &param_value.to_string())]);
     }
     if let Some(ref user_agent) = configuration.user_agent {
         req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());

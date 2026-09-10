@@ -10,9 +10,12 @@ All URIs are relative to *https://api.deadlock-api.com*
 | [**matchHistory**](PlayersApi.md#matchHistory) | **GET** /v1/players/{account_id}/match-history | Match History |
 | [**mateStats**](PlayersApi.md#mateStats) | **GET** /v1/players/{account_id}/mate-stats | Mate Stats |
 | [**playerHeroStats**](PlayersApi.md#playerHeroStats) | **GET** /v1/players/hero-stats | Hero Stats |
-| [**rankPredict**](PlayersApi.md#rankPredict) | **GET** /v1/players/{account_id}/rank-predict | Rank Predict |
-| [**rankPredictAvgImage**](PlayersApi.md#rankPredictAvgImage) | **GET** /v1/players/rank-predict/image | Rank Predict Avg Image |
-| [**rankPredictImage**](PlayersApi.md#rankPredictImage) | **GET** /v1/players/{account_id}/rank-predict/image | Rank Predict Image |
+| [**rank**](PlayersApi.md#rank) | **GET** /v1/players/{account_id}/rank | Rank |
+| [**rankAvgImage**](PlayersApi.md#rankAvgImage) | **GET** /v1/players/rank/image | Rank Avg Image |
+| [**rankImage**](PlayersApi.md#rankImage) | **GET** /v1/players/{account_id}/rank/image | Rank Image |
+| [**rankPredict**](PlayersApi.md#rankPredict) | **GET** /v1/players/{account_id}/rank-predict | Rank Predict (Deprecated) |
+| [**rankPredictAvgImage**](PlayersApi.md#rankPredictAvgImage) | **GET** /v1/players/rank-predict/image | Rank Predict Avg Image (Deprecated) |
+| [**rankPredictImage**](PlayersApi.md#rankPredictImage) | **GET** /v1/players/{account_id}/rank-predict/image | Rank Predict Image (Deprecated) |
 
 
 <a id="accountStats"></a>
@@ -145,6 +148,8 @@ try {
 ```
 
 ### Parameters
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
 | **accountId** | **kotlin.Int**| The players &#x60;SteamID3&#x60; | |
 | **gameMode** | **kotlin.String**| Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;. | [optional] [enum: normal, street_brawl, explore_n_y_c, internal] |
 | **minUnixTimestamp** | **kotlin.Long**| Filter matches based on their start time (Unix timestamp). | [optional] |
@@ -154,8 +159,6 @@ try {
 | **minMatchId** | **kotlin.Long**| Filter matches based on their ID. | [optional] |
 | **maxMatchId** | **kotlin.Long**| Filter matches based on their ID. | [optional] |
 | **minMatchesPlayed** | **kotlin.Long**| Filter based on the number of matches played. | [optional] |
-| Name | Type | Description  | Notes |
-| ------------- | ------------- | ------------- | ------------- |
 | **maxMatchesPlayed** | **kotlin.Long**| Filter based on the number of matches played. | [optional] |
 
 ### Return type
@@ -201,9 +204,9 @@ try {
 ```
 
 ### Parameters
-| **accountId** | **kotlin.Int**| The players &#x60;SteamID3&#x60; | |
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
+| **accountId** | **kotlin.Int**| The players &#x60;SteamID3&#x60; | |
 | **forceRefetch** | **kotlin.Boolean**| Refetch the match history from Steam, even if it is already cached in &#x60;ClickHouse&#x60;. Only use this if you are sure that the data in &#x60;ClickHouse&#x60; is outdated. Enabling this flag results in a strict rate limit. | [optional] |
 
 ### Return type
@@ -258,6 +261,8 @@ try {
 ```
 
 ### Parameters
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
 | **accountId** | **kotlin.Int**| The players &#x60;SteamID3&#x60; | |
 | **gameMode** | **kotlin.String**| Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;. | [optional] [enum: normal, street_brawl, explore_n_y_c, internal] |
 | **minUnixTimestamp** | **kotlin.Long**| Filter matches based on their start time (Unix timestamp). | [optional] |
@@ -268,8 +273,6 @@ try {
 | **maxMatchId** | **kotlin.Long**| Filter matches based on their ID. | [optional] |
 | **minMatchesPlayed** | **kotlin.Long**| Filter based on the number of matches played. | [optional] |
 | **maxMatchesPlayed** | **kotlin.Long**| Filter based on the number of matches played. | [optional] |
-| Name | Type | Description  | Notes |
-| ------------- | ------------- | ------------- | ------------- |
 | **sameParty** | **kotlin.Boolean**| Filter based on whether the mates were on the same party. Two players are considered to be in the same party if they were on the same team and are Steam friends as of the match start time (per the &#x60;steam_profiles&#x60; friends list). | [optional] [default to false] |
 
 ### Return type
@@ -287,7 +290,7 @@ No authorization required
 
 <a id="playerHeroStats"></a>
 # **playerHeroStats**
-> kotlin.collections.List&lt;HeroStats&gt; playerHeroStats(accountIds, gameMode, heroIds, minUnixTimestamp, maxUnixTimestamp, minDurationS, maxDurationS, minNetworth, maxNetworth, minAverageBadge, maxAverageBadge, minMatchId, maxMatchId)
+> kotlin.collections.List&lt;HeroStats&gt; playerHeroStats(accountIds, gameMode, matchMode, heroIds, minUnixTimestamp, maxUnixTimestamp, minDurationS, maxDurationS, minNetworth, maxNetworth, minAverageBadge, maxAverageBadge, minMatchId, maxMatchId)
 
 Hero Stats
 
@@ -302,6 +305,7 @@ Hero Stats
 val apiInstance = PlayersApi()
 val accountIds : kotlin.collections.List<kotlin.Int> =  // kotlin.collections.List<kotlin.Int> | Comma separated list of account ids, Account IDs are in `SteamID3` format.
 val gameMode : kotlin.String = gameMode_example // kotlin.String | Filter matches based on their game mode. Valid values: `normal`, `street_brawl`. **Default:** `normal`.
+val matchMode : kotlin.String = matchMode_example // kotlin.String | Filter matches based on the match mode. Valid values: `unranked`, `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`. **Default:** `ranked,unranked`.
 val heroIds : kotlin.String = heroIds_example // kotlin.String | Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes>
 val minUnixTimestamp : kotlin.Long = 789 // kotlin.Long | Filter matches based on their start time (Unix timestamp).
 val maxUnixTimestamp : kotlin.Long = 789 // kotlin.Long | Filter matches based on their start time (Unix timestamp).
@@ -314,7 +318,7 @@ val maxAverageBadge : kotlin.Int = 56 // kotlin.Int | Filter matches based on th
 val minMatchId : kotlin.Long = 789 // kotlin.Long | Filter matches based on their ID.
 val maxMatchId : kotlin.Long = 789 // kotlin.Long | Filter matches based on their ID.
 try {
-    val result : kotlin.collections.List<HeroStats> = apiInstance.playerHeroStats(accountIds, gameMode, heroIds, minUnixTimestamp, maxUnixTimestamp, minDurationS, maxDurationS, minNetworth, maxNetworth, minAverageBadge, maxAverageBadge, minMatchId, maxMatchId)
+    val result : kotlin.collections.List<HeroStats> = apiInstance.playerHeroStats(accountIds, gameMode, matchMode, heroIds, minUnixTimestamp, maxUnixTimestamp, minDurationS, maxDurationS, minNetworth, maxNetworth, minAverageBadge, maxAverageBadge, minMatchId, maxMatchId)
     println(result)
 } catch (e: ClientException) {
     println("4xx response calling PlayersApi#playerHeroStats")
@@ -326,8 +330,11 @@ try {
 ```
 
 ### Parameters
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
 | **accountIds** | [**kotlin.collections.List&lt;kotlin.Int&gt;**](kotlin.Int.md)| Comma separated list of account ids, Account IDs are in &#x60;SteamID3&#x60; format. | |
 | **gameMode** | **kotlin.String**| Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;. | [optional] [enum: normal, street_brawl, explore_n_y_c, internal] |
+| **matchMode** | **kotlin.String**| Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;. | [optional] |
 | **heroIds** | **kotlin.String**| Filter matches based on the hero IDs. See more: &lt;https://api.deadlock-api.com/v1/assets/heroes&gt; | [optional] |
 | **minUnixTimestamp** | **kotlin.Long**| Filter matches based on their start time (Unix timestamp). | [optional] |
 | **maxUnixTimestamp** | **kotlin.Long**| Filter matches based on their start time (Unix timestamp). | [optional] |
@@ -338,8 +345,6 @@ try {
 | **minAverageBadge** | **kotlin.Int**| Filter matches based on the average badge level (tier &#x3D; first digits, subtier &#x3D; last digit) of *both* teams involved. See more: &lt;https://api.deadlock-api.com/v1/assets/ranks&gt; | [optional] |
 | **maxAverageBadge** | **kotlin.Int**| Filter matches based on the average badge level (tier &#x3D; first digits, subtier &#x3D; last digit) of *both* teams involved. See more: &lt;https://api.deadlock-api.com/v1/assets/ranks&gt; | [optional] |
 | **minMatchId** | **kotlin.Long**| Filter matches based on their ID. | [optional] |
-| Name | Type | Description  | Notes |
-| ------------- | ------------- | ------------- | ------------- |
 | **maxMatchId** | **kotlin.Long**| Filter matches based on their ID. | [optional] |
 
 ### Return type
@@ -355,13 +360,13 @@ No authorization required
  - **Content-Type**: Not defined
  - **Accept**: application/json
 
-<a id="rankPredict"></a>
-# **rankPredict**
-> RankPredictResponse rankPredict(accountId)
+<a id="rank"></a>
+# **rank**
+> RankResponse rank(accountId)
 
-Rank Predict
+Rank
 
- Predicts a player&#39;s current rank badge from their last 30 ranked/unranked matches. Requires at least 30 eligible matches (Ranked or Unranked, Normal game mode) with valid badge data.  &gt; **This is an ML prediction and may be inaccurate.** The model has no access to the player&#39;s &gt; actual hidden MMR — it infers rank from match context signals only.  ### Model Accuracy (5-fold cross-validation)  | Metric | Value | |--------|-------| | R²     | 0.949 | | MAE    | 1.08 sub-ranks | | RMSE   | 1.89 sub-ranks | | Within ±1 sub-rank | 77.6% | | Within ±3 sub-rank | 93.9% | | Within ±5 sub-rank | 97.7% | | Within ±6 sub-rank | 98.6% | | Within ±10 sub-rank | 99.6% |  Accuracy by tier:  | Tier range | n | MAE | |------------|---|-----| | Low (1-4)  | 404 | 3.68 sub-ranks | | Mid (5-7)  | 777 | 2.91 sub-ranks | | High (8-11)| 25,556 | 0.98 sub-ranks |  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 100req/s | | Key | - | | Global | - | 
+ Returns the player&#39;s rank at the end of their latest ranked match, i.e. the rank they entered that match with plus the progress the match awarded. A subrank spans 1000 progress points, so a single match can move the badge. Eternus subranks are instead percentile cuts Valve recomputes daily, so within Eternus the badge is the one the player entered the match with.  Only ranked matches carry a rank, and it stays unset while the player is in placement games. When none of the player&#39;s recent ranked matches reports a rank, &#x60;badge&#x60;, &#x60;rank&#x60; and &#x60;subrank&#x60; are all &#x60;0&#x60;, which is the &#x60;Obscurus&#x60; (unranked) tier, and &#x60;last_match&#x60; is &#x60;null&#x60;.  &#x60;last_match&#x60; carries the rank metadata Valve reported on that match, e.g. rank progress, remaining placement games and demotion protection. 
 
 ### Example
 ```kotlin
@@ -372,7 +377,149 @@ Rank Predict
 val apiInstance = PlayersApi()
 val accountId : kotlin.Int = 56 // kotlin.Int | The players `SteamID3`
 try {
-    val result : RankPredictResponse = apiInstance.rankPredict(accountId)
+    val result : RankResponse = apiInstance.rank(accountId)
+    println(result)
+} catch (e: ClientException) {
+    println("4xx response calling PlayersApi#rank")
+    e.printStackTrace()
+} catch (e: ServerException) {
+    println("5xx response calling PlayersApi#rank")
+    e.printStackTrace()
+}
+```
+
+### Parameters
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
+| **accountId** | **kotlin.Int**| The players &#x60;SteamID3&#x60; | |
+
+### Return type
+
+[**RankResponse**](RankResponse.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+<a id="rankAvgImage"></a>
+# **rankAvgImage**
+> kotlin.collections.List&lt;kotlin.Int&gt; rankAvgImage(accountIds, format)
+
+Rank Avg Image
+
+Returns the average rank badge image (binary) for a comma-separated list of account IDs. Accounts without a rank are left out of the average; if none of them has one, the &#x60;Obscurus&#x60; image is returned. Use &#x60;?format&#x3D;webp&#x60; for WebP.
+
+### Example
+```kotlin
+// Import classes:
+//import deadlock_api_client.infrastructure.*
+//import deadlock_api_client.models.*
+
+val apiInstance = PlayersApi()
+val accountIds : kotlin.collections.List<kotlin.Int> =  // kotlin.collections.List<kotlin.Int> | Comma-separated list of account IDs (max 12).
+val format : kotlin.String = format_example // kotlin.String | Image format. Defaults to `png`. Supported: `png`, `webp`.
+try {
+    val result : kotlin.collections.List<kotlin.Int> = apiInstance.rankAvgImage(accountIds, format)
+    println(result)
+} catch (e: ClientException) {
+    println("4xx response calling PlayersApi#rankAvgImage")
+    e.printStackTrace()
+} catch (e: ServerException) {
+    println("5xx response calling PlayersApi#rankAvgImage")
+    e.printStackTrace()
+}
+```
+
+### Parameters
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
+| **accountIds** | [**kotlin.collections.List&lt;kotlin.Int&gt;**](kotlin.Int.md)| Comma-separated list of account IDs (max 12). | |
+| **format** | **kotlin.String**| Image format. Defaults to &#x60;png&#x60;. Supported: &#x60;png&#x60;, &#x60;webp&#x60;. | [optional] [enum: png, webp] |
+
+### Return type
+
+**kotlin.collections.List&lt;kotlin.Int&gt;**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: Not defined
+
+<a id="rankImage"></a>
+# **rankImage**
+> kotlin.collections.List&lt;kotlin.Int&gt; rankImage(accountId, format)
+
+Rank Image
+
+Returns the rank badge image directly (binary), not a URL, with the player&#39;s I-VI division numeral drawn on it. Players whose recent ranked matches carry no rank, and players still in placement, get the plain tier badge. Use &#x60;?format&#x3D;webp&#x60; for WebP.
+
+### Example
+```kotlin
+// Import classes:
+//import deadlock_api_client.infrastructure.*
+//import deadlock_api_client.models.*
+
+val apiInstance = PlayersApi()
+val accountId : kotlin.Int = 56 // kotlin.Int | The players `SteamID3`
+val format : kotlin.String = format_example // kotlin.String | Image format. Defaults to `png`. Supported: `png`, `webp`.
+try {
+    val result : kotlin.collections.List<kotlin.Int> = apiInstance.rankImage(accountId, format)
+    println(result)
+} catch (e: ClientException) {
+    println("4xx response calling PlayersApi#rankImage")
+    e.printStackTrace()
+} catch (e: ServerException) {
+    println("5xx response calling PlayersApi#rankImage")
+    e.printStackTrace()
+}
+```
+
+### Parameters
+| Name | Type | Description  | Notes |
+| ------------- | ------------- | ------------- | ------------- |
+| **accountId** | **kotlin.Int**| The players &#x60;SteamID3&#x60; | |
+| **format** | **kotlin.String**| Image format. Defaults to &#x60;png&#x60;. Supported: &#x60;png&#x60;, &#x60;webp&#x60;. | [optional] [enum: png, webp] |
+
+### Return type
+
+**kotlin.collections.List&lt;kotlin.Int&gt;**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: Not defined
+
+<a id="rankPredict"></a>
+# **rankPredict**
+> RankResponse rankPredict(accountId)
+
+Rank Predict (Deprecated)
+
+Deprecated alias of &#x60;/v1/players/{account_id}/rank&#x60;. The rank is no longer predicted, it is read from the player&#39;s latest ranked match.
+
+### Example
+```kotlin
+// Import classes:
+//import deadlock_api_client.infrastructure.*
+//import deadlock_api_client.models.*
+
+val apiInstance = PlayersApi()
+val accountId : kotlin.Int = 56 // kotlin.Int | The players `SteamID3`
+try {
+    val result : RankResponse = apiInstance.rankPredict(accountId)
     println(result)
 } catch (e: ClientException) {
     println("4xx response calling PlayersApi#rankPredict")
@@ -390,7 +537,7 @@ try {
 
 ### Return type
 
-[**RankPredictResponse**](RankPredictResponse.md)
+[**RankResponse**](RankResponse.md)
 
 ### Authorization
 
@@ -403,11 +550,11 @@ No authorization required
 
 <a id="rankPredictAvgImage"></a>
 # **rankPredictAvgImage**
-> kotlin.collections.List&lt;kotlin.Int&gt; rankPredictAvgImage(accountIds, format, size)
+> kotlin.collections.List&lt;kotlin.Int&gt; rankPredictAvgImage(accountIds, format)
 
-Rank Predict Avg Image
+Rank Predict Avg Image (Deprecated)
 
-Returns the average predicted rank badge image (binary) for a comma-separated list of account IDs. Use &#x60;?format&#x3D;webp&#x60; for WebP and &#x60;?size&#x3D;small&#x60; for the small badge (defaults to large).
+Deprecated alias of &#x60;/v1/players/rank/image&#x60;. The rank is no longer predicted, it is read from each player&#39;s latest ranked match.
 
 ### Example
 ```kotlin
@@ -418,9 +565,8 @@ Returns the average predicted rank badge image (binary) for a comma-separated li
 val apiInstance = PlayersApi()
 val accountIds : kotlin.collections.List<kotlin.Int> =  // kotlin.collections.List<kotlin.Int> | Comma-separated list of account IDs (max 12).
 val format : kotlin.String = format_example // kotlin.String | Image format. Defaults to `png`. Supported: `png`, `webp`.
-val size : kotlin.String = size_example // kotlin.String | Image size. Defaults to `large`. Supported: `large`, `small`.
 try {
-    val result : kotlin.collections.List<kotlin.Int> = apiInstance.rankPredictAvgImage(accountIds, format, size)
+    val result : kotlin.collections.List<kotlin.Int> = apiInstance.rankPredictAvgImage(accountIds, format)
     println(result)
 } catch (e: ClientException) {
     println("4xx response calling PlayersApi#rankPredictAvgImage")
@@ -432,11 +578,10 @@ try {
 ```
 
 ### Parameters
-| **accountIds** | [**kotlin.collections.List&lt;kotlin.Int&gt;**](kotlin.Int.md)| Comma-separated list of account IDs (max 12). | |
-| **format** | **kotlin.String**| Image format. Defaults to &#x60;png&#x60;. Supported: &#x60;png&#x60;, &#x60;webp&#x60;. | [optional] [enum: png, webp] |
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **size** | **kotlin.String**| Image size. Defaults to &#x60;large&#x60;. Supported: &#x60;large&#x60;, &#x60;small&#x60;. | [optional] [enum: large, small] |
+| **accountIds** | [**kotlin.collections.List&lt;kotlin.Int&gt;**](kotlin.Int.md)| Comma-separated list of account IDs (max 12). | |
+| **format** | **kotlin.String**| Image format. Defaults to &#x60;png&#x60;. Supported: &#x60;png&#x60;, &#x60;webp&#x60;. | [optional] [enum: png, webp] |
 
 ### Return type
 
@@ -453,11 +598,11 @@ No authorization required
 
 <a id="rankPredictImage"></a>
 # **rankPredictImage**
-> kotlin.collections.List&lt;kotlin.Int&gt; rankPredictImage(accountId, format, size)
+> kotlin.collections.List&lt;kotlin.Int&gt; rankPredictImage(accountId, format)
 
-Rank Predict Image
+Rank Predict Image (Deprecated)
 
-Returns the predicted rank badge image directly (binary), not a URL. Use &#x60;?format&#x3D;webp&#x60; for WebP and &#x60;?size&#x3D;small&#x60; for the small badge (defaults to large).
+Deprecated alias of &#x60;/v1/players/{account_id}/rank/image&#x60;. The rank is no longer predicted, it is read from the player&#39;s latest ranked match.
 
 ### Example
 ```kotlin
@@ -468,9 +613,8 @@ Returns the predicted rank badge image directly (binary), not a URL. Use &#x60;?
 val apiInstance = PlayersApi()
 val accountId : kotlin.Int = 56 // kotlin.Int | The players `SteamID3`
 val format : kotlin.String = format_example // kotlin.String | Image format. Defaults to `png`. Supported: `png`, `webp`.
-val size : kotlin.String = size_example // kotlin.String | Image size. Defaults to `large`. Supported: `large`, `small`.
 try {
-    val result : kotlin.collections.List<kotlin.Int> = apiInstance.rankPredictImage(accountId, format, size)
+    val result : kotlin.collections.List<kotlin.Int> = apiInstance.rankPredictImage(accountId, format)
     println(result)
 } catch (e: ClientException) {
     println("4xx response calling PlayersApi#rankPredictImage")
@@ -482,11 +626,10 @@ try {
 ```
 
 ### Parameters
-| **accountId** | **kotlin.Int**| The players &#x60;SteamID3&#x60; | |
-| **format** | **kotlin.String**| Image format. Defaults to &#x60;png&#x60;. Supported: &#x60;png&#x60;, &#x60;webp&#x60;. | [optional] [enum: png, webp] |
 | Name | Type | Description  | Notes |
 | ------------- | ------------- | ------------- | ------------- |
-| **size** | **kotlin.String**| Image size. Defaults to &#x60;large&#x60;. Supported: &#x60;large&#x60;, &#x60;small&#x60;. | [optional] [enum: large, small] |
+| **accountId** | **kotlin.Int**| The players &#x60;SteamID3&#x60; | |
+| **format** | **kotlin.String**| Image format. Defaults to &#x60;png&#x60;. Supported: &#x60;png&#x60;, &#x60;webp&#x60;. | [optional] [enum: png, webp] |
 
 ### Return type
 

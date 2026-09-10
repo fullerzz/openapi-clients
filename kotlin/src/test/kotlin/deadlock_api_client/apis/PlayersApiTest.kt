@@ -33,7 +33,7 @@ import deadlock_api_client.models.MateStats
 import deadlock_api_client.models.PlayerAccountStats
 import deadlock_api_client.models.PlayerCard
 import deadlock_api_client.models.PlayerMatchHistoryEntry
-import deadlock_api_client.models.RankPredictResponse
+import deadlock_api_client.models.RankResponse
 
 class PlayersApiTest : ShouldSpec() {
     init {
@@ -105,6 +105,7 @@ class PlayersApiTest : ShouldSpec() {
             // uncomment below to test playerHeroStats
             //val accountIds : kotlin.collections.List<kotlin.Int> =  // kotlin.collections.List<kotlin.Int> | Comma separated list of account ids, Account IDs are in `SteamID3` format.
             //val gameMode : kotlin.String = gameMode_example // kotlin.String | Filter matches based on their game mode. Valid values: `normal`, `street_brawl`. **Default:** `normal`.
+            //val matchMode : kotlin.String = matchMode_example // kotlin.String | Filter matches based on the match mode. Valid values: `unranked`, `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`. **Default:** `ranked,unranked`.
             //val heroIds : kotlin.String = heroIds_example // kotlin.String | Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes>
             //val minUnixTimestamp : kotlin.Long = 789 // kotlin.Long | Filter matches based on their start time (Unix timestamp).
             //val maxUnixTimestamp : kotlin.Long = 789 // kotlin.Long | Filter matches based on their start time (Unix timestamp).
@@ -116,7 +117,33 @@ class PlayersApiTest : ShouldSpec() {
             //val maxAverageBadge : kotlin.Int = 56 // kotlin.Int | Filter matches based on the average badge level (tier = first digits, subtier = last digit) of *both* teams involved. See more: <https://api.deadlock-api.com/v1/assets/ranks>
             //val minMatchId : kotlin.Long = 789 // kotlin.Long | Filter matches based on their ID.
             //val maxMatchId : kotlin.Long = 789 // kotlin.Long | Filter matches based on their ID.
-            //val result : kotlin.collections.List<HeroStats> = apiInstance.playerHeroStats(accountIds, gameMode, heroIds, minUnixTimestamp, maxUnixTimestamp, minDurationS, maxDurationS, minNetworth, maxNetworth, minAverageBadge, maxAverageBadge, minMatchId, maxMatchId)
+            //val result : kotlin.collections.List<HeroStats> = apiInstance.playerHeroStats(accountIds, gameMode, matchMode, heroIds, minUnixTimestamp, maxUnixTimestamp, minDurationS, maxDurationS, minNetworth, maxNetworth, minAverageBadge, maxAverageBadge, minMatchId, maxMatchId)
+            //result shouldBe ("TODO")
+        }
+
+        // to test rank
+        should("test rank") {
+            // uncomment below to test rank
+            //val accountId : kotlin.Int = 56 // kotlin.Int | The players `SteamID3`
+            //val result : RankResponse = apiInstance.rank(accountId)
+            //result shouldBe ("TODO")
+        }
+
+        // to test rankAvgImage
+        should("test rankAvgImage") {
+            // uncomment below to test rankAvgImage
+            //val accountIds : kotlin.collections.List<kotlin.Int> =  // kotlin.collections.List<kotlin.Int> | Comma-separated list of account IDs (max 12).
+            //val format : kotlin.String = format_example // kotlin.String | Image format. Defaults to `png`. Supported: `png`, `webp`.
+            //val result : kotlin.collections.List<kotlin.Int> = apiInstance.rankAvgImage(accountIds, format)
+            //result shouldBe ("TODO")
+        }
+
+        // to test rankImage
+        should("test rankImage") {
+            // uncomment below to test rankImage
+            //val accountId : kotlin.Int = 56 // kotlin.Int | The players `SteamID3`
+            //val format : kotlin.String = format_example // kotlin.String | Image format. Defaults to `png`. Supported: `png`, `webp`.
+            //val result : kotlin.collections.List<kotlin.Int> = apiInstance.rankImage(accountId, format)
             //result shouldBe ("TODO")
         }
 
@@ -124,7 +151,7 @@ class PlayersApiTest : ShouldSpec() {
         should("test rankPredict") {
             // uncomment below to test rankPredict
             //val accountId : kotlin.Int = 56 // kotlin.Int | The players `SteamID3`
-            //val result : RankPredictResponse = apiInstance.rankPredict(accountId)
+            //val result : RankResponse = apiInstance.rankPredict(accountId)
             //result shouldBe ("TODO")
         }
 
@@ -133,8 +160,7 @@ class PlayersApiTest : ShouldSpec() {
             // uncomment below to test rankPredictAvgImage
             //val accountIds : kotlin.collections.List<kotlin.Int> =  // kotlin.collections.List<kotlin.Int> | Comma-separated list of account IDs (max 12).
             //val format : kotlin.String = format_example // kotlin.String | Image format. Defaults to `png`. Supported: `png`, `webp`.
-            //val size : kotlin.String = size_example // kotlin.String | Image size. Defaults to `large`. Supported: `large`, `small`.
-            //val result : kotlin.collections.List<kotlin.Int> = apiInstance.rankPredictAvgImage(accountIds, format, size)
+            //val result : kotlin.collections.List<kotlin.Int> = apiInstance.rankPredictAvgImage(accountIds, format)
             //result shouldBe ("TODO")
         }
 
@@ -143,8 +169,7 @@ class PlayersApiTest : ShouldSpec() {
             // uncomment below to test rankPredictImage
             //val accountId : kotlin.Int = 56 // kotlin.Int | The players `SteamID3`
             //val format : kotlin.String = format_example // kotlin.String | Image format. Defaults to `png`. Supported: `png`, `webp`.
-            //val size : kotlin.String = size_example // kotlin.String | Image size. Defaults to `large`. Supported: `large`, `small`.
-            //val result : kotlin.collections.List<kotlin.Int> = apiInstance.rankPredictImage(accountId, format, size)
+            //val result : kotlin.collections.List<kotlin.Int> = apiInstance.rankPredictImage(accountId, format)
             //result shouldBe ("TODO")
         }
 

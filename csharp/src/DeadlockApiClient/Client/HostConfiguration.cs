@@ -99,6 +99,10 @@ namespace DeadlockApiClient.Client
             _jsonOptions.Converters.Add(new FeedItemJsonConverter());
             _jsonOptions.Converters.Add(new FeedItemOneOfJsonConverter());
             _jsonOptions.Converters.Add(new FeedItemOneOf1JsonConverter());
+            _jsonOptions.Converters.Add(new FeedbackKindJsonConverter());
+            _jsonOptions.Converters.Add(new FeedbackKindNullableJsonConverter());
+            _jsonOptions.Converters.Add(new FeedbackSubmissionJsonConverter());
+            _jsonOptions.Converters.Add(new FeedbackTargetJsonConverter());
             _jsonOptions.Converters.Add(new FlashDataJsonConverter());
             _jsonOptions.Converters.Add(new ForumPatchJsonConverter());
             _jsonOptions.Converters.Add(new GameModeJsonConverter());
@@ -151,6 +155,11 @@ namespace DeadlockApiClient.Client
             _jsonOptions.Converters.Add(new JobStatusNullableJsonConverter());
             _jsonOptions.Converters.Add(new KillDeathStatsJsonConverter());
             _jsonOptions.Converters.Add(new LaneInfoJsonConverter());
+            _jsonOptions.Converters.Add(new LaneMatchupStatJsonConverter());
+            _jsonOptions.Converters.Add(new LaneMatchupStatsJsonConverter());
+            _jsonOptions.Converters.Add(new LaneSoulCurveJsonConverter());
+            _jsonOptions.Converters.Add(new LaneStatCurveJsonConverter());
+            _jsonOptions.Converters.Add(new LastRankedMatchJsonConverter());
             _jsonOptions.Converters.Add(new LeaderboardJsonConverter());
             _jsonOptions.Converters.Add(new LeaderboardEntryJsonConverter());
             _jsonOptions.Converters.Add(new ListServersResponseJsonConverter());
@@ -190,8 +199,8 @@ namespace DeadlockApiClient.Client
             _jsonOptions.Converters.Add(new PlayerPerformanceCurvePointJsonConverter());
             _jsonOptions.Converters.Add(new RankJsonConverter());
             _jsonOptions.Converters.Add(new RankImagesJsonConverter());
-            _jsonOptions.Converters.Add(new RankPredictResponseJsonConverter());
-            _jsonOptions.Converters.Add(new RankPredictionJsonConverter());
+            _jsonOptions.Converters.Add(new RankResponseJsonConverter());
+            _jsonOptions.Converters.Add(new RankedSeasonJsonConverter());
             _jsonOptions.Converters.Add(new RawAbilityUpgradeJsonConverter());
             _jsonOptions.Converters.Add(new RawAbilityUpgradePropertyUpgradeJsonConverter());
             _jsonOptions.Converters.Add(new RawCustomCrosshairSettingsJsonConverter());
@@ -206,6 +215,7 @@ namespace DeadlockApiClient.Client
             _jsonOptions.Converters.Add(new RegionModeNullableJsonConverter());
             _jsonOptions.Converters.Add(new RejuvParamsJsonConverter());
             _jsonOptions.Converters.Add(new ScriptValuesJsonConverter());
+            _jsonOptions.Converters.Add(new SeasonIntervalJsonConverter());
             _jsonOptions.Converters.Add(new ServerRegionJsonConverter());
             _jsonOptions.Converters.Add(new ServerRegionNullableJsonConverter());
             _jsonOptions.Converters.Add(new ServerStatusRequestJsonConverter());
@@ -214,6 +224,7 @@ namespace DeadlockApiClient.Client
             _jsonOptions.Converters.Add(new ShopStatDisplayJsonConverter());
             _jsonOptions.Converters.Add(new ShopVitalityStatsDisplayJsonConverter());
             _jsonOptions.Converters.Add(new ShopWeaponStatsDisplayJsonConverter());
+            _jsonOptions.Converters.Add(new SourceLocationJsonConverter());
             _jsonOptions.Converters.Add(new SpreadPenaltyJsonConverter());
             _jsonOptions.Converters.Add(new StartingStatJsonConverter());
             _jsonOptions.Converters.Add(new StartingStatsJsonConverter());
@@ -259,6 +270,7 @@ namespace DeadlockApiClient.Client
             _jsonOptions.Converters.Add(new VariableCategoryNullableJsonConverter());
             _jsonOptions.Converters.Add(new VariableDescriptionJsonConverter());
             _jsonOptions.Converters.Add(new VerticalRecoilJsonConverter());
+            _jsonOptions.Converters.Add(new ViewportJsonConverter());
             _jsonOptions.Converters.Add(new WeaponJsonConverter());
             _jsonOptions.Converters.Add(new WeaponInfoJsonConverter());
             _jsonOptions.Converters.Add(new ZiplanePathJsonConverter());
@@ -290,6 +302,7 @@ namespace DeadlockApiClient.Client
             _services.AddSingleton<NPCUnitsApiEvents>();
             _services.AddSingleton<PatchesApiEvents>();
             _services.AddSingleton<PlayersApiEvents>();
+            _services.AddSingleton<RankedSeasonsApiEvents>();
             _services.AddSingleton<RanksApiEvents>();
             _services.AddSingleton<SQLApiEvents>();
             _services.AddSingleton<ServersApiEvents>();
@@ -365,6 +378,7 @@ namespace DeadlockApiClient.Client
             builders.Add(_services.AddHttpClient<INPCUnitsApi, NPCUnitsApi>("DeadlockApiClient.Api.INPCUnitsApi", client));
             builders.Add(_services.AddHttpClient<IPatchesApi, PatchesApi>("DeadlockApiClient.Api.IPatchesApi", client));
             builders.Add(_services.AddHttpClient<IPlayersApi, PlayersApi>("DeadlockApiClient.Api.IPlayersApi", client));
+            builders.Add(_services.AddHttpClient<IRankedSeasonsApi, RankedSeasonsApi>("DeadlockApiClient.Api.IRankedSeasonsApi", client));
             builders.Add(_services.AddHttpClient<IRanksApi, RanksApi>("DeadlockApiClient.Api.IRanksApi", client));
             builders.Add(_services.AddHttpClient<ISQLApi, SQLApi>("DeadlockApiClient.Api.ISQLApi", client));
             builders.Add(_services.AddHttpClient<IServersApi, ServersApi>("DeadlockApiClient.Api.IServersApi", client));
@@ -373,8 +387,10 @@ namespace DeadlockApiClient.Client
 
             foreach (IHttpClientBuilder instance in builders)
             {
-                OnAddApiHttpClientBuilder(instance);
-                builder?.Invoke(instance);
+                bool suppressDefault = false;
+                OnAddApiHttpClientBuilder(instance, builder, ref suppressDefault);
+                if (!suppressDefault)
+                    builder?.Invoke(instance);
             }
 
             HttpClientsAdded = true;
@@ -383,12 +399,17 @@ namespace DeadlockApiClient.Client
         }
 
         /// <summary>
-        /// Applies configuration to each HttpClient after registration.
-        /// Implement this partial method in a separate file to provide custom defaults;
-        /// the caller's <c>builder</c> action runs after.
+        /// Applies configuration to each HttpClient.
+        /// Implement this partial method to prepend configuration, invoke <paramref name="userBuilder"/> at the
+        /// desired position, and append further configuration. Set <paramref name="suppressDefault"/> to
+        /// <c>true</c> when you invoke <paramref name="userBuilder"/> yourself to prevent a second invocation,
+        /// or to ignore the user's builder entirely.
+        /// If this method is not implemented, <paramref name="userBuilder"/> is invoked automatically.
         /// </summary>
-        /// <param name="builder"></param>
-        partial void OnAddApiHttpClientBuilder(IHttpClientBuilder builder);
+        /// <param name="builder">The <see cref="IHttpClientBuilder"/> to configure.</param>
+        /// <param name="userBuilder">The caller-supplied builder action, or <c>null</c> if none was provided.</param>
+        /// <param name="suppressDefault">Set to <c>true</c> to prevent the default invocation of <paramref name="userBuilder"/>.</param>
+        partial void OnAddApiHttpClientBuilder(IHttpClientBuilder builder, Action<IHttpClientBuilder>? userBuilder, ref bool suppressDefault);
 
         /// <summary>
         /// Called at the end of the constructor after all JSON converters and services are registered.

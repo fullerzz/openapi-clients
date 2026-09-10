@@ -59,7 +59,7 @@ namespace DeadlockApiClient.Test.Api
             int accountId = default!;
             var response = await _instance.AccountStatsAsync(accountId);
             var model = response.Ok();
-            Assert.IsType<PlayerAccountStats>(model);
+            Assert.IsType<DeadlockApiClient.Model.PlayerAccountStats>(model);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace DeadlockApiClient.Test.Api
             int accountId = default!;
             var response = await _instance.CardAsync(accountId);
             var model = response.Ok();
-            Assert.IsType<PlayerCard>(model);
+            Assert.IsType<DeadlockApiClient.Model.PlayerCard>(model);
         }
 
         /// <summary>
@@ -138,6 +138,7 @@ namespace DeadlockApiClient.Test.Api
         {
             List<int> accountIds = default!;
             Client.Option<string?> gameMode = default!;
+            Client.Option<string?> matchMode = default!;
             Client.Option<string?> heroIds = default!;
             Client.Option<long?> minUnixTimestamp = default!;
             Client.Option<long?> maxUnixTimestamp = default!;
@@ -149,9 +150,47 @@ namespace DeadlockApiClient.Test.Api
             Client.Option<int?> maxAverageBadge = default!;
             Client.Option<long?> minMatchId = default!;
             Client.Option<long?> maxMatchId = default!;
-            var response = await _instance.PlayerHeroStatsAsync(accountIds, gameMode, heroIds, minUnixTimestamp, maxUnixTimestamp, minDurationS, maxDurationS, minNetworth, maxNetworth, minAverageBadge, maxAverageBadge, minMatchId, maxMatchId);
+            var response = await _instance.PlayerHeroStatsAsync(accountIds, gameMode, matchMode, heroIds, minUnixTimestamp, maxUnixTimestamp, minDurationS, maxDurationS, minNetworth, maxNetworth, minAverageBadge, maxAverageBadge, minMatchId, maxMatchId);
             var model = response.Ok();
             Assert.IsType<List<HeroStats>>(model);
+        }
+
+        /// <summary>
+        /// Test Rank
+        /// </summary>
+        [Fact (Skip = "not implemented")]
+        public async Task RankAsyncTest()
+        {
+            int accountId = default!;
+            var response = await _instance.RankAsync(accountId);
+            var model = response.Ok();
+            Assert.IsType<DeadlockApiClient.Model.RankResponse>(model);
+        }
+
+        /// <summary>
+        /// Test RankAvgImage
+        /// </summary>
+        [Fact (Skip = "not implemented")]
+        public async Task RankAvgImageAsyncTest()
+        {
+            List<int> accountIds = default!;
+            Client.Option<string> format = default!;
+            var response = await _instance.RankAvgImageAsync(accountIds, format);
+            var model = response.Ok();
+            Assert.IsType<List<int>>(model);
+        }
+
+        /// <summary>
+        /// Test RankImage
+        /// </summary>
+        [Fact (Skip = "not implemented")]
+        public async Task RankImageAsyncTest()
+        {
+            int accountId = default!;
+            Client.Option<string> format = default!;
+            var response = await _instance.RankImageAsync(accountId, format);
+            var model = response.Ok();
+            Assert.IsType<List<int>>(model);
         }
 
         /// <summary>
@@ -163,7 +202,7 @@ namespace DeadlockApiClient.Test.Api
             int accountId = default!;
             var response = await _instance.RankPredictAsync(accountId);
             var model = response.Ok();
-            Assert.IsType<RankPredictResponse>(model);
+            Assert.IsType<DeadlockApiClient.Model.RankResponse>(model);
         }
 
         /// <summary>
@@ -174,8 +213,7 @@ namespace DeadlockApiClient.Test.Api
         {
             List<int> accountIds = default!;
             Client.Option<string> format = default!;
-            Client.Option<string> size = default!;
-            var response = await _instance.RankPredictAvgImageAsync(accountIds, format, size);
+            var response = await _instance.RankPredictAvgImageAsync(accountIds, format);
             var model = response.Ok();
             Assert.IsType<List<int>>(model);
         }
@@ -188,8 +226,7 @@ namespace DeadlockApiClient.Test.Api
         {
             int accountId = default!;
             Client.Option<string> format = default!;
-            Client.Option<string> size = default!;
-            var response = await _instance.RankPredictImageAsync(accountId, format, size);
+            var response = await _instance.RankPredictImageAsync(accountId, format);
             var model = response.Ok();
             Assert.IsType<List<int>>(model);
         }

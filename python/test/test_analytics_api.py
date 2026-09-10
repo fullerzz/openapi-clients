@@ -131,6 +131,20 @@ class TestAnalyticsApi(unittest.TestCase):
         """
         pass
 
+    def test_lane_matchup_stats(self) -> None:
+        """Test case for lane_matchup_stats
+
+        Lane Matchup Stats (Subject to Change)
+        """
+        pass
+
+    def test_lane_soul_curve(self) -> None:
+        """Test case for lane_soul_curve
+
+        Lane Soul Curve (Subject to Change)
+        """
+        pass
+
     def test_player_performance_curve(self) -> None:
         """Test case for player_performance_curve
 

@@ -24,7 +24,7 @@ from deadlock_api_client.models.mate_stats import MateStats
 from deadlock_api_client.models.player_account_stats import PlayerAccountStats
 from deadlock_api_client.models.player_card import PlayerCard
 from deadlock_api_client.models.player_match_history_entry import PlayerMatchHistoryEntry
-from deadlock_api_client.models.rank_predict_response import RankPredictResponse
+from deadlock_api_client.models.rank_response import RankResponse
 
 from deadlock_api_client.api_client import ApiClient, RequestSerialized
 from deadlock_api_client.api_response import ApiResponse
@@ -1734,6 +1734,7 @@ class PlayersApi:
         self,
         account_ids: Annotated[List[Annotated[int, Field(strict=True, ge=0)]], Field(min_length=1, max_length=1000, description="Comma separated list of account ids, Account IDs are in `SteamID3` format.")],
         game_mode: Annotated[Optional[StrictStr], Field(description="Filter matches based on their game mode. Valid values: `normal`, `street_brawl`. **Default:** `normal`.")] = None,
+        match_mode: Annotated[Optional[StrictStr], Field(description="Filter matches based on the match mode. Valid values: `unranked`, `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`. **Default:** `ranked,unranked`.")] = None,
         hero_ids: Annotated[Optional[StrictStr], Field(description="Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes>")] = None,
         min_unix_timestamp: Annotated[Optional[StrictInt], Field(description="Filter matches based on their start time (Unix timestamp).")] = None,
         max_unix_timestamp: Annotated[Optional[StrictInt], Field(description="Filter matches based on their start time (Unix timestamp).")] = None,
@@ -1766,6 +1767,8 @@ class PlayersApi:
         :type account_ids: List[int]
         :param game_mode: Filter matches based on their game mode. Valid values: `normal`, `street_brawl`. **Default:** `normal`.
         :type game_mode: str
+        :param match_mode: Filter matches based on the match mode. Valid values: `unranked`, `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`. **Default:** `ranked,unranked`.
+        :type match_mode: str
         :param hero_ids: Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes>
         :type hero_ids: str
         :param min_unix_timestamp: Filter matches based on their start time (Unix timestamp).
@@ -1813,6 +1816,7 @@ class PlayersApi:
         _param = self._player_hero_stats_serialize(
             account_ids=account_ids,
             game_mode=game_mode,
+            match_mode=match_mode,
             hero_ids=hero_ids,
             min_unix_timestamp=min_unix_timestamp,
             max_unix_timestamp=max_unix_timestamp,
@@ -1851,6 +1855,7 @@ class PlayersApi:
         self,
         account_ids: Annotated[List[Annotated[int, Field(strict=True, ge=0)]], Field(min_length=1, max_length=1000, description="Comma separated list of account ids, Account IDs are in `SteamID3` format.")],
         game_mode: Annotated[Optional[StrictStr], Field(description="Filter matches based on their game mode. Valid values: `normal`, `street_brawl`. **Default:** `normal`.")] = None,
+        match_mode: Annotated[Optional[StrictStr], Field(description="Filter matches based on the match mode. Valid values: `unranked`, `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`. **Default:** `ranked,unranked`.")] = None,
         hero_ids: Annotated[Optional[StrictStr], Field(description="Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes>")] = None,
         min_unix_timestamp: Annotated[Optional[StrictInt], Field(description="Filter matches based on their start time (Unix timestamp).")] = None,
         max_unix_timestamp: Annotated[Optional[StrictInt], Field(description="Filter matches based on their start time (Unix timestamp).")] = None,
@@ -1883,6 +1888,8 @@ class PlayersApi:
         :type account_ids: List[int]
         :param game_mode: Filter matches based on their game mode. Valid values: `normal`, `street_brawl`. **Default:** `normal`.
         :type game_mode: str
+        :param match_mode: Filter matches based on the match mode. Valid values: `unranked`, `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`. **Default:** `ranked,unranked`.
+        :type match_mode: str
         :param hero_ids: Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes>
         :type hero_ids: str
         :param min_unix_timestamp: Filter matches based on their start time (Unix timestamp).
@@ -1930,6 +1937,7 @@ class PlayersApi:
         _param = self._player_hero_stats_serialize(
             account_ids=account_ids,
             game_mode=game_mode,
+            match_mode=match_mode,
             hero_ids=hero_ids,
             min_unix_timestamp=min_unix_timestamp,
             max_unix_timestamp=max_unix_timestamp,
@@ -1968,6 +1976,7 @@ class PlayersApi:
         self,
         account_ids: Annotated[List[Annotated[int, Field(strict=True, ge=0)]], Field(min_length=1, max_length=1000, description="Comma separated list of account ids, Account IDs are in `SteamID3` format.")],
         game_mode: Annotated[Optional[StrictStr], Field(description="Filter matches based on their game mode. Valid values: `normal`, `street_brawl`. **Default:** `normal`.")] = None,
+        match_mode: Annotated[Optional[StrictStr], Field(description="Filter matches based on the match mode. Valid values: `unranked`, `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`. **Default:** `ranked,unranked`.")] = None,
         hero_ids: Annotated[Optional[StrictStr], Field(description="Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes>")] = None,
         min_unix_timestamp: Annotated[Optional[StrictInt], Field(description="Filter matches based on their start time (Unix timestamp).")] = None,
         max_unix_timestamp: Annotated[Optional[StrictInt], Field(description="Filter matches based on their start time (Unix timestamp).")] = None,
@@ -2000,6 +2009,8 @@ class PlayersApi:
         :type account_ids: List[int]
         :param game_mode: Filter matches based on their game mode. Valid values: `normal`, `street_brawl`. **Default:** `normal`.
         :type game_mode: str
+        :param match_mode: Filter matches based on the match mode. Valid values: `unranked`, `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`. **Default:** `ranked,unranked`.
+        :type match_mode: str
         :param hero_ids: Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes>
         :type hero_ids: str
         :param min_unix_timestamp: Filter matches based on their start time (Unix timestamp).
@@ -2047,6 +2058,7 @@ class PlayersApi:
         _param = self._player_hero_stats_serialize(
             account_ids=account_ids,
             game_mode=game_mode,
+            match_mode=match_mode,
             hero_ids=hero_ids,
             min_unix_timestamp=min_unix_timestamp,
             max_unix_timestamp=max_unix_timestamp,
@@ -2080,6 +2092,7 @@ class PlayersApi:
         self,
         account_ids,
         game_mode,
+        match_mode,
         hero_ids,
         min_unix_timestamp,
         max_unix_timestamp,
@@ -2121,6 +2134,10 @@ class PlayersApi:
         if game_mode is not None:
             
             _query_params.append(('game_mode', game_mode))
+            
+        if match_mode is not None:
+            
+            _query_params.append(('match_mode', match_mode))
             
         if hero_ids is not None:
             
@@ -2203,7 +2220,7 @@ class PlayersApi:
 
 
     @validate_call
-    def rank_predict(
+    def rank(
         self,
         account_id: Annotated[int, Field(strict=True, ge=0, description="The players `SteamID3`")],
         _request_timeout: Union[
@@ -2218,10 +2235,10 @@ class PlayersApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RankPredictResponse:
-        """Rank Predict
+    ) -> RankResponse:
+        """Rank
 
-         Predicts a player's current rank badge from their last 30 ranked/unranked matches. Requires at least 30 eligible matches (Ranked or Unranked, Normal game mode) with valid badge data.  > **This is an ML prediction and may be inaccurate.** The model has no access to the player's > actual hidden MMR — it infers rank from match context signals only.  ### Model Accuracy (5-fold cross-validation)  | Metric | Value | |--------|-------| | R²     | 0.949 | | MAE    | 1.08 sub-ranks | | RMSE   | 1.89 sub-ranks | | Within ±1 sub-rank | 77.6% | | Within ±3 sub-rank | 93.9% | | Within ±5 sub-rank | 97.7% | | Within ±6 sub-rank | 98.6% | | Within ±10 sub-rank | 99.6% |  Accuracy by tier:  | Tier range | n | MAE | |------------|---|-----| | Low (1-4)  | 404 | 3.68 sub-ranks | | Mid (5-7)  | 777 | 2.91 sub-ranks | | High (8-11)| 25,556 | 0.98 sub-ranks |  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 100req/s | | Key | - | | Global | - | 
+         Returns the player's rank at the end of their latest ranked match, i.e. the rank they entered that match with plus the progress the match awarded. A subrank spans 1000 progress points, so a single match can move the badge. Eternus subranks are instead percentile cuts Valve recomputes daily, so within Eternus the badge is the one the player entered the match with.  Only ranked matches carry a rank, and it stays unset while the player is in placement games. When none of the player's recent ranked matches reports a rank, `badge`, `rank` and `subrank` are all `0`, which is the `Obscurus` (unranked) tier, and `last_match` is `null`.  `last_match` carries the rank metadata Valve reported on that match, e.g. rank progress, remaining placement games and demotion protection. 
 
         :param account_id: The players `SteamID3` (required)
         :type account_id: int
@@ -2247,6 +2264,859 @@ class PlayersApi:
         :return: Returns the result object.
         """ # noqa: E501
 
+        _param = self._rank_serialize(
+            account_id=account_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "RankResponse",
+            '400': None,
+            '403': None,
+            '500': None,
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def rank_with_http_info(
+        self,
+        account_id: Annotated[int, Field(strict=True, ge=0, description="The players `SteamID3`")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[RankResponse]:
+        """Rank
+
+         Returns the player's rank at the end of their latest ranked match, i.e. the rank they entered that match with plus the progress the match awarded. A subrank spans 1000 progress points, so a single match can move the badge. Eternus subranks are instead percentile cuts Valve recomputes daily, so within Eternus the badge is the one the player entered the match with.  Only ranked matches carry a rank, and it stays unset while the player is in placement games. When none of the player's recent ranked matches reports a rank, `badge`, `rank` and `subrank` are all `0`, which is the `Obscurus` (unranked) tier, and `last_match` is `null`.  `last_match` carries the rank metadata Valve reported on that match, e.g. rank progress, remaining placement games and demotion protection. 
+
+        :param account_id: The players `SteamID3` (required)
+        :type account_id: int
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._rank_serialize(
+            account_id=account_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "RankResponse",
+            '400': None,
+            '403': None,
+            '500': None,
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def rank_without_preload_content(
+        self,
+        account_id: Annotated[int, Field(strict=True, ge=0, description="The players `SteamID3`")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Rank
+
+         Returns the player's rank at the end of their latest ranked match, i.e. the rank they entered that match with plus the progress the match awarded. A subrank spans 1000 progress points, so a single match can move the badge. Eternus subranks are instead percentile cuts Valve recomputes daily, so within Eternus the badge is the one the player entered the match with.  Only ranked matches carry a rank, and it stays unset while the player is in placement games. When none of the player's recent ranked matches reports a rank, `badge`, `rank` and `subrank` are all `0`, which is the `Obscurus` (unranked) tier, and `last_match` is `null`.  `last_match` carries the rank metadata Valve reported on that match, e.g. rank progress, remaining placement games and demotion protection. 
+
+        :param account_id: The players `SteamID3` (required)
+        :type account_id: int
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._rank_serialize(
+            account_id=account_id,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "RankResponse",
+            '400': None,
+            '403': None,
+            '500': None,
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _rank_serialize(
+        self,
+        account_id,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        if account_id is not None:
+            _path_params['account_id'] = account_id
+        # process the query parameters
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/v1/players/{account_id}/rank',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def rank_avg_image(
+        self,
+        account_ids: Annotated[List[Annotated[int, Field(strict=True, ge=0)]], Field(description="Comma-separated list of account IDs (max 12).")],
+        format: Annotated[Optional[StrictStr], Field(description="Image format. Defaults to `png`. Supported: `png`, `webp`.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> List[int]:
+        """Rank Avg Image
+
+        Returns the average rank badge image (binary) for a comma-separated list of account IDs. Accounts without a rank are left out of the average; if none of them has one, the `Obscurus` image is returned. Use `?format=webp` for WebP.
+
+        :param account_ids: Comma-separated list of account IDs (max 12). (required)
+        :type account_ids: List[int]
+        :param format: Image format. Defaults to `png`. Supported: `png`, `webp`.
+        :type format: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._rank_avg_image_serialize(
+            account_ids=account_ids,
+            format=format,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "List[int]",
+            '400': None,
+            '403': None,
+            '404': None,
+            '500': None,
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def rank_avg_image_with_http_info(
+        self,
+        account_ids: Annotated[List[Annotated[int, Field(strict=True, ge=0)]], Field(description="Comma-separated list of account IDs (max 12).")],
+        format: Annotated[Optional[StrictStr], Field(description="Image format. Defaults to `png`. Supported: `png`, `webp`.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[List[int]]:
+        """Rank Avg Image
+
+        Returns the average rank badge image (binary) for a comma-separated list of account IDs. Accounts without a rank are left out of the average; if none of them has one, the `Obscurus` image is returned. Use `?format=webp` for WebP.
+
+        :param account_ids: Comma-separated list of account IDs (max 12). (required)
+        :type account_ids: List[int]
+        :param format: Image format. Defaults to `png`. Supported: `png`, `webp`.
+        :type format: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._rank_avg_image_serialize(
+            account_ids=account_ids,
+            format=format,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "List[int]",
+            '400': None,
+            '403': None,
+            '404': None,
+            '500': None,
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def rank_avg_image_without_preload_content(
+        self,
+        account_ids: Annotated[List[Annotated[int, Field(strict=True, ge=0)]], Field(description="Comma-separated list of account IDs (max 12).")],
+        format: Annotated[Optional[StrictStr], Field(description="Image format. Defaults to `png`. Supported: `png`, `webp`.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Rank Avg Image
+
+        Returns the average rank badge image (binary) for a comma-separated list of account IDs. Accounts without a rank are left out of the average; if none of them has one, the `Obscurus` image is returned. Use `?format=webp` for WebP.
+
+        :param account_ids: Comma-separated list of account IDs (max 12). (required)
+        :type account_ids: List[int]
+        :param format: Image format. Defaults to `png`. Supported: `png`, `webp`.
+        :type format: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._rank_avg_image_serialize(
+            account_ids=account_ids,
+            format=format,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "List[int]",
+            '400': None,
+            '403': None,
+            '404': None,
+            '500': None,
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _rank_avg_image_serialize(
+        self,
+        account_ids,
+        format,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+            'account_ids': 'multi',
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        if account_ids is not None:
+            
+            _query_params.append(('account_ids', account_ids))
+            
+        if format is not None:
+            
+            _query_params.append(('format', format))
+            
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'image/png', 
+                    'image/webp'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/v1/players/rank/image',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def rank_image(
+        self,
+        account_id: Annotated[int, Field(strict=True, ge=0, description="The players `SteamID3`")],
+        format: Annotated[Optional[StrictStr], Field(description="Image format. Defaults to `png`. Supported: `png`, `webp`.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> List[int]:
+        """Rank Image
+
+        Returns the rank badge image directly (binary), not a URL, with the player's I-VI division numeral drawn on it. Players whose recent ranked matches carry no rank, and players still in placement, get the plain tier badge. Use `?format=webp` for WebP.
+
+        :param account_id: The players `SteamID3` (required)
+        :type account_id: int
+        :param format: Image format. Defaults to `png`. Supported: `png`, `webp`.
+        :type format: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._rank_image_serialize(
+            account_id=account_id,
+            format=format,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "List[int]",
+            '400': None,
+            '403': None,
+            '404': None,
+            '500': None,
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def rank_image_with_http_info(
+        self,
+        account_id: Annotated[int, Field(strict=True, ge=0, description="The players `SteamID3`")],
+        format: Annotated[Optional[StrictStr], Field(description="Image format. Defaults to `png`. Supported: `png`, `webp`.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[List[int]]:
+        """Rank Image
+
+        Returns the rank badge image directly (binary), not a URL, with the player's I-VI division numeral drawn on it. Players whose recent ranked matches carry no rank, and players still in placement, get the plain tier badge. Use `?format=webp` for WebP.
+
+        :param account_id: The players `SteamID3` (required)
+        :type account_id: int
+        :param format: Image format. Defaults to `png`. Supported: `png`, `webp`.
+        :type format: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._rank_image_serialize(
+            account_id=account_id,
+            format=format,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "List[int]",
+            '400': None,
+            '403': None,
+            '404': None,
+            '500': None,
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def rank_image_without_preload_content(
+        self,
+        account_id: Annotated[int, Field(strict=True, ge=0, description="The players `SteamID3`")],
+        format: Annotated[Optional[StrictStr], Field(description="Image format. Defaults to `png`. Supported: `png`, `webp`.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Rank Image
+
+        Returns the rank badge image directly (binary), not a URL, with the player's I-VI division numeral drawn on it. Players whose recent ranked matches carry no rank, and players still in placement, get the plain tier badge. Use `?format=webp` for WebP.
+
+        :param account_id: The players `SteamID3` (required)
+        :type account_id: int
+        :param format: Image format. Defaults to `png`. Supported: `png`, `webp`.
+        :type format: str
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._rank_image_serialize(
+            account_id=account_id,
+            format=format,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "List[int]",
+            '400': None,
+            '403': None,
+            '404': None,
+            '500': None,
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _rank_image_serialize(
+        self,
+        account_id,
+        format,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        if account_id is not None:
+            _path_params['account_id'] = account_id
+        # process the query parameters
+        if format is not None:
+            
+            _query_params.append(('format', format))
+            
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'image/png', 
+                    'image/webp'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/v1/players/{account_id}/rank/image',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def rank_predict(
+        self,
+        account_id: Annotated[int, Field(strict=True, ge=0, description="The players `SteamID3`")],
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RankResponse:
+        """(Deprecated) Rank Predict (Deprecated)
+
+        Deprecated alias of `/v1/players/{account_id}/rank`. The rank is no longer predicted, it is read from the player's latest ranked match.
+
+        :param account_id: The players `SteamID3` (required)
+        :type account_id: int
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+        warnings.warn("GET /v1/players/{account_id}/rank-predict is deprecated.", DeprecationWarning)
+
         _param = self._rank_predict_serialize(
             account_id=account_id,
             _request_auth=_request_auth,
@@ -2256,13 +3126,10 @@ class PlayersApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "RankPredictResponse",
+            '200': "RankResponse",
             '400': None,
             '403': None,
-            '422': None,
-            '429': None,
             '500': None,
-            '503': None,
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -2291,10 +3158,10 @@ class PlayersApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[RankPredictResponse]:
-        """Rank Predict
+    ) -> ApiResponse[RankResponse]:
+        """(Deprecated) Rank Predict (Deprecated)
 
-         Predicts a player's current rank badge from their last 30 ranked/unranked matches. Requires at least 30 eligible matches (Ranked or Unranked, Normal game mode) with valid badge data.  > **This is an ML prediction and may be inaccurate.** The model has no access to the player's > actual hidden MMR — it infers rank from match context signals only.  ### Model Accuracy (5-fold cross-validation)  | Metric | Value | |--------|-------| | R²     | 0.949 | | MAE    | 1.08 sub-ranks | | RMSE   | 1.89 sub-ranks | | Within ±1 sub-rank | 77.6% | | Within ±3 sub-rank | 93.9% | | Within ±5 sub-rank | 97.7% | | Within ±6 sub-rank | 98.6% | | Within ±10 sub-rank | 99.6% |  Accuracy by tier:  | Tier range | n | MAE | |------------|---|-----| | Low (1-4)  | 404 | 3.68 sub-ranks | | Mid (5-7)  | 777 | 2.91 sub-ranks | | High (8-11)| 25,556 | 0.98 sub-ranks |  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 100req/s | | Key | - | | Global | - | 
+        Deprecated alias of `/v1/players/{account_id}/rank`. The rank is no longer predicted, it is read from the player's latest ranked match.
 
         :param account_id: The players `SteamID3` (required)
         :type account_id: int
@@ -2319,6 +3186,7 @@ class PlayersApi:
         :type _host_index: int, optional
         :return: Returns the result object.
         """ # noqa: E501
+        warnings.warn("GET /v1/players/{account_id}/rank-predict is deprecated.", DeprecationWarning)
 
         _param = self._rank_predict_serialize(
             account_id=account_id,
@@ -2329,13 +3197,10 @@ class PlayersApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "RankPredictResponse",
+            '200': "RankResponse",
             '400': None,
             '403': None,
-            '422': None,
-            '429': None,
             '500': None,
-            '503': None,
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -2365,9 +3230,9 @@ class PlayersApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Rank Predict
+        """(Deprecated) Rank Predict (Deprecated)
 
-         Predicts a player's current rank badge from their last 30 ranked/unranked matches. Requires at least 30 eligible matches (Ranked or Unranked, Normal game mode) with valid badge data.  > **This is an ML prediction and may be inaccurate.** The model has no access to the player's > actual hidden MMR — it infers rank from match context signals only.  ### Model Accuracy (5-fold cross-validation)  | Metric | Value | |--------|-------| | R²     | 0.949 | | MAE    | 1.08 sub-ranks | | RMSE   | 1.89 sub-ranks | | Within ±1 sub-rank | 77.6% | | Within ±3 sub-rank | 93.9% | | Within ±5 sub-rank | 97.7% | | Within ±6 sub-rank | 98.6% | | Within ±10 sub-rank | 99.6% |  Accuracy by tier:  | Tier range | n | MAE | |------------|---|-----| | Low (1-4)  | 404 | 3.68 sub-ranks | | Mid (5-7)  | 777 | 2.91 sub-ranks | | High (8-11)| 25,556 | 0.98 sub-ranks |  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 100req/s | | Key | - | | Global | - | 
+        Deprecated alias of `/v1/players/{account_id}/rank`. The rank is no longer predicted, it is read from the player's latest ranked match.
 
         :param account_id: The players `SteamID3` (required)
         :type account_id: int
@@ -2392,6 +3257,7 @@ class PlayersApi:
         :type _host_index: int, optional
         :return: Returns the result object.
         """ # noqa: E501
+        warnings.warn("GET /v1/players/{account_id}/rank-predict is deprecated.", DeprecationWarning)
 
         _param = self._rank_predict_serialize(
             account_id=account_id,
@@ -2402,13 +3268,10 @@ class PlayersApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "RankPredictResponse",
+            '200': "RankResponse",
             '400': None,
             '403': None,
-            '422': None,
-            '429': None,
             '500': None,
-            '503': None,
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -2485,7 +3348,6 @@ class PlayersApi:
         self,
         account_ids: Annotated[List[Annotated[int, Field(strict=True, ge=0)]], Field(description="Comma-separated list of account IDs (max 12).")],
         format: Annotated[Optional[StrictStr], Field(description="Image format. Defaults to `png`. Supported: `png`, `webp`.")] = None,
-        size: Annotated[Optional[StrictStr], Field(description="Image size. Defaults to `large`. Supported: `large`, `small`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2499,16 +3361,14 @@ class PlayersApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> List[int]:
-        """Rank Predict Avg Image
+        """(Deprecated) Rank Predict Avg Image (Deprecated)
 
-        Returns the average predicted rank badge image (binary) for a comma-separated list of account IDs. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
+        Deprecated alias of `/v1/players/rank/image`. The rank is no longer predicted, it is read from each player's latest ranked match.
 
         :param account_ids: Comma-separated list of account IDs (max 12). (required)
         :type account_ids: List[int]
         :param format: Image format. Defaults to `png`. Supported: `png`, `webp`.
         :type format: str
-        :param size: Image size. Defaults to `large`. Supported: `large`, `small`.
-        :type size: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2530,11 +3390,11 @@ class PlayersApi:
         :type _host_index: int, optional
         :return: Returns the result object.
         """ # noqa: E501
+        warnings.warn("GET /v1/players/rank-predict/image is deprecated.", DeprecationWarning)
 
         _param = self._rank_predict_avg_image_serialize(
             account_ids=account_ids,
             format=format,
-            size=size,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2546,10 +3406,7 @@ class PlayersApi:
             '400': None,
             '403': None,
             '404': None,
-            '422': None,
-            '429': None,
             '500': None,
-            '503': None,
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -2567,7 +3424,6 @@ class PlayersApi:
         self,
         account_ids: Annotated[List[Annotated[int, Field(strict=True, ge=0)]], Field(description="Comma-separated list of account IDs (max 12).")],
         format: Annotated[Optional[StrictStr], Field(description="Image format. Defaults to `png`. Supported: `png`, `webp`.")] = None,
-        size: Annotated[Optional[StrictStr], Field(description="Image size. Defaults to `large`. Supported: `large`, `small`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2581,16 +3437,14 @@ class PlayersApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[List[int]]:
-        """Rank Predict Avg Image
+        """(Deprecated) Rank Predict Avg Image (Deprecated)
 
-        Returns the average predicted rank badge image (binary) for a comma-separated list of account IDs. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
+        Deprecated alias of `/v1/players/rank/image`. The rank is no longer predicted, it is read from each player's latest ranked match.
 
         :param account_ids: Comma-separated list of account IDs (max 12). (required)
         :type account_ids: List[int]
         :param format: Image format. Defaults to `png`. Supported: `png`, `webp`.
         :type format: str
-        :param size: Image size. Defaults to `large`. Supported: `large`, `small`.
-        :type size: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2612,11 +3466,11 @@ class PlayersApi:
         :type _host_index: int, optional
         :return: Returns the result object.
         """ # noqa: E501
+        warnings.warn("GET /v1/players/rank-predict/image is deprecated.", DeprecationWarning)
 
         _param = self._rank_predict_avg_image_serialize(
             account_ids=account_ids,
             format=format,
-            size=size,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2628,10 +3482,7 @@ class PlayersApi:
             '400': None,
             '403': None,
             '404': None,
-            '422': None,
-            '429': None,
             '500': None,
-            '503': None,
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -2649,7 +3500,6 @@ class PlayersApi:
         self,
         account_ids: Annotated[List[Annotated[int, Field(strict=True, ge=0)]], Field(description="Comma-separated list of account IDs (max 12).")],
         format: Annotated[Optional[StrictStr], Field(description="Image format. Defaults to `png`. Supported: `png`, `webp`.")] = None,
-        size: Annotated[Optional[StrictStr], Field(description="Image size. Defaults to `large`. Supported: `large`, `small`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2663,16 +3513,14 @@ class PlayersApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Rank Predict Avg Image
+        """(Deprecated) Rank Predict Avg Image (Deprecated)
 
-        Returns the average predicted rank badge image (binary) for a comma-separated list of account IDs. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
+        Deprecated alias of `/v1/players/rank/image`. The rank is no longer predicted, it is read from each player's latest ranked match.
 
         :param account_ids: Comma-separated list of account IDs (max 12). (required)
         :type account_ids: List[int]
         :param format: Image format. Defaults to `png`. Supported: `png`, `webp`.
         :type format: str
-        :param size: Image size. Defaults to `large`. Supported: `large`, `small`.
-        :type size: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2694,11 +3542,11 @@ class PlayersApi:
         :type _host_index: int, optional
         :return: Returns the result object.
         """ # noqa: E501
+        warnings.warn("GET /v1/players/rank-predict/image is deprecated.", DeprecationWarning)
 
         _param = self._rank_predict_avg_image_serialize(
             account_ids=account_ids,
             format=format,
-            size=size,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2710,10 +3558,7 @@ class PlayersApi:
             '400': None,
             '403': None,
             '404': None,
-            '422': None,
-            '429': None,
             '500': None,
-            '503': None,
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -2726,7 +3571,6 @@ class PlayersApi:
         self,
         account_ids,
         format,
-        size,
         _request_auth,
         _content_type,
         _headers,
@@ -2757,10 +3601,6 @@ class PlayersApi:
         if format is not None:
             
             _query_params.append(('format', format))
-            
-        if size is not None:
-            
-            _query_params.append(('size', size))
             
         # process the header parameters
         # process the form parameters
@@ -2804,7 +3644,6 @@ class PlayersApi:
         self,
         account_id: Annotated[int, Field(strict=True, ge=0, description="The players `SteamID3`")],
         format: Annotated[Optional[StrictStr], Field(description="Image format. Defaults to `png`. Supported: `png`, `webp`.")] = None,
-        size: Annotated[Optional[StrictStr], Field(description="Image size. Defaults to `large`. Supported: `large`, `small`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2818,16 +3657,14 @@ class PlayersApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> List[int]:
-        """Rank Predict Image
+        """(Deprecated) Rank Predict Image (Deprecated)
 
-        Returns the predicted rank badge image directly (binary), not a URL. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
+        Deprecated alias of `/v1/players/{account_id}/rank/image`. The rank is no longer predicted, it is read from the player's latest ranked match.
 
         :param account_id: The players `SteamID3` (required)
         :type account_id: int
         :param format: Image format. Defaults to `png`. Supported: `png`, `webp`.
         :type format: str
-        :param size: Image size. Defaults to `large`. Supported: `large`, `small`.
-        :type size: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2849,11 +3686,11 @@ class PlayersApi:
         :type _host_index: int, optional
         :return: Returns the result object.
         """ # noqa: E501
+        warnings.warn("GET /v1/players/{account_id}/rank-predict/image is deprecated.", DeprecationWarning)
 
         _param = self._rank_predict_image_serialize(
             account_id=account_id,
             format=format,
-            size=size,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2865,10 +3702,7 @@ class PlayersApi:
             '400': None,
             '403': None,
             '404': None,
-            '422': None,
-            '429': None,
             '500': None,
-            '503': None,
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -2886,7 +3720,6 @@ class PlayersApi:
         self,
         account_id: Annotated[int, Field(strict=True, ge=0, description="The players `SteamID3`")],
         format: Annotated[Optional[StrictStr], Field(description="Image format. Defaults to `png`. Supported: `png`, `webp`.")] = None,
-        size: Annotated[Optional[StrictStr], Field(description="Image size. Defaults to `large`. Supported: `large`, `small`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2900,16 +3733,14 @@ class PlayersApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[List[int]]:
-        """Rank Predict Image
+        """(Deprecated) Rank Predict Image (Deprecated)
 
-        Returns the predicted rank badge image directly (binary), not a URL. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
+        Deprecated alias of `/v1/players/{account_id}/rank/image`. The rank is no longer predicted, it is read from the player's latest ranked match.
 
         :param account_id: The players `SteamID3` (required)
         :type account_id: int
         :param format: Image format. Defaults to `png`. Supported: `png`, `webp`.
         :type format: str
-        :param size: Image size. Defaults to `large`. Supported: `large`, `small`.
-        :type size: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2931,11 +3762,11 @@ class PlayersApi:
         :type _host_index: int, optional
         :return: Returns the result object.
         """ # noqa: E501
+        warnings.warn("GET /v1/players/{account_id}/rank-predict/image is deprecated.", DeprecationWarning)
 
         _param = self._rank_predict_image_serialize(
             account_id=account_id,
             format=format,
-            size=size,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2947,10 +3778,7 @@ class PlayersApi:
             '400': None,
             '403': None,
             '404': None,
-            '422': None,
-            '429': None,
             '500': None,
-            '503': None,
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -2968,7 +3796,6 @@ class PlayersApi:
         self,
         account_id: Annotated[int, Field(strict=True, ge=0, description="The players `SteamID3`")],
         format: Annotated[Optional[StrictStr], Field(description="Image format. Defaults to `png`. Supported: `png`, `webp`.")] = None,
-        size: Annotated[Optional[StrictStr], Field(description="Image size. Defaults to `large`. Supported: `large`, `small`.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2982,16 +3809,14 @@ class PlayersApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Rank Predict Image
+        """(Deprecated) Rank Predict Image (Deprecated)
 
-        Returns the predicted rank badge image directly (binary), not a URL. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
+        Deprecated alias of `/v1/players/{account_id}/rank/image`. The rank is no longer predicted, it is read from the player's latest ranked match.
 
         :param account_id: The players `SteamID3` (required)
         :type account_id: int
         :param format: Image format. Defaults to `png`. Supported: `png`, `webp`.
         :type format: str
-        :param size: Image size. Defaults to `large`. Supported: `large`, `small`.
-        :type size: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -3013,11 +3838,11 @@ class PlayersApi:
         :type _host_index: int, optional
         :return: Returns the result object.
         """ # noqa: E501
+        warnings.warn("GET /v1/players/{account_id}/rank-predict/image is deprecated.", DeprecationWarning)
 
         _param = self._rank_predict_image_serialize(
             account_id=account_id,
             format=format,
-            size=size,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -3029,10 +3854,7 @@ class PlayersApi:
             '400': None,
             '403': None,
             '404': None,
-            '422': None,
-            '429': None,
             '500': None,
-            '503': None,
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -3045,7 +3867,6 @@ class PlayersApi:
         self,
         account_id,
         format,
-        size,
         _request_auth,
         _content_type,
         _headers,
@@ -3073,10 +3894,6 @@ class PlayersApi:
         if format is not None:
             
             _query_params.append(('format', format))
-            
-        if size is not None:
-            
-            _query_params.append(('size', size))
             
         # process the header parameters
         # process the form parameters

@@ -27,22 +27,39 @@ Accept: application/json
 
 ### Hero Stats
 ## Hero Stats
-GET https://api.deadlock-api.com/v1/players/hero-stats?accountIds={{accountIds}}&gameMode={{gameMode}}&heroIds={{heroIds}}&minUnixTimestamp={{minUnixTimestamp}}&maxUnixTimestamp={{maxUnixTimestamp}}&minDurationS={{minDurationS}}&maxDurationS={{maxDurationS}}&minNetworth={{minNetworth}}&maxNetworth={{maxNetworth}}&minAverageBadge={{minAverageBadge}}&maxAverageBadge={{maxAverageBadge}}&minMatchId={{minMatchId}}&maxMatchId={{maxMatchId}}
+GET https://api.deadlock-api.com/v1/players/hero-stats?accountIds={{accountIds}}&gameMode={{gameMode}}&matchMode={{matchMode}}&heroIds={{heroIds}}&minUnixTimestamp={{minUnixTimestamp}}&maxUnixTimestamp={{maxUnixTimestamp}}&minDurationS={{minDurationS}}&maxDurationS={{maxDurationS}}&minNetworth={{minNetworth}}&maxNetworth={{maxNetworth}}&minAverageBadge={{minAverageBadge}}&maxAverageBadge={{maxAverageBadge}}&minMatchId={{minMatchId}}&maxMatchId={{maxMatchId}}
 Accept: application/json
 
-### Rank Predict
-## Rank Predict
-GET https://api.deadlock-api.com/v1/players/{{account_id}}/rank-predict
+### Rank
+## Rank
+GET https://api.deadlock-api.com/v1/players/{{account_id}}/rank
 Accept: application/json
 
-### Rank Predict Avg Image
-## Rank Predict Avg Image
-GET https://api.deadlock-api.com/v1/players/rank-predict/image?accountIds={{accountIds}}&format={{format}}&size={{size}}
+### Rank Avg Image
+## Rank Avg Image
+GET https://api.deadlock-api.com/v1/players/rank/image?accountIds={{accountIds}}&format={{format}}
 Accept: image/png
 Accept: image/webp
 
-### Rank Predict Image
-## Rank Predict Image
-GET https://api.deadlock-api.com/v1/players/{{account_id}}/rank-predict/image?format={{format}}&size={{size}}
+### Rank Image
+## Rank Image
+GET https://api.deadlock-api.com/v1/players/{{account_id}}/rank/image?format={{format}}
+Accept: image/png
+Accept: image/webp
+
+### Rank Predict (Deprecated)
+## Rank Predict (Deprecated)
+GET https://api.deadlock-api.com/v1/players/{{account_id}}/rank-predict
+Accept: application/json
+
+### Rank Predict Avg Image (Deprecated)
+## Rank Predict Avg Image (Deprecated)
+GET https://api.deadlock-api.com/v1/players/rank-predict/image?accountIds={{accountIds}}&format={{format}}
+Accept: image/png
+Accept: image/webp
+
+### Rank Predict Image (Deprecated)
+## Rank Predict Image (Deprecated)
+GET https://api.deadlock-api.com/v1/players/{{account_id}}/rank-predict/image?format={{format}}
 Accept: image/png
 Accept: image/webp

@@ -45,16 +45,24 @@ tags:
   name: Demo
 - description: Player related endpoints
   name: Players
-- description: "\n# STOP! READ THIS FIRST!\n\nPlease be very careful when using this\
-    \ endpoint and make yourself familiar with the way we calculate the MMR.\n\nThis\
-    \ is how we calculate a player MMR.\n\n1. We take the average badge of the team\
-    \ the player was on in a match.\n2. We convert the badge to a MMR score using\
-    \ the formula: `(intDiv(badge, 10) - 1) * 6 + (badge % 10)`\n3. We do a exponential\
-    \ moving average (EMA) of the last 50 matches to get the player's MMR score.\n\
-    4. We convert the MMR score back to a badge using the formula: `10 * intDiv(mmr_score,\
-    \ 6) + 1 + mmr_score % 6`\n\n### Rate Limits:\n| Type | Limit |\n| ---- | -----\
-    \ |\n| IP | 5req/min |\n| Key | 25req/min |\n| Global | 50req/min |\n\nRate limits\
-    \ are shared across all MMR endpoints (single bucket).\n    "
+- description: "\n# DEPRECATED! READ THIS FIRST!\n\nAll MMR endpoints are deprecated\
+    \ and will be removed. We no longer estimate a MMR: Valve reports the\nactual\
+    \ rank on ranked matches, and these endpoints now serve that rank instead of the\
+    \ old exponential\nmoving average over team average badges.\n\nMigrate to:\n\n\
+    | Deprecated | Replacement |\n| ---------- | ----------- |\n| `/v1/players/mmr`,\
+    \ `/v1/players/mmr/{hero_id}` | `/v1/players/{account_id}/rank` |\n| `/v1/players/mmr/distribution`,\
+    \ `/v1/players/mmr/distribution/{hero_id}` | `/v1/analytics/badge-distribution`\
+    \ |\n| `/v1/players/{account_id}/mmr-history`, `/v1/players/{account_id}/mmr-history/{hero_id}`\
+    \ | `ranked_display_badge` / `ranked_delta` in `/v1/players/{account_id}/match-history`\
+    \ |\n\nSince ranks only exist on ranked matches, players without one are missing\
+    \ from the responses, and the\nhero-scoped variants no longer differ per hero:\
+    \ they report the account-wide rank restricted to\nmatches played on that hero.\n\
+    \n### Rate Limits:\n\nThe rank and rank-history endpoints share one bucket:\n\n\
+    | Type | Limit |\n| ---- | ----- |\n| IP | 20req/min |\n| Key | 100req/min & 2000req/h\
+    \ |\n| Global | 200req/min |\n\nThe distribution endpoints aggregate over every\
+    \ ranked match and are far more expensive, so they\nhave their own, tighter bucket:\n\
+    \n| Type | Limit |\n| ---- | ----- |\n| IP | 5req/min |\n| Key | 25req/min |\n\
+    | Global | 50req/min |\n    "
   name: MMR
 - description: Steam related endpoints
   name: Steam
@@ -107,7 +115,7 @@ tags:
 - description: Hero metadata derived from per-version game data files.
   name: Heroes
 - description: "Item, ability, and weapon definitions parsed from the patch's KV3\
-    \ source files. Mirrors the previous Python `/v2/items` endpoint."
+    \ source files."
   name: Items
 - description: Loot table definitions derived from per-version game data files.
   name: Loot Tables
@@ -122,6 +130,8 @@ tags:
 - description: "File-tree indexes of static assets (images, icons, sounds, fonts)\
     \ hosted on the CDN, mapping each asset's name to its public URL."
   name: Assets
+- description: Ranked season definitions derived from per-version game data files.
+  name: Ranked Seasons
 - description: "Per-rank metadata (name, tier color, badge image URLs) derived from\
     \ per-version game data files."
   name: Ranks
@@ -168,6 +178,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: Filter matches based on their start time (Unix timestamp). **Default:**
           30 days ago.
         explode: true
@@ -175,7 +196,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -400,10 +421,16 @@ paths:
       - Analytics
   /v1/analytics/badge-distribution:
     get:
-      description: "\nThis endpoint returns the player badge distribution.\n\n###\
-        \ Rate Limits:\n> The rate limits below are **shared across all analytics\
-        \ endpoints**.\n\n| Type | Limit |\n| ---- | ----- |\n| IP | 200req/min |\n\
-        | Key | 400req/min |\n| Global | 2000req/min |\n    "
+      description: "\nThis endpoint returns the player badge distribution.\n\n`total_matches`\
+        \ counts matches by their average badge, while `unique_players` counts players\
+        \ by the\nrank Valve reported at the end of their latest ranked match within\
+        \ the filtered range. Since only\nranked matches carry a rank, `unique_players`\
+        \ ignores the `match_mode` filter and always looks at\nranked matches.\n\n\
+        Ranks exist only from the first ranked season on, so `min_unix_timestamp`\
+        \ is clamped to its start.\n\n### Rate Limits:\n> The rate limits below are\
+        \ **shared across all analytics endpoints**.\n\n| Type | Limit |\n| ---- |\
+        \ ----- |\n| IP | 200req/min |\n| Key | 400req/min |\n| Global | 2000req/min\
+        \ |\n    "
       operationId: badge_distribution
       parameters:
       - description: "Filter matches based on their game mode. Valid values: `normal`,\
@@ -421,14 +448,26 @@ paths:
           nullable: true
           type: string
         style: form
-      - description: Filter matches based on their start time (Unix timestamp). **Default:**
-          30 days ago.
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
+      - description: |-
+          Filter matches based on their start time (Unix timestamp). Values below the start of the
+          first ranked season (1785430800) are clamped to it. **Default:** 30 days ago.
         explode: true
         in: query
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -562,7 +601,7 @@ paths:
         name: min_last_updated_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -632,6 +671,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: Filter matches based on their start time (Unix timestamp). **Default:**
           30 days ago.
         explode: true
@@ -639,7 +689,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -839,6 +889,17 @@ paths:
         \ Global | 2000req/min |\n    "
       operationId: hero_ban_stats
       parameters:
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: Bucket allows you to group the stats by a specific field.
         explode: true
         in: query
@@ -861,7 +922,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -988,6 +1049,17 @@ paths:
           minimum: 0
           type: integer
         style: simple
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: "Filter matches based on their start time (Unix timestamp). **Default:**\
           \ 30 days ago. **Minimum:** March 1, 2026."
         explode: true
@@ -995,7 +1067,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -1177,6 +1249,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: Filter matches based on their start time (Unix timestamp). **Default:**
           30 days ago.
         explode: true
@@ -1184,7 +1267,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -1463,6 +1546,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: Filter matches based on their start time (Unix timestamp). **Default:**
           30 days ago.
         explode: true
@@ -1470,7 +1564,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -1721,6 +1815,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: Filter matches based on their start time (Unix timestamp). **Default:**
           30 days ago.
         explode: true
@@ -1728,7 +1833,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -1989,6 +2094,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: Filter matches based on their start time (Unix timestamp). **Default:**
           30 days ago.
         explode: true
@@ -1996,7 +2112,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -2255,6 +2371,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: "Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes>"
         explode: true
         in: query
@@ -2271,7 +2398,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -2564,6 +2691,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: "Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes>"
         explode: true
         in: query
@@ -2592,7 +2730,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -2795,6 +2933,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: "Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes>"
         explode: true
         in: query
@@ -2881,7 +3030,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -3163,6 +3312,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: Filter matches based on their start time (Unix timestamp). **Default:**
           30 days ago.
         explode: true
@@ -3170,7 +3330,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -3416,6 +3576,585 @@ paths:
       summary: Kill Death Stats
       tags:
       - Analytics
+  /v1/analytics/lane-matchup-stats:
+    get:
+      description: "\n> **⚠️ Subject to change:** This endpoint is newly added and\
+        \ not yet stable. Its parameters, response fields and semantics may change\
+        \ or be removed without notice.\n\nRetrieves duo-versus-duo lane statistics:\
+        \ how a pair of heroes sharing a lane performed against the pair of heroes\
+        \ they laned against.\n\nWin rate covers the whole match. Everything else\
+        \ is read at `sample_time_s` (900 by default, the last sample before the game's\
+        \ recording cadence coarsens) off the matchups that lasted that long, counted\
+        \ by `sample_matches`. Souls are always reported, in `net_worth_diff`; pass\
+        \ `stats` for any other per-tick stat the game records — kills, denies, player\
+        \ damage, healing, level and so on — each as the duo's own combined value\
+        \ *and* as its lead over the enemy duo.\n\nOnly lanes where *both* sides fielded\
+        \ exactly two players are counted, and each lane contributes one row per side,\
+        \ so every matchup appears twice with the two sides swapped.\n\n`group_by`\
+        \ chooses what a row stands for. The default groups all three dimensions,\
+        \ giving one row per duo-versus-duo matchup per lane. Dropping `enemy_hero_ids`\
+        \ gives a duo's record across every opponent, dropping `hero_ids` gives what\
+        \ a duo is up against, and dropping `assigned_lane` merges the lanes. Folded\
+        \ dimensions come back as `0` / an empty array.\n\nPass `hero_ids` and `enemy_hero_ids`\
+        \ to scope the response to the duos you care about. Without them the full\
+        \ duo-versus-duo matrix is computed, which is a considerably more expensive\
+        \ query.\n\nResults are cached for **1 hour**. The cache key is determined\
+        \ by the specific combination of filter parameters used in the query. Subsequent\
+        \ requests using the exact same filters within this timeframe will receive\
+        \ the cached response.\n\n### Rate Limits:\n> The rate limits below are **shared\
+        \ across all analytics endpoints**.\n\n| Type | Limit |\n| ---- | ----- |\n\
+        | IP | 200req/min |\n| Key | 400req/min |\n| Global | 2000req/min |\n    "
+      operationId: lane_matchup_stats
+      parameters:
+      - description: "Filter matches based on their game mode. Valid values: `normal`,\
+          \ `street_brawl`. **Default:** `normal`."
+        explode: true
+        in: query
+        name: game_mode
+        required: false
+        schema:
+          enum:
+          - normal
+          - street_brawl
+          - explore_n_y_c
+          - internal
+          nullable: true
+          type: string
+        style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
+      - description: Filter matches based on their start time (Unix timestamp). **Default:**
+          30 days ago.
+        explode: true
+        in: query
+        name: min_unix_timestamp
+        required: false
+        schema:
+          default: 1786320000
+          format: int64
+          nullable: true
+          type: integer
+        style: form
+      - description: Filter matches based on their start time (Unix timestamp).
+        explode: true
+        in: query
+        name: max_unix_timestamp
+        required: false
+        schema:
+          format: int64
+          nullable: true
+          type: integer
+        style: form
+      - description: Filter matches based on their duration in seconds (up to 7000s).
+        explode: true
+        in: query
+        name: min_duration_s
+        required: false
+        schema:
+          format: int64
+          maximum: 7000
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: Filter matches based on their duration in seconds (up to 7000s).
+        explode: true
+        in: query
+        name: max_duration_s
+        required: false
+        schema:
+          format: int64
+          maximum: 7000
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: "Filter matches based on the average badge level (tier = first\
+          \ digits, subtier = last digit) of *both* teams involved. See more: <https://api.deadlock-api.com/v1/assets/ranks>"
+        explode: true
+        in: query
+        name: min_average_badge
+        required: false
+        schema:
+          format: int32
+          maximum: 116
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: "Filter matches based on the average badge level (tier = first\
+          \ digits, subtier = last digit) of *both* teams involved. See more: <https://api.deadlock-api.com/v1/assets/ranks>"
+        explode: true
+        in: query
+        name: max_average_badge
+        required: false
+        schema:
+          format: int32
+          maximum: 116
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: Filter matches based on their ID.
+        explode: true
+        in: query
+        name: min_match_id
+        required: false
+        schema:
+          format: int64
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: Filter matches based on their ID.
+        explode: true
+        in: query
+        name: max_match_id
+        required: false
+        schema:
+          format: int64
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: |-
+          Seconds into the match the stat readings are taken at. **Default:** 900. Matchups whose
+          match ended earlier are still counted in `wins` and `matches_played`, but contribute no
+          reading; `sample_matches` reports how many did.
+        explode: true
+        in: query
+        name: sample_time_s
+        required: false
+        schema:
+          default: 900
+          format: int32
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: Comma separated list of `assigned_lane` values to restrict the
+          response to. See the `lane_info` array of <https://api.deadlock-api.com/v1/assets/generic-data>.
+        explode: true
+        in: query
+        name: assigned_lanes
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
+      - description: "Comma separated list of hero ids the *ally* duo has to be drawn\
+          \ from. Omit to return every duo. See more: <https://api.deadlock-api.com/v1/assets/heroes>"
+        explode: true
+        in: query
+        name: hero_ids
+        required: false
+        schema:
+          items:
+            format: int32
+            minimum: 0
+            type: integer
+          nullable: true
+          type: array
+          default: null
+        style: form
+      - description: "Comma separated list of hero ids the *enemy* duo has to be drawn\
+          \ from. Omit to return every duo. See more: <https://api.deadlock-api.com/v1/assets/heroes>"
+        explode: true
+        in: query
+        name: enemy_hero_ids
+        required: false
+        schema:
+          items:
+            format: int32
+            minimum: 0
+            type: integer
+          nullable: true
+          type: array
+          default: null
+        style: form
+      - description: "Comma separated list of extra per-tick stats to report, at most\
+          \ 8. **Default:** none."
+        explode: true
+        in: query
+        name: stats
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
+      - description: "Comma separated list of dimensions to group by. Valid values:\
+          \ `assigned_lane`, `hero_ids`, `enemy_hero_ids`. **Default:** all three."
+        explode: true
+        in: query
+        name: group_by
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
+      - description: The minimum number of lane matchups behind a row for it to be
+          included in the response.
+        explode: true
+        in: query
+        name: min_matches
+        required: false
+        schema:
+          default: 20
+          format: int64
+          minimum: 1
+          nullable: true
+          type: integer
+        style: form
+      - description: The maximum number of lane matchups behind a row for it to be
+          included in the response.
+        explode: true
+        in: query
+        name: max_matches
+        required: false
+        schema:
+          format: int64
+          minimum: 1
+          nullable: true
+          type: integer
+        style: form
+      - description: Comma separated list of account ids to include
+        explode: true
+        in: query
+        name: account_ids
+        required: false
+        schema:
+          items:
+            format: int32
+            minimum: 0
+            type: integer
+          maxItems: 1000
+          minItems: 1
+          nullable: true
+          type: array
+          default: null
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/LaneMatchupStats"
+                type: array
+                default: null
+          description: Lane Matchup Stats
+        "400":
+          description: Provided parameters are invalid.
+        "500":
+          description: Failed to fetch lane matchup stats
+      summary: Lane Matchup Stats (Subject to Change)
+      tags:
+      - Analytics
+  /v1/analytics/lane-soul-curve:
+    get:
+      description: "\n> **⚠️ Subject to change:** This endpoint is newly added and\
+        \ not yet stable. Its parameters, response fields and semantics may change\
+        \ or be removed without notice.\n\nRetrieves how a duo's lead over the duo\
+        \ they laned against develops over the course of the match.\n\nThe curve is\
+        \ not interpolated: it carries exactly the samples the game records, which\
+        \ are every 180 seconds up to the 15 minute mark and every 300 seconds after\
+        \ that. It runs from `min_time_s` (180 by default) to `max_time_s`, which\
+        \ is open by default, so a matchup is followed until its matches end. `sample_matches`\
+        \ reports how many matchups were still running at each point, and thins out\
+        \ towards the end of the curve.\n\nOnly lanes where *both* sides fielded exactly\
+        \ two players are counted, and each lane contributes one row per side, so\
+        \ every matchup appears twice with the two sides swapped.\n\nSouls are always\
+        \ reported, in `net_worth_diff`. Pass `stats` for curves of any other per-tick\
+        \ stat the game records — kills, denies, player damage, healing, level and\
+        \ so on — each as the duo's own combined value *and* as its lead over the\
+        \ enemy duo.\n\n`group_by` chooses what a row stands for. The default groups\
+        \ all three dimensions, giving one row per duo-versus-duo matchup per lane.\
+        \ Dropping `enemy_hero_ids` gives a duo's curve across every opponent, dropping\
+        \ `hero_ids` gives what a duo is up against, and dropping `assigned_lane`\
+        \ merges the lanes. Folded dimensions come back as `0` / an empty array.\n\
+        \nPass `hero_ids` and `enemy_hero_ids` to scope the response to the duos you\
+        \ care about. Without them the full duo-versus-duo matrix is computed, which\
+        \ is a considerably more expensive query.\n\nResults are cached for **1 hour**\
+        \ based on the combination of query parameters provided. Subsequent identical\
+        \ requests within this timeframe will receive the cached response.\n\n###\
+        \ Rate Limits:\n> The rate limits below are **shared across all analytics\
+        \ endpoints**.\n\n| Type | Limit |\n| ---- | ----- |\n| IP | 200req/min |\n\
+        | Key | 400req/min |\n| Global | 2000req/min |\n    "
+      operationId: lane_soul_curve
+      parameters:
+      - description: "Filter matches based on their game mode. Valid values: `normal`,\
+          \ `street_brawl`. **Default:** `normal`."
+        explode: true
+        in: query
+        name: game_mode
+        required: false
+        schema:
+          enum:
+          - normal
+          - street_brawl
+          - explore_n_y_c
+          - internal
+          nullable: true
+          type: string
+        style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
+      - description: Filter matches based on their start time (Unix timestamp). **Default:**
+          30 days ago.
+        explode: true
+        in: query
+        name: min_unix_timestamp
+        required: false
+        schema:
+          default: 1786320000
+          format: int64
+          nullable: true
+          type: integer
+        style: form
+      - description: Filter matches based on their start time (Unix timestamp).
+        explode: true
+        in: query
+        name: max_unix_timestamp
+        required: false
+        schema:
+          format: int64
+          nullable: true
+          type: integer
+        style: form
+      - description: Filter matches based on their duration in seconds (up to 7000s).
+        explode: true
+        in: query
+        name: min_duration_s
+        required: false
+        schema:
+          format: int64
+          maximum: 7000
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: Filter matches based on their duration in seconds (up to 7000s).
+        explode: true
+        in: query
+        name: max_duration_s
+        required: false
+        schema:
+          format: int64
+          maximum: 7000
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: "Filter matches based on the average badge level (tier = first\
+          \ digits, subtier = last digit) of *both* teams involved. See more: <https://api.deadlock-api.com/v1/assets/ranks>"
+        explode: true
+        in: query
+        name: min_average_badge
+        required: false
+        schema:
+          format: int32
+          maximum: 116
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: "Filter matches based on the average badge level (tier = first\
+          \ digits, subtier = last digit) of *both* teams involved. See more: <https://api.deadlock-api.com/v1/assets/ranks>"
+        explode: true
+        in: query
+        name: max_average_badge
+        required: false
+        schema:
+          format: int32
+          maximum: 116
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: Filter matches based on their ID.
+        explode: true
+        in: query
+        name: min_match_id
+        required: false
+        schema:
+          format: int64
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: Filter matches based on their ID.
+        explode: true
+        in: query
+        name: max_match_id
+        required: false
+        schema:
+          format: int64
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: "Earliest sample to return, in seconds into the match. **Default:**\
+          \ 180."
+        explode: true
+        in: query
+        name: min_time_s
+        required: false
+        schema:
+          default: 180
+          format: int32
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: |-
+          Latest sample to return, in seconds into the match. Omit to follow every matchup to the end
+          of its match.
+        explode: true
+        in: query
+        name: max_time_s
+        required: false
+        schema:
+          format: int32
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      - description: Comma separated list of `assigned_lane` values to restrict the
+          response to. See the `lane_info` array of <https://api.deadlock-api.com/v1/assets/generic-data>.
+        explode: true
+        in: query
+        name: assigned_lanes
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
+      - description: "Comma separated list of hero ids the *ally* duo has to be drawn\
+          \ from. Omit to return every duo. See more: <https://api.deadlock-api.com/v1/assets/heroes>"
+        explode: true
+        in: query
+        name: hero_ids
+        required: false
+        schema:
+          items:
+            format: int32
+            minimum: 0
+            type: integer
+          nullable: true
+          type: array
+          default: null
+        style: form
+      - description: "Comma separated list of hero ids the *enemy* duo has to be drawn\
+          \ from. Omit to return every duo. See more: <https://api.deadlock-api.com/v1/assets/heroes>"
+        explode: true
+        in: query
+        name: enemy_hero_ids
+        required: false
+        schema:
+          items:
+            format: int32
+            minimum: 0
+            type: integer
+          nullable: true
+          type: array
+          default: null
+        style: form
+      - description: "Comma separated list of extra per-tick stats to return curves\
+          \ for, at most 8. **Default:** none."
+        explode: true
+        in: query
+        name: stats
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
+      - description: "Comma separated list of dimensions to group by. Valid values:\
+          \ `assigned_lane`, `hero_ids`, `enemy_hero_ids`. **Default:** all three."
+        explode: true
+        in: query
+        name: group_by
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
+      - description: The minimum number of lane matchups behind a row for it to be
+          included in the response.
+        explode: true
+        in: query
+        name: min_matches
+        required: false
+        schema:
+          default: 20
+          format: int64
+          minimum: 1
+          nullable: true
+          type: integer
+        style: form
+      - description: The maximum number of lane matchups behind a row for it to be
+          included in the response.
+        explode: true
+        in: query
+        name: max_matches
+        required: false
+        schema:
+          format: int64
+          minimum: 1
+          nullable: true
+          type: integer
+        style: form
+      - description: Comma separated list of account ids to include
+        explode: true
+        in: query
+        name: account_ids
+        required: false
+        schema:
+          items:
+            format: int32
+            minimum: 0
+            type: integer
+          maxItems: 1000
+          minItems: 1
+          nullable: true
+          type: array
+          default: null
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/LaneSoulCurve"
+                type: array
+                default: null
+          description: Lane Soul Curve
+        "400":
+          description: Provided parameters are invalid.
+        "500":
+          description: Failed to fetch lane soul curve
+      summary: Lane Soul Curve (Subject to Change)
+      tags:
+      - Analytics
   /v1/analytics/player-performance-curve:
     get:
       description: "\nRetrieves player performance statistics (net worth, kills, deaths,\
@@ -3457,6 +4196,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: Filter matches based on their start time (Unix timestamp). **Default:**
           30 days ago.
         explode: true
@@ -3464,7 +4214,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -3682,6 +4432,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: Filter matches based on their start time (Unix timestamp). **Default:**
           30 days ago.
         explode: true
@@ -3689,7 +4450,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -3885,6 +4646,7 @@ paths:
         schema:
           enum:
           - matches
+          - rank
           - wins
           - losses
           - winrate
@@ -3973,6 +4735,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: Filter by min number of matches played.
         explode: true
         in: query
@@ -3991,7 +4764,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -4161,6 +4934,7 @@ paths:
         schema:
           enum:
           - matches
+          - rank
           - wins
           - losses
           - winrate
@@ -4246,6 +5020,17 @@ paths:
           - street_brawl
           - explore_n_y_c
           - internal
+          nullable: true
+          type: string
+        style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
           nullable: true
           type: string
         style: form
@@ -4980,6 +5765,7 @@ paths:
               schema:
                 additionalProperties:
                   $ref: "#/components/schemas/Color"
+                type: object
           description: ""
         "404":
           description: Requested client_version is not available
@@ -5733,6 +6519,7 @@ paths:
               schema:
                 additionalProperties:
                   $ref: "#/components/schemas/LootTable"
+                type: object
           description: ""
         "404":
           description: Requested client_version is not available
@@ -5922,6 +6709,83 @@ paths:
       summary: Get NPC Unit
       tags:
       - NPC Units
+  /v1/assets/ranked-seasons:
+    get:
+      description: "Returns the ranked season definitions used by the game client,\
+        \ parsed from the patch's KV3 source files. Each season carries its eligibility\
+        \ requirements and the intervals it runs for, as unix timestamps in seconds."
+      operationId: list_ranked_seasons
+      parameters:
+      - description: Language code. Defaults to `english`.
+        explode: true
+        in: query
+        name: language
+        required: false
+        schema:
+          description: Set of languages the upstream `localization/<lang>.json` files
+            are keyed by.
+          enum:
+          - brazilian
+          - bulgarian
+          - czech
+          - danish
+          - dutch
+          - english
+          - finnish
+          - french
+          - german
+          - greek
+          - hungarian
+          - indonesian
+          - italian
+          - japanese
+          - koreana
+          - latam
+          - norwegian
+          - polish
+          - portuguese
+          - romanian
+          - russian
+          - schinese
+          - spanish
+          - swedish
+          - tchinese
+          - thai
+          - turkish
+          - ukrainian
+          - vietnamese
+          nullable: true
+          type: string
+        style: form
+      - description: Client/game version (e.g. `6518`). Defaults to the latest known
+          version.
+        explode: true
+        in: query
+        name: client_version
+        required: false
+        schema:
+          format: int32
+          minimum: 0
+          nullable: true
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/RankedSeason"
+                type: array
+                default: null
+          description: ""
+        "404":
+          description: Requested client_version is not available
+        "500":
+          description: Failed to load source assets
+      summary: List Ranked Seasons
+      tags:
+      - Ranked Seasons
   /v1/assets/ranks:
     get:
       description: "Returns the 12 player ranks (tier, localized name, badge image\
@@ -6078,6 +6942,70 @@ paths:
         "500":
           description: Failed to load source assets
       summary: Get Rank
+      tags:
+      - Ranks
+  /v1/assets/ranks/{tier}/{subrank}/image:
+    get:
+      description: "Returns the tier badge with its I-VI division numeral drawn on\
+        \ it (binary, not a URL). Use `?format=webp` for WebP."
+      operationId: subrank_image
+      parameters:
+      - description: Rank tier (1-11)
+        explode: false
+        in: path
+        name: tier
+        required: true
+        schema:
+          format: int32
+          minimum: 0
+          type: integer
+        style: simple
+      - description: Division within the tier (1-6)
+        explode: false
+        in: path
+        name: subrank
+        required: true
+        schema:
+          format: int32
+          minimum: 0
+          type: integer
+        style: simple
+      - description: "Image format. Defaults to `png`. Supported: `png`, `webp`."
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          enum:
+          - png
+          - webp
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            image/png:
+              schema:
+                items:
+                  format: int32
+                  minimum: 0
+                  type: integer
+                type: array
+                default: null
+            image/webp:
+              schema:
+                items:
+                  format: int32
+                  minimum: 0
+                  type: integer
+                type: array
+                default: null
+          description: Rank badge image
+        "404":
+          description: Unknown tier or division
+        "500":
+          description: Failed to load source assets
+      summary: Rank Subrank Image
       tags:
       - Ranks
   /v1/assets/sounds:
@@ -6380,6 +7308,108 @@ paths:
       summary: Search
       tags:
       - Builds
+  /v1/builds/by-author/{account_id}:
+    get:
+      description: "\nFetches all builds of an author directly from the Deadlock Game\
+        \ Coordinator and stores them in the database.\n\nUnlike the search endpoint,\
+        \ this does not rely on builds already being in our database, so it can be\
+        \ used to\nlook up builds that have not been crawled yet. Every fetched build\
+        \ is upserted into the database.\n\nProtobuf definitions can be found here:\
+        \ [https://github.com/SteamDatabase/Protobufs](https://github.com/SteamDatabase/Protobufs)\n\
+        \nRelevant Protobuf Messages:\n- CMsgClientToGCFindHeroBuilds\n- CMsgClientToGCFindHeroBuildsResponse\n\
+        \n### Rate Limits:\n| Type | Limit |\n| ---- | ----- |\n| IP | 20req/min |\n\
+        | Key | 100req/min |\n| Global | 500req/min |\n    "
+      operationId: fetch_builds_by_author_live
+      parameters:
+      - description: The players `SteamID3`
+        explode: false
+        in: path
+        name: account_id
+        required: true
+        schema:
+          format: int32
+          minimum: 0
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Build"
+                type: array
+                default: null
+          description: ""
+        "400":
+          description: Provided parameters are invalid.
+        "429":
+          description: Rate limit exceeded
+        "500":
+          description: Fetching builds failed
+      summary: Fetch Live by Author
+      tags:
+      - Builds
+  /v1/builds/{hero_id}/{build_id}:
+    get:
+      description: "\nReturns a single build. If the build is already in our database\
+        \ it is served from there, otherwise it is\nfetched live from the Deadlock\
+        \ Game Coordinator and stored in the database.\n\nSet `force_refetch=true`\
+        \ to always fetch from the Game Coordinator, e.g. to pick up a newer version.\n\
+        \nRate limits only apply when the build is fetched from the Game Coordinator.\n\
+        \nProtobuf definitions can be found here: [https://github.com/SteamDatabase/Protobufs](https://github.com/SteamDatabase/Protobufs)\n\
+        \nRelevant Protobuf Messages:\n- CMsgClientToGCFindHeroBuilds\n- CMsgClientToGCFindHeroBuildsResponse\n\
+        \n### Rate Limits:\n| Type | Limit |\n| ---- | ----- |\n| IP | 20req/min |\n\
+        | Key | 100req/min |\n| Global | 500req/min |\n    "
+      operationId: fetch_build_live
+      parameters:
+      - description: "The hero ID of the build. See more: <https://api.deadlock-api.com/v1/assets/heroes>"
+        explode: false
+        in: path
+        name: hero_id
+        required: true
+        schema:
+          format: int32
+          minimum: 0
+          type: integer
+        style: simple
+      - description: The build ID to fetch.
+        explode: false
+        in: path
+        name: build_id
+        required: true
+        schema:
+          format: int32
+          minimum: 0
+          type: integer
+        style: simple
+      - description: Fetch the build from the Game Coordinator even if it is already
+          in the database.
+        explode: true
+        in: query
+        name: force_refetch
+        required: false
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Build"
+          description: ""
+        "400":
+          description: Provided parameters are invalid.
+        "404":
+          description: Build not found
+        "429":
+          description: Rate limit exceeded
+        "500":
+          description: Fetching build failed
+      summary: Fetch Live
+      tags:
+      - Builds
   /v1/commands/resolve:
     get:
       description: "\n    Resolves a command and returns the resolved command.\n\n\
@@ -6514,6 +7544,7 @@ paths:
               schema:
                 additionalProperties:
                   type: string
+                type: object
           description: ""
         "400":
           description: Provided parameters are invalid.
@@ -6541,12 +7572,38 @@ paths:
                 additionalProperties:
                   format: int32
                   type: integer
+                type: object
           description: ""
         "400":
           description: Provided parameters are invalid.
       summary: Widget Versions
       tags:
       - Commands
+  /v1/feedback:
+    post:
+      description: "\nStores a component annotation or general feedback submitted\
+        \ from deadlock-api.com.\n\n### Rate Limits:\n| Type | Limit |\n| ---- | -----\
+        \ |\n| IP | 10req/min, 100req/h |\n| Key | - |\n| Global | 2000req/h |\n \
+        \   "
+      operationId: submit_feedback
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackSubmission"
+        required: true
+      responses:
+        "201":
+          description: Feedback stored.
+        "400":
+          description: Provided parameters are invalid.
+        "429":
+          description: Rate limit exceeded
+        "500":
+          description: Internal server error
+      summary: Submit Website Feedback
+      tags:
+      - Internal
   /v1/graphql:
     get:
       description: "\nInteractive GraphiQL playground for exploring the GraphQL API.\n\
@@ -7108,8 +8165,9 @@ paths:
         ### Rate Limits:
         | Type | Limit |
         | ---- | ----- |
-        | IP | 20req/m |
-        | Global | 100req/m |
+        | IP | With broadcast_url: 20req/m<br>With match_id: 6req/h |
+        | Key | With broadcast_url: -<br>With match_id: 20req/10m, 100req/h |
+        | Global | With broadcast_url: 100req/m<br>With match_id: 100req/10m, 500req/h |
       operationId: live_query
       parameters:
       - description: SQL query to run over the broadcast's entity/event tables (see
@@ -7150,7 +8208,10 @@ paths:
             text/event-stream: {}
           description: "SSE stream of result rows. Each `message` event's `data` is\
             \ one result row as a JSON object; a terminal `end` event marks the end\
-            \ of the broadcast, and an `error` event carries any mid-stream failure."
+            \ of the broadcast, and an `error` event carries any mid-stream failure.\
+            \ While the broadcast relay is still spinning up (common right after spectating\
+            \ a fresh match), `status` events report retry progress instead of the\
+            \ stream going quiet."
         "400":
           description: "Neither match_id nor broadcast_url given, or the query is\
             \ invalid."
@@ -7341,12 +8402,14 @@ paths:
     get:
       description: "\nThis endpoints lets you fetch multiple match metadata at once.\
         \ The response is a JSON array of match metadata.\n\nWhen player info is included,\
-        \ each player object contains a `hero_build_id` field (if available) from\
-        \ demo analysis.\n\n> **Note:** The `hero_build_id` represents the first build\
-        \ the player had selected when the game started. It does not reflect any build\
-        \ changes made during the match.\n\n### Rate Limits:\n| Type | Limit |\n|\
-        \ ---- | ----- |\n| IP | 10req/min |\n| Key | 10req/10s |\n| Global | 100req/min\
-        \ |\n    "
+        \ each player object contains `hero_build_id` and `pregame_hero_id` fields\
+        \ (if available) from demo analysis.\n\n> **Note:** The `hero_build_id` represents\
+        \ the first build the player had selected when the game started. It does not\
+        \ reflect any build changes made during the match.\n\n> **Note:** The `pregame_hero_id`\
+        \ is the hero the player had locked before the pre-game swap window (`null`\
+        \ if unknown). A player swapped heroes when it differs from their `hero_id`.\n\
+        \n### Rate Limits:\n| Type | Limit |\n| ---- | ----- |\n| IP | 10req/min |\n\
+        | Key | 10req/10s |\n| Global | 100req/min |\n    "
       operationId: bulk_metadata
       parameters:
       - description: Include match info in the response.
@@ -7430,6 +8493,15 @@ paths:
         explode: true
         in: query
         name: include_player_death_details
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: Include per-player `custom_user_stats` (a map of stat name to
+          value) in the response.
+        explode: true
+        in: query
+        name: include_player_custom_user_stats
         required: false
         schema:
           type: boolean
@@ -7803,8 +8875,8 @@ paths:
       description: "\nThis endpoints spectates a match and returns the live URL to\
         \ be used in any demofile broadcast parser.\n\nExample Parsers:\n- [Demofile-Net](https://github.com/saul/demofile-net)\n\
         - [Haste](https://github.com/blukai/haste/)\n\n### Rate Limits:\n| Type |\
-        \ Limit |\n| ---- | ----- |\n| IP | 2req/h |\n| Key | 5req/m, 100req/h |\n\
-        | Global | 5req/10s, 500req/h |\n    "
+        \ Limit |\n| ---- | ----- |\n| IP | 6req/h |\n| Key | 20req/10m, 100req/h\
+        \ |\n| Global | 100req/10m, 500req/h |\n    "
       operationId: url
       parameters:
       - description: The match ID
@@ -7839,8 +8911,11 @@ paths:
         \ parsed into JSON.\n\nEach player object is enriched with a `hero_build_id`\
         \ field (if available) from demo analysis.\n\n> **Note:** The `hero_build_id`\
         \ represents the first build the player had selected when the game started.\
-        \ It does not reflect any build changes made during the match.\n\nProtobuf\
-        \ definitions can be found here: [https://github.com/SteamDatabase/Protobufs](https://github.com/SteamDatabase/Protobufs)\n\
+        \ It does not reflect any build changes made during the match.\n\n`pregame_hero_ids`\
+        \ maps `account_id` to the hero the player had locked before the pre-game\
+        \ swap window (if available from demo analysis). A player swapped heroes when\
+        \ it differs from their `hero_id`.\n\nProtobuf definitions can be found here:\
+        \ [https://github.com/SteamDatabase/Protobufs](https://github.com/SteamDatabase/Protobufs)\n\
         \nRelevant Protobuf Messages:\n- CMsgMatchMetaData\n- CMsgMatchMetaDataContents\n\
         \n### Rate Limits:\n| Type | Limit |\n| ---- | ----- |\n| IP | From Cache:\
         \ 100req/s<br>From S3: 100req/10s<br>From Steam: 3req/h |\n| Key | From Cache:\
@@ -8086,6 +9161,17 @@ paths:
           nullable: true
           type: string
         style: form
+      - description: "Filter matches based on the match mode. Valid values: `unranked`,\
+          \ `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`.\
+          \ **Default:** `ranked,unranked`."
+        explode: true
+        in: query
+        name: match_mode
+        required: false
+        schema:
+          nullable: true
+          type: string
+        style: form
       - description: "Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes>"
         explode: true
         in: query
@@ -8228,9 +9314,13 @@ paths:
       - Players
   /v1/players/mmr:
     get:
+      deprecated: true
       description: |2
 
-        Batch Player MMR
+        Deprecated. The MMR estimate is gone, this now returns the rank Valve reported for each player at
+        the end of their latest ranked match. Players without a ranked match carrying a rank are left out.
+
+        Use `/v1/players/{account_id}/rank` instead.
       operationId: mmr
       parameters:
       - description: "Comma separated list of account ids, Account IDs are in `SteamID3`\
@@ -8274,14 +9364,18 @@ paths:
           description: Provided parameters are invalid.
         "500":
           description: Failed to fetch mmr
-      summary: Batch MMR
+      summary: Batch MMR (Deprecated)
       tags:
       - MMR
   /v1/players/mmr/distribution:
     get:
+      deprecated: true
       description: |2
 
-        Player MMR Distribution
+        Deprecated. The MMR estimate is gone, this now counts players by the rank Valve reported at the end
+        of their latest ranked match within the filtered range.
+
+        Use `/v1/analytics/badge-distribution` instead.
       operationId: mmr_distribution
       parameters:
       - description: Filter matches based on their start time (Unix timestamp). **Default:**
@@ -8291,7 +9385,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -8394,14 +9488,18 @@ paths:
           description: Provided parameters are invalid.
         "500":
           description: Failed to fetch mmr
-      summary: MMR Distribution
+      summary: MMR Distribution (Deprecated)
       tags:
       - MMR
   /v1/players/mmr/distribution/{hero_id}:
     get:
+      deprecated: true
       description: |2
 
-        Player Hero MMR Distribution
+        Deprecated. Valve reports a single account-wide rank, not a per-hero one, so this counts players by
+        the rank they had on their latest ranked match played on that hero.
+
+        Use `/v1/analytics/badge-distribution` instead.
       operationId: hero_mmr_distribution
       parameters:
       - description: Filter matches based on their start time (Unix timestamp). **Default:**
@@ -8411,7 +9509,7 @@ paths:
         name: min_unix_timestamp
         required: false
         schema:
-          default: 1782172800
+          default: 1786320000
           format: int64
           nullable: true
           type: integer
@@ -8524,14 +9622,18 @@ paths:
           description: Provided parameters are invalid.
         "500":
           description: Failed to fetch hero mmr
-      summary: Hero MMR Distribution
+      summary: Hero MMR Distribution (Deprecated)
       tags:
       - MMR
   /v1/players/mmr/{hero_id}:
     get:
+      deprecated: true
       description: |2
 
-        Batch Player Hero MMR
+        Deprecated. Valve reports a single account-wide rank, not a per-hero one, so this returns each
+        player's rank on their latest ranked match played on that hero.
+
+        Use `/v1/players/{account_id}/rank` instead.
       operationId: hero_mmr
       parameters:
       - description: "Comma separated list of account ids, Account IDs are in `SteamID3`\
@@ -8585,14 +9687,14 @@ paths:
           description: Provided parameters are invalid.
         "500":
           description: Failed to fetch hero mmr
-      summary: Batch Hero MMR
+      summary: Batch Hero MMR (Deprecated)
       tags:
       - MMR
   /v1/players/rank-predict/image:
     get:
-      description: Returns the average predicted rank badge image (binary) for a comma-separated
-        list of account IDs. Use `?format=webp` for WebP and `?size=small` for the
-        small badge (defaults to large).
+      deprecated: true
+      description: "Deprecated alias of `/v1/players/rank/image`. The rank is no longer\
+        \ predicted, it is read from each player's latest ranked match."
       operationId: rank_predict_avg_image
       parameters:
       - description: Comma-separated list of account IDs (max 12).
@@ -8619,15 +9721,67 @@ paths:
           - webp
           type: string
         style: form
-      - description: "Image size. Defaults to `large`. Supported: `large`, `small`."
+      responses:
+        "200":
+          content:
+            image/png:
+              schema:
+                items:
+                  format: int32
+                  minimum: 0
+                  type: integer
+                type: array
+                default: null
+            image/webp:
+              schema:
+                items:
+                  format: int32
+                  minimum: 0
+                  type: integer
+                type: array
+                default: null
+          description: Average rank badge image
+        "400":
+          description: Invalid or missing account IDs
+        "403":
+          description: One of the users is protected
+        "404":
+          description: No image available for the rank
+        "500":
+          description: Rank lookup failed
+      summary: Rank Predict Avg Image (Deprecated)
+      tags:
+      - Players
+  /v1/players/rank/image:
+    get:
+      description: "Returns the average rank badge image (binary) for a comma-separated\
+        \ list of account IDs. Accounts without a rank are left out of the average;\
+        \ if none of them has one, the `Obscurus` image is returned. Use `?format=webp`\
+        \ for WebP."
+      operationId: rank_avg_image
+      parameters:
+      - description: Comma-separated list of account IDs (max 12).
         explode: true
         in: query
-        name: size
+        name: account_ids
+        required: true
+        schema:
+          items:
+            format: int32
+            minimum: 0
+            type: integer
+          type: array
+          default: null
+        style: form
+      - description: "Image format. Defaults to `png`. Supported: `png`, `webp`."
+        explode: true
+        in: query
+        name: format
         required: false
         schema:
           enum:
-          - large
-          - small
+          - png
+          - webp
           type: string
         style: form
       responses:
@@ -8649,22 +9803,16 @@ paths:
                   type: integer
                 type: array
                 default: null
-          description: Average predicted rank badge image
+          description: Average rank badge image
         "400":
           description: Invalid or missing account IDs
         "403":
           description: One of the users is protected
         "404":
-          description: No image available for the predicted rank
-        "422":
-          description: Not enough recent ranked matches for one or more accounts
-        "429":
-          description: Rate limit exceeded
+          description: No image available for the rank
         "500":
-          description: Prediction failed
-        "503":
-          description: Rank prediction model not loaded
-      summary: Rank Predict Avg Image
+          description: Rank lookup failed
+      summary: Rank Avg Image
       tags:
       - Players
   /v1/players/steam:
@@ -9257,7 +10405,14 @@ paths:
       - Players
   /v1/players/{account_id}/mmr-history:
     get:
-      description: Player MMR History
+      deprecated: true
+      description: |2
+
+        Deprecated. The MMR estimate is gone, this now returns one entry per ranked match with the rank
+        Valve reported for the player at the end of that match.
+
+        Use the `ranked_display_badge` and `ranked_delta` fields of `/v1/players/{account_id}/match-history`
+        instead.
       operationId: mmr_history
       parameters:
       - description: The players `SteamID3`
@@ -9284,12 +10439,19 @@ paths:
           description: Provided parameters are invalid.
         "500":
           description: Failed to fetch mmr history
-      summary: MMR History
+      summary: MMR History (Deprecated)
       tags:
       - MMR
   /v1/players/{account_id}/mmr-history/{hero_id}:
     get:
-      description: Player Hero MMR History
+      deprecated: true
+      description: |2
+
+        Deprecated. Valve reports a single account-wide rank, not a per-hero one, so this returns the
+        player's rank at the end of each ranked match they played on that hero.
+
+        Use the `ranked_display_badge` and `ranked_delta` fields of `/v1/players/{account_id}/match-history`
+        instead.
       operationId: hero_mmr_history
       parameters:
       - description: The players `SteamID3`
@@ -9326,46 +10488,57 @@ paths:
           description: Provided parameters are invalid.
         "500":
           description: Failed to fetch hero mmr history
-      summary: Hero MMR History
+      summary: Hero MMR History (Deprecated)
       tags:
       - MMR
-  /v1/players/{account_id}/rank-predict:
+  /v1/players/{account_id}/rank:
     get:
       description: |2
 
-        Predicts a player's current rank badge from their last 30 ranked/unranked matches.
-        Requires at least 30 eligible matches (Ranked or Unranked, Normal game mode) with valid badge data.
+        Returns the player's rank at the end of their latest ranked match, i.e. the rank they entered that
+        match with plus the progress the match awarded. A subrank spans 1000 progress points, so a single
+        match can move the badge. Eternus subranks are instead percentile cuts Valve recomputes daily, so
+        within Eternus the badge is the one the player entered the match with.
 
-        > **This is an ML prediction and may be inaccurate.** The model has no access to the player's
-        > actual hidden MMR — it infers rank from match context signals only.
+        Only ranked matches carry a rank, and it stays unset while the player is in placement games.
+        When none of the player's recent ranked matches reports a rank, `badge`, `rank` and `subrank` are
+        all `0`, which is the `Obscurus` (unranked) tier, and `last_match` is `null`.
 
-        ### Model Accuracy (5-fold cross-validation)
-
-        | Metric | Value |
-        |--------|-------|
-        | R²     | 0.949 |
-        | MAE    | 1.08 sub-ranks |
-        | RMSE   | 1.89 sub-ranks |
-        | Within ±1 sub-rank | 77.6% |
-        | Within ±3 sub-rank | 93.9% |
-        | Within ±5 sub-rank | 97.7% |
-        | Within ±6 sub-rank | 98.6% |
-        | Within ±10 sub-rank | 99.6% |
-
-        Accuracy by tier:
-
-        | Tier range | n | MAE |
-        |------------|---|-----|
-        | Low (1-4)  | 404 | 3.68 sub-ranks |
-        | Mid (5-7)  | 777 | 2.91 sub-ranks |
-        | High (8-11)| 25,556 | 0.98 sub-ranks |
-
-        ### Rate Limits:
-        | Type | Limit |
-        | ---- | ----- |
-        | IP | 100req/s |
-        | Key | - |
-        | Global | - |
+        `last_match` carries the rank metadata Valve reported on that match, e.g. rank progress, remaining
+        placement games and demotion protection.
+      operationId: rank
+      parameters:
+      - description: The players `SteamID3`
+        explode: false
+        in: path
+        name: account_id
+        required: true
+        schema:
+          format: int32
+          minimum: 0
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RankResponse"
+          description: ""
+        "400":
+          description: Invalid account ID
+        "403":
+          description: User is protected or endpoint unavailable
+        "500":
+          description: Rank lookup failed
+      summary: Rank
+      tags:
+      - Players
+  /v1/players/{account_id}/rank-predict:
+    get:
+      deprecated: true
+      description: "Deprecated alias of `/v1/players/{account_id}/rank`. The rank\
+        \ is no longer predicted, it is read from the player's latest ranked match."
       operationId: rank_predict
       parameters:
       - description: The players `SteamID3`
@@ -9383,28 +10556,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RankPredictResponse"
+                $ref: "#/components/schemas/RankResponse"
           description: ""
         "400":
           description: Invalid account ID
         "403":
           description: User is protected or endpoint unavailable
-        "422":
-          description: Not enough recent ranked matches (need 30)
-        "429":
-          description: Rate limit exceeded
         "500":
-          description: Prediction failed
-        "503":
-          description: Rank prediction model not loaded
-      summary: Rank Predict
+          description: Rank lookup failed
+      summary: Rank Predict (Deprecated)
       tags:
       - Players
   /v1/players/{account_id}/rank-predict/image:
     get:
-      description: "Returns the predicted rank badge image directly (binary), not\
-        \ a URL. Use `?format=webp` for WebP and `?size=small` for the small badge\
-        \ (defaults to large)."
+      deprecated: true
+      description: "Deprecated alias of `/v1/players/{account_id}/rank/image`. The\
+        \ rank is no longer predicted, it is read from the player's latest ranked\
+        \ match."
       operationId: rank_predict_image
       parameters:
       - description: The players `SteamID3`
@@ -9428,15 +10596,64 @@ paths:
           - webp
           type: string
         style: form
-      - description: "Image size. Defaults to `large`. Supported: `large`, `small`."
+      responses:
+        "200":
+          content:
+            image/png:
+              schema:
+                items:
+                  format: int32
+                  minimum: 0
+                  type: integer
+                type: array
+                default: null
+            image/webp:
+              schema:
+                items:
+                  format: int32
+                  minimum: 0
+                  type: integer
+                type: array
+                default: null
+          description: Rank badge image
+        "400":
+          description: Invalid account ID
+        "403":
+          description: User is protected or endpoint unavailable
+        "404":
+          description: No image available for the rank
+        "500":
+          description: Rank lookup failed
+      summary: Rank Predict Image (Deprecated)
+      tags:
+      - Players
+  /v1/players/{account_id}/rank/image:
+    get:
+      description: "Returns the rank badge image directly (binary), not a URL, with\
+        \ the player's I-VI division numeral drawn on it. Players whose recent ranked\
+        \ matches carry no rank, and players still in placement, get the plain tier\
+        \ badge. Use `?format=webp` for WebP."
+      operationId: rank_image
+      parameters:
+      - description: The players `SteamID3`
+        explode: false
+        in: path
+        name: account_id
+        required: true
+        schema:
+          format: int32
+          minimum: 0
+          type: integer
+        style: simple
+      - description: "Image format. Defaults to `png`. Supported: `png`, `webp`."
         explode: true
         in: query
-        name: size
+        name: format
         required: false
         schema:
           enum:
-          - large
-          - small
+          - png
+          - webp
           type: string
         style: form
       responses:
@@ -9458,22 +10675,16 @@ paths:
                   type: integer
                 type: array
                 default: null
-          description: Predicted rank badge image
+          description: Rank badge image
         "400":
           description: Invalid account ID
         "403":
           description: User is protected or endpoint unavailable
         "404":
-          description: No image available for the predicted rank
-        "422":
-          description: Not enough recent ranked matches (need 30)
-        "429":
-          description: Rate limit exceeded
+          description: No image available for the rank
         "500":
-          description: Prediction failed
-        "503":
-          description: Rank prediction model not loaded
-      summary: Rank Predict Image
+          description: Rank lookup failed
+      summary: Rank Image
       tags:
       - Players
   /v1/servers:
@@ -9652,6 +10863,7 @@ paths:
               schema:
                 additionalProperties:
                   type: string
+                type: object
           description: ""
         "500":
           content:
@@ -9709,6 +10921,8 @@ components:
           additionalProperties:
             $ref: "#/components/schemas/TableSize"
           description: The sizes of all tables in the database.
+          nullable: true
+          type: object
         user_ingested_matches_last24h:
           deprecated: true
           description: The number of matches ingested in the last 24 hours.
@@ -9821,6 +11035,8 @@ components:
         dependent_abilities:
           additionalProperties:
             $ref: "#/components/schemas/DependantAbilities"
+          nullable: true
+          type: object
         description:
           $ref: "#/components/schemas/AbilityDescription"
         grant_ammo_on_cast:
@@ -9854,6 +11070,8 @@ components:
         properties:
           additionalProperties:
             $ref: "#/components/schemas/ItemProperty"
+          nullable: true
+          type: object
         start_trained:
           nullable: true
           type: boolean
@@ -10168,7 +11386,7 @@ components:
       - ServerTest
       - Tutorial
       - HeroLabs
-      - Calibration
+      - NewPlayerPlacement
       type: string
     ActiveMatchPlayer:
       example:
@@ -10637,6 +11855,7 @@ components:
       example:
         badge_level: 0
         total_matches: 0
+        unique_players: 0
       properties:
         badge_level:
           description: "The badge level (tier = first digits, subtier = last digit).\
@@ -10649,9 +11868,16 @@ components:
           format: int64
           minimum: 0
           type: integer
+        unique_players:
+          description: The number of unique players whose rank on their latest ranked
+            match in the filtered range is this badge level.
+          format: int64
+          minimum: 0
+          type: integer
       required:
       - badge_level
       - total_matches
+      - unique_players
     Build:
       example:
         hero_build:
@@ -11039,17 +12265,24 @@ components:
       - label
     ClickhouseMatchInfo:
       example:
+        average_badge: 0
         average_badge_team0: 0
         average_badge_team1: 0
         duration_s: 0
         game_mode: 5
         match_id: 0
-        match_mode: 2
+        match_mode: 7
         players:
         - account_id: 0
         - account_id: 0
         start_time: 0
       properties:
+        average_badge:
+          description: "See more: <https://api.deadlock-api.com/v1/assets/ranks>"
+          format: int32
+          minimum: 0
+          nullable: true
+          type: integer
         average_badge_team0:
           description: "See more: <https://api.deadlock-api.com/v1/assets/ranks>"
           format: int32
@@ -11531,6 +12764,88 @@ components:
       oneOf:
       - $ref: "#/components/schemas/FeedItem_oneOf"
       - $ref: "#/components/schemas/FeedItem_oneOf_1"
+    FeedbackKind:
+      enum:
+      - annotation
+      - general
+      type: string
+    FeedbackSubmission:
+      example:
+        build_id: build_id
+        comment: comment
+        element_text: element_text
+        kind: annotation
+        nickname: nickname
+        page_url: page_url
+        selector: selector
+        source: ""
+        targets:
+        - element_text: element_text
+          selector: selector
+          source: ""
+        - element_text: element_text
+          selector: selector
+          source: ""
+        viewport: ""
+      properties:
+        build_id:
+          nullable: true
+          type: string
+        comment:
+          type: string
+        element_text:
+          nullable: true
+          type: string
+        kind:
+          $ref: "#/components/schemas/FeedbackKind"
+        nickname:
+          nullable: true
+          type: string
+        page_url:
+          type: string
+        selector:
+          nullable: true
+          type: string
+        source:
+          allOf:
+          - $ref: "#/components/schemas/SourceLocation"
+          description: |-
+            Superseded by `targets`; still accepted so pages cached from an older
+            build keep submitting successfully.
+          nullable: true
+        targets:
+          description: The annotated elements. Left empty for general feedback.
+          items:
+            $ref: "#/components/schemas/FeedbackTarget"
+          type: array
+          default: null
+        viewport:
+          allOf:
+          - $ref: "#/components/schemas/Viewport"
+          nullable: true
+      required:
+      - comment
+      - kind
+      - page_url
+    FeedbackTarget:
+      description: |-
+        One annotated element. A submission carries several when the visitor picked
+        more than one.
+      example:
+        element_text: element_text
+        selector: selector
+        source: ""
+      properties:
+        element_text:
+          nullable: true
+          type: string
+        selector:
+          nullable: true
+          type: string
+        source:
+          allOf:
+          - $ref: "#/components/schemas/SourceLocation"
+          nullable: true
     FlashData:
       example:
         brightness: 6.027456183070403
@@ -12016,37 +13331,46 @@ components:
     HashMap:
       additionalProperties:
         $ref: "#/components/schemas/HashMap_value"
+      type: object
     HashMap_HeroItemType_String:
       additionalProperties:
         type: string
+      type: object
     HashMap_ItemSlotType_ItemSlotInfo:
       additionalProperties:
         $ref: "#/components/schemas/HashMap_ItemSlotType_ItemSlotInfo_value"
+      type: object
     HashMap_ItemSlotType_Vec_MapModCostBonus:
       additionalProperties:
         items:
           $ref: "#/components/schemas/HashMap_ItemSlotType_Vec_MapModCostBonus_value_inner"
         type: array
         default: null
+      type: object
     HashMap_ItemSlotType_Vec_PurchaseBonus:
       additionalProperties:
         items:
           $ref: "#/components/schemas/HashMap_ItemSlotType_Vec_PurchaseBonus_value_inner"
         type: array
         default: null
+      type: object
     HashMap_String_LevelInfo:
       additionalProperties:
         $ref: "#/components/schemas/HashMap_String_LevelInfo_value"
+      type: object
     HashMap_String_Option_DraftBucketing:
       additionalProperties:
         $ref: "#/components/schemas/HashMap_String_Option_DraftBucketing_value"
+      type: object
     HashMap_String_ScalingStat:
       additionalProperties:
         $ref: "#/components/schemas/HashMap_String_ScalingStat_value"
+      type: object
     HashMap_String_f64:
       additionalProperties:
         format: double
         type: number
+      type: object
     Hero:
       example:
         assigned_players_only: true
@@ -12299,12 +13623,15 @@ components:
         item_slot_info:
           additionalProperties:
             $ref: "#/components/schemas/HashMap_ItemSlotType_ItemSlotInfo_value"
+          type: object
         items:
           additionalProperties:
             type: string
+          type: object
         level_info:
           additionalProperties:
             $ref: "#/components/schemas/HashMap_String_LevelInfo_value"
+          type: object
         limited_testing:
           type: boolean
         name:
@@ -12324,9 +13651,11 @@ components:
               $ref: "#/components/schemas/HashMap_ItemSlotType_Vec_PurchaseBonus_value_inner"
             type: array
             default: null
+          type: object
         scaling_stats:
           additionalProperties:
             $ref: "#/components/schemas/HashMap_String_ScalingStat_value"
+          type: object
         shop_stat_display:
           $ref: "#/components/schemas/ShopStatDisplay"
         skin:
@@ -12336,6 +13665,7 @@ components:
           additionalProperties:
             format: double
             type: number
+          type: object
         starting_stats:
           $ref: "#/components/schemas/StartingStats"
         stats_display:
@@ -13786,28 +15116,390 @@ components:
       required:
       - color
       - lane_name
+    LaneMatchupStat:
+      description: "One requested stat, read at `sample_time_s` and averaged over\
+        \ the matchups that reached it."
+      example:
+        diff: 9.301444243932576
+        diff_std: 3.616076749251911
+        value: 2.027123023002322
+        value_std: 4.145608029883936
+      properties:
+        diff:
+          description: Mean of the duo's combined value minus the enemy duo's. Negative
+            means behind.
+          format: double
+          type: number
+        diff_std:
+          description: Population standard deviation of `diff` across the counted
+            matchups.
+          format: double
+          type: number
+        value:
+          description: "Mean of the duo's combined value, summed over its two players."
+          format: double
+          type: number
+        value_std:
+          description: Population standard deviation of `value` across the counted
+            matchups.
+          format: double
+          type: number
+      required:
+      - diff
+      - diff_std
+      - value
+      - value_std
+    LaneMatchupStats:
+      description: "**⚠️ Subject to change:** newly added, fields may change or be\
+        \ removed without notice."
+      example:
+        assigned_lane: 0
+        enemy_hero_ids:
+        - 0
+        - 0
+        hero_ids:
+        - 0
+        - 0
+        matches_played: 0
+        net_worth_diff: 5.637376656633329
+        sample_matches: 0
+        sample_time_s: 0
+        stats:
+          key:
+            diff: 9.301444243932576
+            diff_std: 3.616076749251911
+            value: 2.027123023002322
+            value_std: 4.145608029883936
+        wins: 0
+      properties:
+        assigned_lane:
+          description: "The lane the matchup was played in, or `0` when `assigned_lane`\
+            \ was grouped away. See the `lane_info` array of <https://api.deadlock-api.com/v1/assets/generic-data>."
+          format: int32
+          minimum: 0
+          type: integer
+        enemy_hero_ids:
+          description: "The ascending hero id pair they laned against, or empty when\
+            \ grouped away."
+          items:
+            format: int32
+            minimum: 0
+            type: integer
+          type: array
+          default: null
+        hero_ids:
+          description: "The ascending hero id pair that shared the lane, or empty\
+            \ when grouped away. See more: <https://api.deadlock-api.com/v1/assets/heroes>"
+          items:
+            format: int32
+            minimum: 0
+            type: integer
+          type: array
+          default: null
+        matches_played:
+          description: The total number of lane matchups between `hero_ids` and `enemy_hero_ids`
+            in this lane.
+          format: int64
+          minimum: 0
+          type: integer
+        net_worth_diff:
+          description: |-
+            Mean souls the duo is ahead by at `sample_time_s`, against that duo. Negative means behind.
+            `0` when no counted matchup lasted that long.
+          format: double
+          type: number
+        sample_matches:
+          description: |-
+            How many of `matches_played` lasted to `sample_time_s` with all four players still in. Every
+            reading on this row rests on those matchups only.
+          format: int64
+          minimum: 0
+          type: integer
+        sample_time_s:
+          description: Seconds into the match the stat readings were taken at. Echoes
+            the `sample_time_s` parameter.
+          format: int32
+          minimum: 0
+          type: integer
+        stats:
+          additionalProperties:
+            $ref: "#/components/schemas/LaneMatchupStat"
+          description: A reading per stat named in `stats`. Empty unless the parameter
+            was set.
+          type: object
+        wins:
+          description: The number of matches `hero_ids` won against `enemy_hero_ids`
+            in this lane.
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - assigned_lane
+      - enemy_hero_ids
+      - hero_ids
+      - matches_played
+      - net_worth_diff
+      - sample_matches
+      - sample_time_s
+      - stats
+      - wins
+    LaneSoulCurve:
+      description: "**⚠️ Subject to change:** newly added, fields may change or be\
+        \ removed without notice."
+      example:
+        assigned_lane: 0
+        enemy_hero_ids:
+        - 0
+        - 0
+        hero_ids:
+        - 0
+        - 0
+        matches_played: 0
+        net_worth_diff:
+        - 5.637376656633329
+        - 5.637376656633329
+        net_worth_diff_std:
+        - 2.3021358869347655
+        - 2.3021358869347655
+        sample_matches:
+        - 0
+        - 0
+        sample_times_s:
+        - 0
+        - 0
+        stats:
+          key:
+            diff:
+            - 3.616076749251911
+            - 3.616076749251911
+            diff_std:
+            - 2.027123023002322
+            - 2.027123023002322
+            value:
+            - 4.145608029883936
+            - 4.145608029883936
+            value_std:
+            - 7.386281948385884
+            - 7.386281948385884
+      properties:
+        assigned_lane:
+          description: "The lane the matchup was played in, or `0` when `assigned_lane`\
+            \ was grouped away. See the `lane_info` array of <https://api.deadlock-api.com/v1/assets/generic-data>."
+          format: int32
+          minimum: 0
+          type: integer
+        enemy_hero_ids:
+          description: "The ascending hero id pair they laned against, or empty when\
+            \ grouped away."
+          items:
+            format: int32
+            minimum: 0
+            type: integer
+          type: array
+          default: null
+        hero_ids:
+          description: "The ascending hero id pair that shared the lane, or empty\
+            \ when grouped away. See more: <https://api.deadlock-api.com/v1/assets/heroes>"
+          items:
+            format: int32
+            minimum: 0
+            type: integer
+          type: array
+          default: null
+        matches_played:
+          description: |-
+            Lane matchups behind the row, counted at its *first* sample. This is what `min_matches` and
+            `max_matches` filter on, so it does not move when the requested time range changes; read
+            `sample_matches` for what any individual point rests on.
+          format: int64
+          minimum: 0
+          type: integer
+        net_worth_diff:
+          description: |-
+            Mean souls the duo is ahead by at the matching entry of `sample_times_s`. Negative means
+            behind. Same length as `sample_times_s`.
+          items:
+            format: double
+            type: number
+          type: array
+          default: null
+        net_worth_diff_std:
+          description: |-
+            Population standard deviation of the lead across the counted matchups, at the matching entry
+            of `sample_times_s`. Same length as `sample_times_s`.
+
+            Spread between individual games, not uncertainty about the mean: it stays wide however many
+            matchups are counted, because lane outcomes genuinely differ that much.
+          items:
+            format: double
+            type: number
+          type: array
+          default: null
+        sample_matches:
+          description: |-
+            How many lane matchups were still running at the matching entry of `sample_times_s`.
+            Falls off towards the end of the curve as shorter matches drop out.
+          items:
+            format: int64
+            minimum: 0
+            type: integer
+          type: array
+          default: null
+        sample_times_s:
+          description: "Seconds into the match each entry of the curves was sampled\
+            \ at, ascending."
+          items:
+            format: int32
+            minimum: 0
+            type: integer
+          type: array
+          default: null
+        stats:
+          additionalProperties:
+            $ref: "#/components/schemas/LaneStatCurve"
+          description: A curve per stat named in `stats`. Empty unless the parameter
+            was set.
+          type: object
+      required:
+      - assigned_lane
+      - enemy_hero_ids
+      - hero_ids
+      - matches_played
+      - net_worth_diff
+      - net_worth_diff_std
+      - sample_matches
+      - sample_times_s
+      - stats
+    LaneStatCurve:
+      description: One requested stat's curve. All four arrays line up with `sample_times_s`.
+      example:
+        diff:
+        - 3.616076749251911
+        - 3.616076749251911
+        diff_std:
+        - 2.027123023002322
+        - 2.027123023002322
+        value:
+        - 4.145608029883936
+        - 4.145608029883936
+        value_std:
+        - 7.386281948385884
+        - 7.386281948385884
+      properties:
+        diff:
+          description: Mean of the duo's combined value minus the enemy duo's. Negative
+            means behind.
+          items:
+            format: double
+            type: number
+          type: array
+          default: null
+        diff_std:
+          description: Population standard deviation of `diff` across the counted
+            matchups.
+          items:
+            format: double
+            type: number
+          type: array
+          default: null
+        value:
+          description: "Mean of the duo's combined value, summed over its two players."
+          items:
+            format: double
+            type: number
+          type: array
+          default: null
+        value_std:
+          description: Population standard deviation of `value` across the counted
+            matchups.
+          items:
+            format: double
+            type: number
+          type: array
+          default: null
+      required:
+      - diff
+      - diff_std
+      - value
+      - value_std
+    LastRankedMatch:
+      properties:
+        match_id:
+          format: int64
+          minimum: 0
+          type: integer
+        player_rank_consumed_demotion_protection:
+          description: Whether the match used up one of the player's demotion protection
+            games.
+          nullable: true
+          type: boolean
+        player_rank_desired_progress_change:
+          description: "Progress change the match was supposed to award, before demotion\
+            \ protection is applied."
+          format: int32
+          nullable: true
+          type: integer
+        player_rank_final_flat_progress:
+          description: Rank progress the player ended the match with.
+          format: int32
+          minimum: 0
+          nullable: true
+          type: integer
+        player_rank_initial_calibration_games:
+          description: Remaining placement games at the start of the match.
+          format: int32
+          minimum: 0
+          nullable: true
+          type: integer
+        player_rank_initial_demotion_protection_games:
+          description: Remaining demotion protection games at the start of the match.
+          format: int32
+          minimum: 0
+          nullable: true
+          type: integer
+        player_rank_initial_display_rank:
+          description: "Rank badge the player entered the match with, `tier * 10 +\
+            \ subrank`."
+          format: int32
+          minimum: 0
+          type: integer
+        player_rank_initial_flat_progress:
+          description: Rank progress the player entered the match with.
+          format: int32
+          minimum: 0
+          nullable: true
+          type: integer
+        player_rank_initial_win_streak:
+          description: Win streak the player entered the match with.
+          format: int32
+          minimum: 0
+          nullable: true
+          type: integer
+        start_time:
+          description: Match start time as a unix timestamp.
+          format: int32
+          minimum: 0
+          type: integer
+      required:
+      - match_id
+      - player_rank_initial_display_rank
+      - start_time
     Leaderboard:
       example:
         entries:
         - account_name: account_name
-          badge_level: 0
           possible_account_ids:
           - 0
           - 0
           rank: 0
-          ranked_rank: 0
-          ranked_subrank: 0
           top_hero_ids:
           - 0
           - 0
         - account_name: account_name
-          badge_level: 0
           possible_account_ids:
           - 0
           - 0
           rank: 0
-          ranked_rank: 0
-          ranked_subrank: 0
           top_hero_ids:
           - 0
           - 0
@@ -13823,13 +15515,10 @@ components:
     LeaderboardEntry:
       example:
         account_name: account_name
-        badge_level: 0
         possible_account_ids:
         - 0
         - 0
         rank: 0
-        ranked_rank: 0
-        ranked_subrank: 0
         top_hero_ids:
         - 0
         - 0
@@ -13838,13 +15527,6 @@ components:
           description: The account name of the player.
           nullable: true
           type: string
-        badge_level:
-          description: "The badge level of the player (tier = first digits, subtier\
-            \ = last digit). See more: <https://api.deadlock-api.com/v1/assets/ranks>"
-          format: int32
-          minimum: 0
-          nullable: true
-          type: integer
         possible_account_ids:
           description: "The possible account IDs of the player. **CAVEAT: This is\
             \ not always correct, as Steam account names are not unique.**"
@@ -13857,18 +15539,6 @@ components:
         rank:
           description: "The rank of the player (tier = first digits, subtier = last\
             \ digit). See more: <https://api.deadlock-api.com/v1/assets/ranks>"
-          format: int32
-          minimum: 0
-          nullable: true
-          type: integer
-        ranked_rank:
-          description: "The ranked rank of the player. See more: <https://api.deadlock-api.com/v1/assets/ranks>"
-          format: int32
-          minimum: 0
-          nullable: true
-          type: integer
-        ranked_subrank:
-          description: "The ranked subrank of the player. See more: <https://api.deadlock-api.com/v1/assets/ranks>"
           format: int32
           minimum: 0
           nullable: true
@@ -13982,8 +15652,7 @@ components:
           minimum: 0
           type: integer
         player_score:
-          description: Player Score is the index for the rank array (internally used
-            for the rank regression)
+          description: "Contiguous index of the rank (1-66), derived from `rank`"
           format: double
           type: number
         rank:
@@ -14074,6 +15743,7 @@ components:
         objective_positions:
           additionalProperties:
             $ref: "#/components/schemas/ObjectivePosition"
+          type: object
         radius:
           format: int32
           minimum: 0
@@ -14240,6 +15910,7 @@ components:
           additionalProperties:
             type: string
           description: Free-form key/value metadata for game-mode-specific context
+          type: object
         metric_name:
           description: Name of the metric (e.g. `run_time`)
           type: string
@@ -14660,6 +16331,8 @@ components:
         bound_abilities:
           additionalProperties:
             type: string
+          nullable: true
+          type: object
         class_name:
           type: string
         empowered_modifier_level1:
@@ -14975,6 +16648,7 @@ components:
           additionalProperties:
             format: double
             type: number
+          type: object
       required:
       - outcomes_to_weights
     OutputFormat:
@@ -15318,7 +16992,12 @@ components:
         player_assists: 0
         player_deaths: 0
         player_kills: 0
+        player_match_outcome: 9
         player_team: 9
+        ranked_calibration_match: 0
+        ranked_delta: 8
+        ranked_display_badge: 0
+        ranked_used_demotion_protection: true
         start_time: 0
         team_abandoned: true
       properties:
@@ -15405,9 +17084,40 @@ components:
           format: int32
           minimum: 0
           type: integer
+        player_match_outcome:
+          description: "How the match was scored for the player: 0 = invalid, 1 =\
+            \ win, 2 = loss, 3 = penalized, 4 = penalized party, 5 = not scored."
+          format: int32
+          type: integer
         player_team:
           format: int32
           type: integer
+        ranked_calibration_match:
+          description: Non-zero if this match counted towards the player's ranked
+            calibration.
+          format: int32
+          minimum: 0
+          nullable: true
+          type: integer
+        ranked_delta:
+          description: The ranked progress change the player got from this match.
+          format: int32
+          nullable: true
+          type: integer
+        ranked_display_badge:
+          description: "The ranked badge shown for the player after the match (tier\
+            \ = first digits, subtier = last digit). Within Eternus, where subranks\
+            \ are percentile cuts the GC misreports, this is the badge the player\
+            \ entered the match with. See more: <https://api.deadlock-api.com/v1/assets/ranks>"
+          format: int32
+          minimum: 0
+          nullable: true
+          type: integer
+        ranked_used_demotion_protection:
+          description: Whether the player's demotion protection absorbed a loss in
+            this match.
+          nullable: true
+          type: boolean
         start_time:
           format: int32
           minimum: 0
@@ -15432,6 +17142,7 @@ components:
       - player_assists
       - player_deaths
       - player_kills
+      - player_match_outcome
       - player_team
       - start_time
     PlayerPerformanceCurvePoint:
@@ -15571,6 +17282,8 @@ components:
       example:
         color: color
         images:
+          chalk: chalk
+          chalk_webp: chalk_webp
           large: large
           large_subrank1: large_subrank1
           large_subrank1_webp: large_subrank1_webp
@@ -15599,6 +17312,18 @@ components:
           small_subrank6: small_subrank6
           small_subrank6_webp: small_subrank6_webp
           small_webp: small_webp
+          subrank1: subrank1
+          subrank1_webp: subrank1_webp
+          subrank2: subrank2
+          subrank2_webp: subrank2_webp
+          subrank3: subrank3
+          subrank3_webp: subrank3_webp
+          subrank4: subrank4
+          subrank4_webp: subrank4_webp
+          subrank5: subrank5
+          subrank5_webp: subrank5_webp
+          subrank6: subrank6
+          subrank6_webp: subrank6_webp
         name: name
         tier: 0
       properties:
@@ -15622,6 +17347,8 @@ components:
         Image URLs for a single rank tier. Field declaration order is load-bearing:
         it sets the JSON key order, which is stable across versions of this API.
       example:
+        chalk: chalk
+        chalk_webp: chalk_webp
         large: large
         large_subrank1: large_subrank1
         large_subrank1_webp: large_subrank1_webp
@@ -15650,118 +17377,275 @@ components:
         small_subrank6: small_subrank6
         small_subrank6_webp: small_subrank6_webp
         small_webp: small_webp
+        subrank1: subrank1
+        subrank1_webp: subrank1_webp
+        subrank2: subrank2
+        subrank2_webp: subrank2_webp
+        subrank3: subrank3
+        subrank3_webp: subrank3_webp
+        subrank4: subrank4
+        subrank4_webp: subrank4_webp
+        subrank5: subrank5
+        subrank5_webp: subrank5_webp
+        subrank6: subrank6
+        subrank6_webp: subrank6_webp
       properties:
+        chalk:
+          nullable: true
+          type: string
+        chalk_webp:
+          nullable: true
+          type: string
         large:
           nullable: true
           type: string
         large_subrank1:
+          deprecated: true
           nullable: true
           type: string
         large_subrank1_webp:
+          deprecated: true
           nullable: true
           type: string
         large_subrank2:
+          deprecated: true
           nullable: true
           type: string
         large_subrank2_webp:
+          deprecated: true
           nullable: true
           type: string
         large_subrank3:
+          deprecated: true
           nullable: true
           type: string
         large_subrank3_webp:
+          deprecated: true
           nullable: true
           type: string
         large_subrank4:
+          deprecated: true
           nullable: true
           type: string
         large_subrank4_webp:
+          deprecated: true
           nullable: true
           type: string
         large_subrank5:
+          deprecated: true
           nullable: true
           type: string
         large_subrank5_webp:
+          deprecated: true
           nullable: true
           type: string
         large_subrank6:
+          deprecated: true
           nullable: true
           type: string
         large_subrank6_webp:
+          deprecated: true
           nullable: true
           type: string
         large_webp:
           nullable: true
           type: string
         small:
+          deprecated: true
           nullable: true
           type: string
         small_subrank1:
+          deprecated: true
           nullable: true
           type: string
         small_subrank1_webp:
+          deprecated: true
           nullable: true
           type: string
         small_subrank2:
+          deprecated: true
           nullable: true
           type: string
         small_subrank2_webp:
+          deprecated: true
           nullable: true
           type: string
         small_subrank3:
+          deprecated: true
           nullable: true
           type: string
         small_subrank3_webp:
+          deprecated: true
           nullable: true
           type: string
         small_subrank4:
+          deprecated: true
           nullable: true
           type: string
         small_subrank4_webp:
+          deprecated: true
           nullable: true
           type: string
         small_subrank5:
+          deprecated: true
           nullable: true
           type: string
         small_subrank5_webp:
+          deprecated: true
           nullable: true
           type: string
         small_subrank6:
+          deprecated: true
           nullable: true
           type: string
         small_subrank6_webp:
+          deprecated: true
           nullable: true
           type: string
         small_webp:
+          deprecated: true
           nullable: true
           type: string
-    RankPredictResponse:
-      allOf:
-      - $ref: "#/components/schemas/RankPrediction"
-      - properties:
-          matches_used:
-            description: Number of recent matches used for the prediction
-            minimum: 0
-            type: integer
-        required:
-        - matches_used
+        subrank1:
+          description: "Tier badge with the division numeral drawn on it, composed\
+            \ on demand by this API."
+          nullable: true
+          type: string
+        subrank1_webp:
+          nullable: true
+          type: string
+        subrank2:
+          nullable: true
+          type: string
+        subrank2_webp:
+          nullable: true
+          type: string
+        subrank3:
+          nullable: true
+          type: string
+        subrank3_webp:
+          nullable: true
+          type: string
+        subrank4:
+          nullable: true
+          type: string
+        subrank4_webp:
+          nullable: true
+          type: string
+        subrank5:
+          nullable: true
+          type: string
+        subrank5_webp:
+          nullable: true
+          type: string
+        subrank6:
+          nullable: true
+          type: string
+        subrank6_webp:
+          nullable: true
+          type: string
+    RankResponse:
       example:
         badge: 0
-        raw_score: 6.0274563
-        matches_used: 0
-    RankPrediction:
+        last_match: ""
+        rank: 0
+        subrank: 0
       properties:
         badge:
-          description: "See more: <https://api.deadlock-api.com/v1/assets/ranks>"
+          description: |-
+            Rank badge, `tier * 10 + subrank`, including the progress the last ranked match awarded.
+            Eternus subranks are percentile-based and refreshed daily by Valve, so within Eternus this
+            is the badge the player entered their latest ranked match with.
+            `0` when no recent ranked match reports a rank.
+            See more: <https://api.deadlock-api.com/v1/assets/ranks>
           format: int32
+          minimum: 0
           type: integer
-        raw_score:
-          description: Calibrated model output (float index into badge space)
-          format: float
-          type: number
+        last_match:
+          allOf:
+          - $ref: "#/components/schemas/LastRankedMatch"
+          description: |-
+            Rank metadata of the ranked match the badge was read from. `null` when none of the player's
+            recent ranked matches reports a rank.
+          nullable: true
+        rank:
+          description: "Rank tier, `0` when unknown."
+          format: int32
+          minimum: 0
+          type: integer
+        subrank:
+          description: "Sub-rank within the tier, `0` when unknown."
+          format: int32
+          minimum: 0
+          type: integer
       required:
       - badge
-      - raw_score
+      - rank
+      - subrank
+    RankedSeason:
+      example:
+        calibration_matches: 0
+        class_name: class_name
+        intervals:
+        - end_timestamp: 6
+          interval: 0
+          start_timestamp: 5
+        - end_timestamp: 6
+          interval: 0
+          start_timestamp: 5
+        min_hero_unlocks: 0
+        min_hero_wins: 0
+        min_wins: 0
+        name: name
+        ranked_type: ranked_type
+        valid_party_sizes:
+        - 0
+        - 0
+      properties:
+        calibration_matches:
+          format: int32
+          minimum: 0
+          type: integer
+        class_name:
+          type: string
+        intervals:
+          items:
+            $ref: "#/components/schemas/SeasonInterval"
+          type: array
+          default: null
+        min_hero_unlocks:
+          format: int32
+          minimum: 0
+          type: integer
+        min_hero_wins:
+          format: int32
+          minimum: 0
+          type: integer
+        min_wins:
+          format: int32
+          minimum: 0
+          type: integer
+        name:
+          type: string
+        ranked_type:
+          type: string
+        valid_party_sizes:
+          items:
+            format: int32
+            minimum: 0
+            type: integer
+          type: array
+          default: null
+      required:
+      - calibration_matches
+      - class_name
+      - intervals
+      - min_hero_unlocks
+      - min_hero_wins
+      - min_wins
+      - name
+      - ranked_type
+      - valid_party_sizes
     RawAbilityUpgrade:
       example:
         property_upgrades:
@@ -16065,6 +17949,28 @@ components:
           format: double
           nullable: true
           type: number
+    SeasonInterval:
+      example:
+        end_timestamp: 6
+        interval: 0
+        start_timestamp: 5
+      properties:
+        end_timestamp:
+          description: Unix timestamp (seconds) at which the interval ends.
+          format: int64
+          type: integer
+        interval:
+          format: int32
+          minimum: 0
+          type: integer
+        start_timestamp:
+          description: Unix timestamp (seconds) at which the interval starts.
+          format: int64
+          type: integer
+      required:
+      - end_timestamp
+      - interval
+      - start_timestamp
     ServerRegion:
       enum:
       - europe
@@ -16264,6 +18170,28 @@ components:
       required:
       - display_stats
       - other_display_stats
+    SourceLocation:
+      properties:
+        chain:
+          items:
+            type: string
+          type: array
+          default: null
+        column:
+          format: int32
+          type: integer
+        component:
+          nullable: true
+          type: string
+        file:
+          type: string
+        line:
+          format: int32
+          type: integer
+      required:
+      - column
+      - file
+      - line
     SpreadPenalty:
       description: |-
         Source data emits spread penalties as either a list of floats or a string
@@ -16545,8 +18473,7 @@ components:
       description: |-
         Per-patch Steam manifest as served by the public assets API.
 
-        Field order is load-bearing — it sets the JSON key order, which matches the
-        legacy Python endpoint.
+        Field order is load-bearing — it sets the JSON key order.
       example:
         app_id: 0
         client_version: 0
@@ -16590,7 +18517,7 @@ components:
         version_datetime:
           description: |-
             `version_date` + `version_time` combined into a naive ISO-8601 string
-            (`YYYY-MM-DDTHH:MM:SS`, no timezone) — matches the Python output.
+            (`YYYY-MM-DDTHH:MM:SS`, no timezone).
           type: string
         version_time:
           type: string
@@ -16834,6 +18761,7 @@ components:
         item_drafts:
           additionalProperties:
             $ref: "#/components/schemas/DraftBuckets"
+          type: object
         lane_number:
           format: int64
           type: integer
@@ -17202,6 +19130,8 @@ components:
         properties:
           additionalProperties:
             $ref: "#/components/schemas/UpgradeProperty"
+          nullable: true
+          type: object
         shop_image:
           nullable: true
           type: string
@@ -17393,6 +19323,21 @@ components:
           allOf:
           - $ref: "#/components/schemas/RecoilRange"
           nullable: true
+    Viewport:
+      properties:
+        device_pixel_ratio:
+          format: float
+          type: number
+        height:
+          format: int32
+          type: integer
+        width:
+          format: int32
+          type: integer
+      required:
+      - device_pixel_ratio
+      - height
+      - width
     Weapon:
       properties:
         class_name:
@@ -17432,6 +19377,8 @@ components:
         properties:
           additionalProperties:
             $ref: "#/components/schemas/ItemProperty"
+          nullable: true
+          type: object
         start_trained:
           nullable: true
           type: boolean
@@ -18130,6 +20077,7 @@ x-tagGroups:
   - Accolades
   - Steam Info
   - Colors
+  - Ranked Seasons
 - name: Game Info
   tags:
   - Info

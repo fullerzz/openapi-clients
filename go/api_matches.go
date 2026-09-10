@@ -293,6 +293,7 @@ type ApiBulkMetadataRequest struct {
 	includePlayerStats *bool
 	includePlayerFinalStats *bool
 	includePlayerDeathDetails *bool
+	includePlayerCustomUserStats *bool
 	gameMode *string
 	matchMode *string
 	matchIds *[]int64
@@ -377,6 +378,12 @@ func (r ApiBulkMetadataRequest) IncludePlayerFinalStats(includePlayerFinalStats 
 // Include player death details in the response.
 func (r ApiBulkMetadataRequest) IncludePlayerDeathDetails(includePlayerDeathDetails bool) ApiBulkMetadataRequest {
 	r.includePlayerDeathDetails = &includePlayerDeathDetails
+	return r
+}
+
+// Include per-player &#x60;custom_user_stats&#x60; (a map of stat name to value) in the response.
+func (r ApiBulkMetadataRequest) IncludePlayerCustomUserStats(includePlayerCustomUserStats bool) ApiBulkMetadataRequest {
+	r.includePlayerCustomUserStats = &includePlayerCustomUserStats
 	return r
 }
 
@@ -540,9 +547,11 @@ BulkMetadata Bulk Metadata
 
 This endpoints lets you fetch multiple match metadata at once. The response is a JSON array of match metadata.
 
-When player info is included, each player object contains a `hero_build_id` field (if available) from demo analysis.
+When player info is included, each player object contains `hero_build_id` and `pregame_hero_id` fields (if available) from demo analysis.
 
 > **Note:** The `hero_build_id` represents the first build the player had selected when the game started. It does not reflect any build changes made during the match.
+
+> **Note:** The `pregame_hero_id` is the hero the player had locked before the pre-game swap window (`null` if unknown). A player swapped heroes when it differs from their `hero_id`.
 
 ### Rate Limits:
 | Type | Limit |
@@ -616,6 +625,9 @@ func (a *MatchesAPIService) BulkMetadataExecute(r ApiBulkMetadataRequest) ([]int
 	}
 	if r.includePlayerDeathDetails != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_player_death_details", r.includePlayerDeathDetails, "form", "")
+	}
+	if r.includePlayerCustomUserStats != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_player_custom_user_stats", r.includePlayerCustomUserStats, "form", "")
 	}
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
@@ -913,6 +925,8 @@ This endpoint returns the match metadata for the given `match_id` parsed into JS
 Each player object is enriched with a `hero_build_id` field (if available) from demo analysis.
 
 > **Note:** The `hero_build_id` represents the first build the player had selected when the game started. It does not reflect any build changes made during the match.
+
+`pregame_hero_ids` maps `account_id` to the hero the player had locked before the pre-game swap window (if available from demo analysis). A player swapped heroes when it differs from their `hero_id`.
 
 Protobuf definitions can be found here: [https://github.com/SteamDatabase/Protobufs](https://github.com/SteamDatabase/Protobufs)
 
@@ -1414,9 +1428,9 @@ Example Parsers:
 ### Rate Limits:
 | Type | Limit |
 | ---- | ----- |
-| IP | 2req/h |
-| Key | 5req/m, 100req/h |
-| Global | 5req/10s, 500req/h |
+| IP | 6req/h |
+| Key | 20req/10m, 100req/h |
+| Global | 100req/10m, 500req/h |
     
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().

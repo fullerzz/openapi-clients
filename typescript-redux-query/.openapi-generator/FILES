@@ -28,6 +28,7 @@ src/apis/MiscEntitiesApi.ts
 src/apis/NPCUnitsApi.ts
 src/apis/PatchesApi.ts
 src/apis/PlayersApi.ts
+src/apis/RankedSeasonsApi.ts
 src/apis/RanksApi.ts
 src/apis/SQLApi.ts
 src/apis/ServersApi.ts
@@ -84,6 +85,9 @@ src/models/EnemyStats.ts
 src/models/FeedItem.ts
 src/models/FeedItemOneOf.ts
 src/models/FeedItemOneOf1.ts
+src/models/FeedbackKind.ts
+src/models/FeedbackSubmission.ts
+src/models/FeedbackTarget.ts
 src/models/FlashData.ts
 src/models/ForumPatch.ts
 src/models/GameMode.ts
@@ -131,6 +135,11 @@ src/models/ItemType.ts
 src/models/JobStatus.ts
 src/models/KillDeathStats.ts
 src/models/LaneInfo.ts
+src/models/LaneMatchupStat.ts
+src/models/LaneMatchupStats.ts
+src/models/LaneSoulCurve.ts
+src/models/LaneStatCurve.ts
+src/models/LastRankedMatch.ts
 src/models/Leaderboard.ts
 src/models/LeaderboardEntry.ts
 src/models/ListServersResponse.ts
@@ -169,8 +178,8 @@ src/models/PlayerMatchHistoryEntry.ts
 src/models/PlayerPerformanceCurvePoint.ts
 src/models/Rank.ts
 src/models/RankImages.ts
-src/models/RankPredictResponse.ts
-src/models/RankPrediction.ts
+src/models/RankResponse.ts
+src/models/RankedSeason.ts
 src/models/RawAbilityUpgrade.ts
 src/models/RawAbilityUpgradePropertyUpgrade.ts
 src/models/RawCustomCrosshairSettings.ts
@@ -184,6 +193,7 @@ src/models/RecoilRange.ts
 src/models/RegionMode.ts
 src/models/RejuvParams.ts
 src/models/ScriptValues.ts
+src/models/SeasonInterval.ts
 src/models/ServerRegion.ts
 src/models/ServerStatusRequest.ts
 src/models/ServerStatusResponse.ts
@@ -191,6 +201,7 @@ src/models/ShopSpiritStatsDisplay.ts
 src/models/ShopStatDisplay.ts
 src/models/ShopVitalityStatsDisplay.ts
 src/models/ShopWeaponStatsDisplay.ts
+src/models/SourceLocation.ts
 src/models/SpreadPenalty.ts
 src/models/StartingStat.ts
 src/models/StartingStats.ts
@@ -234,6 +245,7 @@ src/models/UpgradeTooltipSectionAttribute.ts
 src/models/VariableCategory.ts
 src/models/VariableDescription.ts
 src/models/VerticalRecoil.ts
+src/models/Viewport.ts
 src/models/Weapon.ts
 src/models/WeaponInfo.ts
 src/models/ZiplanePath.ts

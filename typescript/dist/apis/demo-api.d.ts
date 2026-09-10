@@ -21,7 +21,7 @@ import type { DemoSchemaResponse } from '../models/index.js';
  */
 export declare const DemoApiAxiosParamCreator: (configuration?: Configuration) => {
     /**
-     *  Run a SQL query over a match\'s **live** broadcast and stream result rows over Server-Sent Events as the match plays, instead of waiting for the demo to finish (see the async `/demo/query`).  Provide either `match_id` (the server spectates the lobby to obtain the broadcast URL) or an explicit `broadcast_url` from `/live/urls`.  Projection/filter queries emit rows continuously as they are decoded. A whole-match aggregation (`GROUP BY` / `ORDER BY`) can only produce its final rows once the broadcast ends.  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 20req/m | | Global | 100req/m |
+     *  Run a SQL query over a match\'s **live** broadcast and stream result rows over Server-Sent Events as the match plays, instead of waiting for the demo to finish (see the async `/demo/query`).  Provide either `match_id` (the server spectates the lobby to obtain the broadcast URL) or an explicit `broadcast_url` from `/live/urls`.  Projection/filter queries emit rows continuously as they are decoded. A whole-match aggregation (`GROUP BY` / `ORDER BY`) can only produce its final rows once the broadcast ends.  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | With broadcast_url: 20req/m<br>With match_id: 6req/h | | Key | With broadcast_url: -<br>With match_id: 20req/10m, 100req/h | | Global | With broadcast_url: 100req/m<br>With match_id: 100req/10m, 500req/h |
      * @summary Live Demo Query (SSE)
      * @param {string} query SQL query to run over the broadcast\&#39;s entity/event tables (see &#x60;/demo/schema&#x60;).
      * @param {number | null} [matchId] Match to spectate and stream. Provide this or &#x60;broadcast_url&#x60;; &#x60;broadcast_url&#x60; wins if both are given. Resolving a match spectates its lobby and is rate-limited.
@@ -60,7 +60,7 @@ export declare const DemoApiAxiosParamCreator: (configuration?: Configuration) =
  */
 export declare const DemoApiFp: (configuration?: Configuration) => {
     /**
-     *  Run a SQL query over a match\'s **live** broadcast and stream result rows over Server-Sent Events as the match plays, instead of waiting for the demo to finish (see the async `/demo/query`).  Provide either `match_id` (the server spectates the lobby to obtain the broadcast URL) or an explicit `broadcast_url` from `/live/urls`.  Projection/filter queries emit rows continuously as they are decoded. A whole-match aggregation (`GROUP BY` / `ORDER BY`) can only produce its final rows once the broadcast ends.  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 20req/m | | Global | 100req/m |
+     *  Run a SQL query over a match\'s **live** broadcast and stream result rows over Server-Sent Events as the match plays, instead of waiting for the demo to finish (see the async `/demo/query`).  Provide either `match_id` (the server spectates the lobby to obtain the broadcast URL) or an explicit `broadcast_url` from `/live/urls`.  Projection/filter queries emit rows continuously as they are decoded. A whole-match aggregation (`GROUP BY` / `ORDER BY`) can only produce its final rows once the broadcast ends.  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | With broadcast_url: 20req/m<br>With match_id: 6req/h | | Key | With broadcast_url: -<br>With match_id: 20req/10m, 100req/h | | Global | With broadcast_url: 100req/m<br>With match_id: 100req/10m, 500req/h |
      * @summary Live Demo Query (SSE)
      * @param {string} query SQL query to run over the broadcast\&#39;s entity/event tables (see &#x60;/demo/schema&#x60;).
      * @param {number | null} [matchId] Match to spectate and stream. Provide this or &#x60;broadcast_url&#x60;; &#x60;broadcast_url&#x60; wins if both are given. Resolving a match spectates its lobby and is rate-limited.
@@ -99,7 +99,7 @@ export declare const DemoApiFp: (configuration?: Configuration) => {
  */
 export declare const DemoApiFactory: (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) => {
     /**
-     *  Run a SQL query over a match\'s **live** broadcast and stream result rows over Server-Sent Events as the match plays, instead of waiting for the demo to finish (see the async `/demo/query`).  Provide either `match_id` (the server spectates the lobby to obtain the broadcast URL) or an explicit `broadcast_url` from `/live/urls`.  Projection/filter queries emit rows continuously as they are decoded. A whole-match aggregation (`GROUP BY` / `ORDER BY`) can only produce its final rows once the broadcast ends.  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 20req/m | | Global | 100req/m |
+     *  Run a SQL query over a match\'s **live** broadcast and stream result rows over Server-Sent Events as the match plays, instead of waiting for the demo to finish (see the async `/demo/query`).  Provide either `match_id` (the server spectates the lobby to obtain the broadcast URL) or an explicit `broadcast_url` from `/live/urls`.  Projection/filter queries emit rows continuously as they are decoded. A whole-match aggregation (`GROUP BY` / `ORDER BY`) can only produce its final rows once the broadcast ends.  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | With broadcast_url: 20req/m<br>With match_id: 6req/h | | Key | With broadcast_url: -<br>With match_id: 20req/10m, 100req/h | | Global | With broadcast_url: 100req/m<br>With match_id: 100req/10m, 500req/h |
      * @summary Live Demo Query (SSE)
      * @param {DemoApiLiveQueryRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
@@ -177,13 +177,13 @@ export interface DemoApiSubmitRequest {
  */
 export declare class DemoApi extends BaseAPI {
     /**
-     *  Run a SQL query over a match\'s **live** broadcast and stream result rows over Server-Sent Events as the match plays, instead of waiting for the demo to finish (see the async `/demo/query`).  Provide either `match_id` (the server spectates the lobby to obtain the broadcast URL) or an explicit `broadcast_url` from `/live/urls`.  Projection/filter queries emit rows continuously as they are decoded. A whole-match aggregation (`GROUP BY` / `ORDER BY`) can only produce its final rows once the broadcast ends.  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 20req/m | | Global | 100req/m |
+     *  Run a SQL query over a match\'s **live** broadcast and stream result rows over Server-Sent Events as the match plays, instead of waiting for the demo to finish (see the async `/demo/query`).  Provide either `match_id` (the server spectates the lobby to obtain the broadcast URL) or an explicit `broadcast_url` from `/live/urls`.  Projection/filter queries emit rows continuously as they are decoded. A whole-match aggregation (`GROUP BY` / `ORDER BY`) can only produce its final rows once the broadcast ends.  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | With broadcast_url: 20req/m<br>With match_id: 6req/h | | Key | With broadcast_url: -<br>With match_id: 20req/10m, 100req/h | | Global | With broadcast_url: 100req/m<br>With match_id: 100req/10m, 500req/h |
      * @summary Live Demo Query (SSE)
      * @param {DemoApiLiveQueryRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    liveQuery(requestParameters: DemoApiLiveQueryRequest, options?: RawAxiosRequestConfig): Promise<import("axios").AxiosResponse<void, any, {}>>;
+    liveQuery(requestParameters: DemoApiLiveQueryRequest, options?: RawAxiosRequestConfig): Promise<import("axios").AxiosResponse<void, any, {}, any>>;
     /**
      *  Returns the queryable schema of a match\'s demo file: every entity and event table with its columns and Arrow types.  By default this returns the schema of the most recent match we have a demo for. Optionally pass `match_id` to read the schema for a specific match; if we don\'t already have its salts, they are fetched from Steam (rate limited, see `/{match_id}/salts`).
      * @summary Demo Schema
@@ -191,7 +191,7 @@ export declare class DemoApi extends BaseAPI {
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    schema(requestParameters?: DemoApiSchemaRequest, options?: RawAxiosRequestConfig): Promise<import("axios").AxiosResponse<DemoSchemaResponse, any, {}>>;
+    schema(requestParameters?: DemoApiSchemaRequest, options?: RawAxiosRequestConfig): Promise<import("axios").AxiosResponse<DemoSchemaResponse, any, {}, any>>;
     /**
      *  Returns the status of a demo query job. While `queued`/`running` it includes a rough `estimated_wait_seconds`; when `done` it includes `result_url` (a public link to the Parquet artifact, or the zstd-compressed `.ndjson.zst` artifact); when `failed` it includes `error`.
      * @summary Demo Query Status
@@ -199,7 +199,7 @@ export declare class DemoApi extends BaseAPI {
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    status(requestParameters: DemoApiStatusRequest, options?: RawAxiosRequestConfig): Promise<import("axios").AxiosResponse<DemoQueryStatusResponse, any, {}>>;
+    status(requestParameters: DemoApiStatusRequest, options?: RawAxiosRequestConfig): Promise<import("axios").AxiosResponse<DemoQueryStatusResponse, any, {}, any>>;
     /**
      *  Submit a SQL query against a match\'s demo file. The work (download + decompress + parse + query) takes ~55s, so this is asynchronous: the endpoint returns a `job_id` you poll via `/demo/query/{job_id}`. Once done, the status response carries a public URL to the result artifact (Parquet or NDJSON).  Identical `(match_id, query, format)` submissions are deduplicated and reuse a cached result.  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 20req/h | | Key | 200req/h | | Global | 400req/h |
      * @summary Demo Query
@@ -207,6 +207,6 @@ export declare class DemoApi extends BaseAPI {
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    submit(requestParameters: DemoApiSubmitRequest, options?: RawAxiosRequestConfig): Promise<import("axios").AxiosResponse<DemoQueryJobResponse, any, {}>>;
+    submit(requestParameters: DemoApiSubmitRequest, options?: RawAxiosRequestConfig): Promise<import("axios").AxiosResponse<DemoQueryJobResponse, any, {}, any>>;
 }
 //# sourceMappingURL=demo-api.d.ts.map

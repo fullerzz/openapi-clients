@@ -62,6 +62,9 @@ from deadlock_api_client.models.enemy_stats import EnemyStats
 from deadlock_api_client.models.feed_item import FeedItem
 from deadlock_api_client.models.feed_item_one_of import FeedItemOneOf
 from deadlock_api_client.models.feed_item_one_of1 import FeedItemOneOf1
+from deadlock_api_client.models.feedback_kind import FeedbackKind
+from deadlock_api_client.models.feedback_submission import FeedbackSubmission
+from deadlock_api_client.models.feedback_target import FeedbackTarget
 from deadlock_api_client.models.flash_data import FlashData
 from deadlock_api_client.models.forum_patch import ForumPatch
 from deadlock_api_client.models.game_mode import GameMode
@@ -109,6 +112,11 @@ from deadlock_api_client.models.item_type import ItemType
 from deadlock_api_client.models.job_status import JobStatus
 from deadlock_api_client.models.kill_death_stats import KillDeathStats
 from deadlock_api_client.models.lane_info import LaneInfo
+from deadlock_api_client.models.lane_matchup_stat import LaneMatchupStat
+from deadlock_api_client.models.lane_matchup_stats import LaneMatchupStats
+from deadlock_api_client.models.lane_soul_curve import LaneSoulCurve
+from deadlock_api_client.models.lane_stat_curve import LaneStatCurve
+from deadlock_api_client.models.last_ranked_match import LastRankedMatch
 from deadlock_api_client.models.leaderboard import Leaderboard
 from deadlock_api_client.models.leaderboard_entry import LeaderboardEntry
 from deadlock_api_client.models.list_servers_response import ListServersResponse
@@ -147,8 +155,8 @@ from deadlock_api_client.models.player_match_history_entry import PlayerMatchHis
 from deadlock_api_client.models.player_performance_curve_point import PlayerPerformanceCurvePoint
 from deadlock_api_client.models.rank import Rank
 from deadlock_api_client.models.rank_images import RankImages
-from deadlock_api_client.models.rank_predict_response import RankPredictResponse
-from deadlock_api_client.models.rank_prediction import RankPrediction
+from deadlock_api_client.models.rank_response import RankResponse
+from deadlock_api_client.models.ranked_season import RankedSeason
 from deadlock_api_client.models.raw_ability_upgrade import RawAbilityUpgrade
 from deadlock_api_client.models.raw_ability_upgrade_property_upgrade import RawAbilityUpgradePropertyUpgrade
 from deadlock_api_client.models.raw_custom_crosshair_settings import RawCustomCrosshairSettings
@@ -162,6 +170,7 @@ from deadlock_api_client.models.recoil_range import RecoilRange
 from deadlock_api_client.models.region_mode import RegionMode
 from deadlock_api_client.models.rejuv_params import RejuvParams
 from deadlock_api_client.models.script_values import ScriptValues
+from deadlock_api_client.models.season_interval import SeasonInterval
 from deadlock_api_client.models.server_region import ServerRegion
 from deadlock_api_client.models.server_status_request import ServerStatusRequest
 from deadlock_api_client.models.server_status_response import ServerStatusResponse
@@ -169,6 +178,7 @@ from deadlock_api_client.models.shop_spirit_stats_display import ShopSpiritStats
 from deadlock_api_client.models.shop_stat_display import ShopStatDisplay
 from deadlock_api_client.models.shop_vitality_stats_display import ShopVitalityStatsDisplay
 from deadlock_api_client.models.shop_weapon_stats_display import ShopWeaponStatsDisplay
+from deadlock_api_client.models.source_location import SourceLocation
 from deadlock_api_client.models.spread_penalty import SpreadPenalty
 from deadlock_api_client.models.starting_stat import StartingStat
 from deadlock_api_client.models.starting_stats import StartingStats
@@ -212,6 +222,7 @@ from deadlock_api_client.models.upgrade_tooltip_section_attribute import Upgrade
 from deadlock_api_client.models.variable_category import VariableCategory
 from deadlock_api_client.models.variable_description import VariableDescription
 from deadlock_api_client.models.vertical_recoil import VerticalRecoil
+from deadlock_api_client.models.viewport import Viewport
 from deadlock_api_client.models.weapon import Weapon
 from deadlock_api_client.models.weapon_info import WeaponInfo
 from deadlock_api_client.models.ziplane_path import ZiplanePath

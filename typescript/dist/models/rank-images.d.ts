@@ -13,33 +13,128 @@
  * Image URLs for a single rank tier. Field declaration order is load-bearing: it sets the JSON key order, which is stable across versions of this API.
  */
 export interface RankImages {
+    'chalk'?: string | null;
+    'chalk_webp'?: string | null;
     'large'?: string | null;
+    /**
+     * @deprecated
+     */
     'large_subrank1'?: string | null;
+    /**
+     * @deprecated
+     */
     'large_subrank1_webp'?: string | null;
+    /**
+     * @deprecated
+     */
     'large_subrank2'?: string | null;
+    /**
+     * @deprecated
+     */
     'large_subrank2_webp'?: string | null;
+    /**
+     * @deprecated
+     */
     'large_subrank3'?: string | null;
+    /**
+     * @deprecated
+     */
     'large_subrank3_webp'?: string | null;
+    /**
+     * @deprecated
+     */
     'large_subrank4'?: string | null;
+    /**
+     * @deprecated
+     */
     'large_subrank4_webp'?: string | null;
+    /**
+     * @deprecated
+     */
     'large_subrank5'?: string | null;
+    /**
+     * @deprecated
+     */
     'large_subrank5_webp'?: string | null;
+    /**
+     * @deprecated
+     */
     'large_subrank6'?: string | null;
+    /**
+     * @deprecated
+     */
     'large_subrank6_webp'?: string | null;
     'large_webp'?: string | null;
+    /**
+     * @deprecated
+     */
     'small'?: string | null;
+    /**
+     * @deprecated
+     */
     'small_subrank1'?: string | null;
+    /**
+     * @deprecated
+     */
     'small_subrank1_webp'?: string | null;
+    /**
+     * @deprecated
+     */
     'small_subrank2'?: string | null;
+    /**
+     * @deprecated
+     */
     'small_subrank2_webp'?: string | null;
+    /**
+     * @deprecated
+     */
     'small_subrank3'?: string | null;
+    /**
+     * @deprecated
+     */
     'small_subrank3_webp'?: string | null;
+    /**
+     * @deprecated
+     */
     'small_subrank4'?: string | null;
+    /**
+     * @deprecated
+     */
     'small_subrank4_webp'?: string | null;
+    /**
+     * @deprecated
+     */
     'small_subrank5'?: string | null;
+    /**
+     * @deprecated
+     */
     'small_subrank5_webp'?: string | null;
+    /**
+     * @deprecated
+     */
     'small_subrank6'?: string | null;
+    /**
+     * @deprecated
+     */
     'small_subrank6_webp'?: string | null;
+    /**
+     * @deprecated
+     */
     'small_webp'?: string | null;
+    /**
+     * Tier badge with the division numeral drawn on it, composed on demand by this API.
+     */
+    'subrank1'?: string | null;
+    'subrank1_webp'?: string | null;
+    'subrank2'?: string | null;
+    'subrank2_webp'?: string | null;
+    'subrank3'?: string | null;
+    'subrank3_webp'?: string | null;
+    'subrank4'?: string | null;
+    'subrank4_webp'?: string | null;
+    'subrank5'?: string | null;
+    'subrank5_webp'?: string | null;
+    'subrank6'?: string | null;
+    'subrank6_webp'?: string | null;
 }
 //# sourceMappingURL=rank-images.d.ts.map

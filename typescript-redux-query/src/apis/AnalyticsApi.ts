@@ -63,6 +63,12 @@ import {
     KillDeathStats,
     KillDeathStatsFromJSON,
     KillDeathStatsToJSON,
+    LaneMatchupStats,
+    LaneMatchupStatsFromJSON,
+    LaneMatchupStatsToJSON,
+    LaneSoulCurve,
+    LaneSoulCurveFromJSON,
+    LaneSoulCurveToJSON,
     PlayerEntry,
     PlayerEntryFromJSON,
     PlayerEntryToJSON,
@@ -74,6 +80,7 @@ import {
 export interface AbilityOrderStatsRequest {
     heroId: number;
     gameMode?: AbilityOrderStatsGameModeEnum;
+    matchMode?: string;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
     minDurationS?: number;
@@ -95,6 +102,7 @@ export interface AbilityOrderStatsRequest {
 
 export interface BadgeDistributionRequest {
     gameMode?: BadgeDistributionGameModeEnum;
+    matchMode?: string;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
     minDurationS?: number;
@@ -115,6 +123,7 @@ export interface BuildItemStatsRequest {
 export interface GameStatsRequest {
     bucket?: GameStatsBucketEnum;
     gameMode?: GameStatsGameModeEnum;
+    matchMode?: string;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
     minDurationS?: number;
@@ -132,6 +141,7 @@ export interface GameStatsRequest {
 }
 
 export interface HeroBanStatsRequest {
+    matchMode?: string;
     bucket?: HeroBanStatsBucketEnum;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
@@ -145,6 +155,7 @@ export interface HeroBanStatsRequest {
 
 export interface HeroBuildStatsRequest {
     heroId: number;
+    matchMode?: string;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
     minDurationS?: number;
@@ -161,6 +172,7 @@ export interface HeroBuildStatsRequest {
 
 export interface HeroCombStatsRequest {
     gameMode?: HeroCombStatsGameModeEnum;
+    matchMode?: string;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
     minDurationS?: number;
@@ -184,6 +196,7 @@ export interface HeroCombStatsRequest {
 
 export interface HeroCountersStatsRequest {
     gameMode?: HeroCountersStatsGameModeEnum;
+    matchMode?: string;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
     minDurationS?: number;
@@ -207,6 +220,7 @@ export interface HeroScoreboardRequest {
     sortBy: HeroScoreboardSortByEnum;
     sortDirection?: HeroScoreboardSortDirectionEnum;
     gameMode?: HeroScoreboardGameModeEnum;
+    matchMode?: string;
     minMatches?: number;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
@@ -225,6 +239,7 @@ export interface HeroScoreboardRequest {
 export interface HeroStatsRequest {
     bucket?: HeroStatsBucketEnum;
     gameMode?: HeroStatsGameModeEnum;
+    matchMode?: string;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
     minDurationS?: number;
@@ -247,6 +262,7 @@ export interface HeroStatsRequest {
 
 export interface HeroSynergiesStatsRequest {
     gameMode?: HeroSynergiesStatsGameModeEnum;
+    matchMode?: string;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
     minDurationS?: number;
@@ -268,6 +284,7 @@ export interface ItemFlowStatsRequest {
     phaseIntervalS?: number;
     phaseCount?: number;
     gameMode?: ItemFlowStatsGameModeEnum;
+    matchMode?: string;
     heroIds?: string;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
@@ -293,6 +310,7 @@ export interface ItemPermutationStatsRequest {
     minMatches?: number;
     maxMatches?: number;
     gameMode?: ItemPermutationStatsGameModeEnum;
+    matchMode?: string;
     heroIds?: string;
     heroId?: number;
     minUnixTimestamp?: number;
@@ -312,6 +330,7 @@ export interface ItemPermutationStatsRequest {
 export interface ItemStatsRequest {
     bucket?: ItemStatsBucketEnum;
     gameMode?: ItemStatsGameModeEnum;
+    matchMode?: string;
     heroIds?: string;
     heroId?: number;
     enemyHeroIds?: string;
@@ -343,6 +362,7 @@ export interface ItemStatsRequest {
 export interface KillDeathStatsRequest {
     team?: number;
     gameMode?: KillDeathStatsGameModeEnum;
+    matchMode?: string;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
     minDurationS?: number;
@@ -366,9 +386,55 @@ export interface KillDeathStatsRequest {
     maxGameTimeS?: number;
 }
 
+export interface LaneMatchupStatsRequest {
+    gameMode?: LaneMatchupStatsGameModeEnum;
+    matchMode?: string;
+    minUnixTimestamp?: number;
+    maxUnixTimestamp?: number;
+    minDurationS?: number;
+    maxDurationS?: number;
+    minAverageBadge?: number;
+    maxAverageBadge?: number;
+    minMatchId?: number;
+    maxMatchId?: number;
+    sampleTimeS?: number;
+    assignedLanes?: string;
+    heroIds?: Array<number>;
+    enemyHeroIds?: Array<number>;
+    stats?: string;
+    groupBy?: string;
+    minMatches?: number;
+    maxMatches?: number;
+    accountIds?: Array<number>;
+}
+
+export interface LaneSoulCurveRequest {
+    gameMode?: LaneSoulCurveGameModeEnum;
+    matchMode?: string;
+    minUnixTimestamp?: number;
+    maxUnixTimestamp?: number;
+    minDurationS?: number;
+    maxDurationS?: number;
+    minAverageBadge?: number;
+    maxAverageBadge?: number;
+    minMatchId?: number;
+    maxMatchId?: number;
+    minTimeS?: number;
+    maxTimeS?: number;
+    assignedLanes?: string;
+    heroIds?: Array<number>;
+    enemyHeroIds?: Array<number>;
+    stats?: string;
+    groupBy?: string;
+    minMatches?: number;
+    maxMatches?: number;
+    accountIds?: Array<number>;
+}
+
 export interface PlayerPerformanceCurveRequest {
     resolution?: number;
     gameMode?: PlayerPerformanceCurveGameModeEnum;
+    matchMode?: string;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
     minDurationS?: number;
@@ -389,6 +455,7 @@ export interface PlayerScoreboardRequest {
     sortBy: PlayerScoreboardSortByEnum;
     sortDirection?: PlayerScoreboardSortDirectionEnum;
     gameMode?: PlayerScoreboardGameModeEnum;
+    matchMode?: string;
     heroId?: number;
     minMatches?: number;
     maxMatches?: number;
@@ -410,6 +477,7 @@ export interface PlayerScoreboardRequest {
 export interface PlayerStatsMetricsRequest {
     heroIds?: string;
     gameMode?: PlayerStatsMetricsGameModeEnum;
+    matchMode?: string;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
     minDurationS?: number;
@@ -448,6 +516,11 @@ function abilityOrderStatsRaw<T>(requestParameters: AbilityOrderStatsRequest, re
 
     if (requestParameters.gameMode !== undefined) {
         queryParameters['game_mode'] = requestParameters.gameMode;
+    }
+
+
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
     }
 
 
@@ -572,7 +645,7 @@ export function abilityOrderStats<T>(requestParameters: AbilityOrderStatsRequest
 }
 
 /**
- *  This endpoint returns the player badge distribution.  ### Rate Limits: > The rate limits below are **shared across all analytics endpoints**.  | Type | Limit | | ---- | ----- | | IP | 200req/min | | Key | 400req/min | | Global | 2000req/min |     
+ *  This endpoint returns the player badge distribution.  `total_matches` counts matches by their average badge, while `unique_players` counts players by the rank Valve reported at the end of their latest ranked match within the filtered range. Since only ranked matches carry a rank, `unique_players` ignores the `match_mode` filter and always looks at ranked matches.  Ranks exist only from the first ranked season on, so `min_unix_timestamp` is clamped to its start.  ### Rate Limits: > The rate limits below are **shared across all analytics endpoints**.  | Type | Limit | | ---- | ----- | | IP | 200req/min | | Key | 400req/min | | Global | 2000req/min |     
  * Badge Distribution
  */
 function badgeDistributionRaw<T>(requestParameters: BadgeDistributionRequest, requestConfig: runtime.TypedQueryConfig<T, Array<BadgeDistribution>> = {}): QueryConfig<T> {
@@ -583,6 +656,11 @@ function badgeDistributionRaw<T>(requestParameters: BadgeDistributionRequest, re
 
     if (requestParameters.gameMode !== undefined) {
         queryParameters['game_mode'] = requestParameters.gameMode;
+    }
+
+
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
     }
 
 
@@ -659,7 +737,7 @@ function badgeDistributionRaw<T>(requestParameters: BadgeDistributionRequest, re
 }
 
 /**
-*  This endpoint returns the player badge distribution.  ### Rate Limits: > The rate limits below are **shared across all analytics endpoints**.  | Type | Limit | | ---- | ----- | | IP | 200req/min | | Key | 400req/min | | Global | 2000req/min |     
+*  This endpoint returns the player badge distribution.  `total_matches` counts matches by their average badge, while `unique_players` counts players by the rank Valve reported at the end of their latest ranked match within the filtered range. Since only ranked matches carry a rank, `unique_players` ignores the `match_mode` filter and always looks at ranked matches.  Ranks exist only from the first ranked season on, so `min_unix_timestamp` is clamped to its start.  ### Rate Limits: > The rate limits below are **shared across all analytics endpoints**.  | Type | Limit | | ---- | ----- | | IP | 200req/min | | Key | 400req/min | | Global | 2000req/min |     
 * Badge Distribution
 */
 export function badgeDistribution<T>(requestParameters: BadgeDistributionRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<BadgeDistribution>>): QueryConfig<T> {
@@ -743,6 +821,11 @@ function gameStatsRaw<T>(requestParameters: GameStatsRequest, requestConfig: run
 
     if (requestParameters.gameMode !== undefined) {
         queryParameters['game_mode'] = requestParameters.gameMode;
+    }
+
+
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
     }
 
 
@@ -861,6 +944,11 @@ function heroBanStatsRaw<T>(requestParameters: HeroBanStatsRequest, requestConfi
     queryParameters = {};
 
 
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
+    }
+
+
     if (requestParameters.bucket !== undefined) {
         queryParameters['bucket'] = requestParameters.bucket;
     }
@@ -953,6 +1041,11 @@ function heroBuildStatsRaw<T>(requestParameters: HeroBuildStatsRequest, requestC
     let queryParameters = null;
 
     queryParameters = {};
+
+
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
+    }
 
 
     if (requestParameters.minUnixTimestamp !== undefined) {
@@ -1062,6 +1155,11 @@ function heroCombStatsRaw<T>(requestParameters: HeroCombStatsRequest, requestCon
 
     if (requestParameters.gameMode !== undefined) {
         queryParameters['game_mode'] = requestParameters.gameMode;
+    }
+
+
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
     }
 
 
@@ -1207,6 +1305,11 @@ function heroCountersStatsRaw<T>(requestParameters: HeroCountersStatsRequest, re
 
     if (requestParameters.gameMode !== undefined) {
         queryParameters['game_mode'] = requestParameters.gameMode;
+    }
+
+
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
     }
 
 
@@ -1359,6 +1462,11 @@ function heroScoreboardRaw<T>(requestParameters: HeroScoreboardRequest, requestC
     }
 
 
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
+    }
+
+
     if (requestParameters.minMatches !== undefined) {
         queryParameters['min_matches'] = requestParameters.minMatches;
     }
@@ -1476,6 +1584,11 @@ function heroStatsRaw<T>(requestParameters: HeroStatsRequest, requestConfig: run
 
     if (requestParameters.gameMode !== undefined) {
         queryParameters['game_mode'] = requestParameters.gameMode;
+    }
+
+
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
     }
 
 
@@ -1619,6 +1732,11 @@ function heroSynergiesStatsRaw<T>(requestParameters: HeroSynergiesStatsRequest, 
     }
 
 
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
+    }
+
+
     if (requestParameters.minUnixTimestamp !== undefined) {
         queryParameters['min_unix_timestamp'] = requestParameters.minUnixTimestamp;
     }
@@ -1751,6 +1869,11 @@ function itemFlowStatsRaw<T>(requestParameters: ItemFlowStatsRequest, requestCon
 
     if (requestParameters.gameMode !== undefined) {
         queryParameters['game_mode'] = requestParameters.gameMode;
+    }
+
+
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
     }
 
 
@@ -1909,6 +2032,11 @@ function itemPermutationStatsRaw<T>(requestParameters: ItemPermutationStatsReque
     }
 
 
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
+    }
+
+
     if (requestParameters.heroIds !== undefined) {
         queryParameters['hero_ids'] = requestParameters.heroIds;
     }
@@ -2031,6 +2159,11 @@ function itemStatsRaw<T>(requestParameters: ItemStatsRequest, requestConfig: run
 
     if (requestParameters.gameMode !== undefined) {
         queryParameters['game_mode'] = requestParameters.gameMode;
+    }
+
+
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
     }
 
 
@@ -2219,6 +2352,11 @@ function killDeathStatsRaw<T>(requestParameters: KillDeathStatsRequest, requestC
     }
 
 
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
+    }
+
+
     if (requestParameters.minUnixTimestamp !== undefined) {
         queryParameters['min_unix_timestamp'] = requestParameters.minUnixTimestamp;
     }
@@ -2360,6 +2498,291 @@ export function killDeathStats<T>(requestParameters: KillDeathStatsRequest, requ
 }
 
 /**
+ *  > **⚠️ Subject to change:** This endpoint is newly added and not yet stable. Its parameters, response fields and semantics may change or be removed without notice.  Retrieves duo-versus-duo lane statistics: how a pair of heroes sharing a lane performed against the pair of heroes they laned against.  Win rate covers the whole match. Everything else is read at `sample_time_s` (900 by default, the last sample before the game\'s recording cadence coarsens) off the matchups that lasted that long, counted by `sample_matches`. Souls are always reported, in `net_worth_diff`; pass `stats` for any other per-tick stat the game records — kills, denies, player damage, healing, level and so on — each as the duo\'s own combined value *and* as its lead over the enemy duo.  Only lanes where *both* sides fielded exactly two players are counted, and each lane contributes one row per side, so every matchup appears twice with the two sides swapped.  `group_by` chooses what a row stands for. The default groups all three dimensions, giving one row per duo-versus-duo matchup per lane. Dropping `enemy_hero_ids` gives a duo\'s record across every opponent, dropping `hero_ids` gives what a duo is up against, and dropping `assigned_lane` merges the lanes. Folded dimensions come back as `0` / an empty array.  Pass `hero_ids` and `enemy_hero_ids` to scope the response to the duos you care about. Without them the full duo-versus-duo matrix is computed, which is a considerably more expensive query.  Results are cached for **1 hour**. The cache key is determined by the specific combination of filter parameters used in the query. Subsequent requests using the exact same filters within this timeframe will receive the cached response.  ### Rate Limits: > The rate limits below are **shared across all analytics endpoints**.  | Type | Limit | | ---- | ----- | | IP | 200req/min | | Key | 400req/min | | Global | 2000req/min |     
+ * Lane Matchup Stats (Subject to Change)
+ */
+function laneMatchupStatsRaw<T>(requestParameters: LaneMatchupStatsRequest, requestConfig: runtime.TypedQueryConfig<T, Array<LaneMatchupStats>> = {}): QueryConfig<T> {
+    let queryParameters = null;
+
+    queryParameters = {};
+
+
+    if (requestParameters.gameMode !== undefined) {
+        queryParameters['game_mode'] = requestParameters.gameMode;
+    }
+
+
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
+    }
+
+
+    if (requestParameters.minUnixTimestamp !== undefined) {
+        queryParameters['min_unix_timestamp'] = requestParameters.minUnixTimestamp;
+    }
+
+
+    if (requestParameters.maxUnixTimestamp !== undefined) {
+        queryParameters['max_unix_timestamp'] = requestParameters.maxUnixTimestamp;
+    }
+
+
+    if (requestParameters.minDurationS !== undefined) {
+        queryParameters['min_duration_s'] = requestParameters.minDurationS;
+    }
+
+
+    if (requestParameters.maxDurationS !== undefined) {
+        queryParameters['max_duration_s'] = requestParameters.maxDurationS;
+    }
+
+
+    if (requestParameters.minAverageBadge !== undefined) {
+        queryParameters['min_average_badge'] = requestParameters.minAverageBadge;
+    }
+
+
+    if (requestParameters.maxAverageBadge !== undefined) {
+        queryParameters['max_average_badge'] = requestParameters.maxAverageBadge;
+    }
+
+
+    if (requestParameters.minMatchId !== undefined) {
+        queryParameters['min_match_id'] = requestParameters.minMatchId;
+    }
+
+
+    if (requestParameters.maxMatchId !== undefined) {
+        queryParameters['max_match_id'] = requestParameters.maxMatchId;
+    }
+
+
+    if (requestParameters.sampleTimeS !== undefined) {
+        queryParameters['sample_time_s'] = requestParameters.sampleTimeS;
+    }
+
+
+    if (requestParameters.assignedLanes !== undefined) {
+        queryParameters['assigned_lanes'] = requestParameters.assignedLanes;
+    }
+
+
+    if (requestParameters.heroIds) {
+        queryParameters['hero_ids'] = requestParameters.heroIds;
+    }
+
+
+    if (requestParameters.enemyHeroIds) {
+        queryParameters['enemy_hero_ids'] = requestParameters.enemyHeroIds;
+    }
+
+
+    if (requestParameters.stats !== undefined) {
+        queryParameters['stats'] = requestParameters.stats;
+    }
+
+
+    if (requestParameters.groupBy !== undefined) {
+        queryParameters['group_by'] = requestParameters.groupBy;
+    }
+
+
+    if (requestParameters.minMatches !== undefined) {
+        queryParameters['min_matches'] = requestParameters.minMatches;
+    }
+
+
+    if (requestParameters.maxMatches !== undefined) {
+        queryParameters['max_matches'] = requestParameters.maxMatches;
+    }
+
+
+    if (requestParameters.accountIds) {
+        queryParameters['account_ids'] = requestParameters.accountIds;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/v1/analytics/lane-matchup-stats`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(LaneMatchupStatsFromJSON), text);
+    }
+
+    return config;
+}
+
+/**
+*  > **⚠️ Subject to change:** This endpoint is newly added and not yet stable. Its parameters, response fields and semantics may change or be removed without notice.  Retrieves duo-versus-duo lane statistics: how a pair of heroes sharing a lane performed against the pair of heroes they laned against.  Win rate covers the whole match. Everything else is read at `sample_time_s` (900 by default, the last sample before the game\'s recording cadence coarsens) off the matchups that lasted that long, counted by `sample_matches`. Souls are always reported, in `net_worth_diff`; pass `stats` for any other per-tick stat the game records — kills, denies, player damage, healing, level and so on — each as the duo\'s own combined value *and* as its lead over the enemy duo.  Only lanes where *both* sides fielded exactly two players are counted, and each lane contributes one row per side, so every matchup appears twice with the two sides swapped.  `group_by` chooses what a row stands for. The default groups all three dimensions, giving one row per duo-versus-duo matchup per lane. Dropping `enemy_hero_ids` gives a duo\'s record across every opponent, dropping `hero_ids` gives what a duo is up against, and dropping `assigned_lane` merges the lanes. Folded dimensions come back as `0` / an empty array.  Pass `hero_ids` and `enemy_hero_ids` to scope the response to the duos you care about. Without them the full duo-versus-duo matrix is computed, which is a considerably more expensive query.  Results are cached for **1 hour**. The cache key is determined by the specific combination of filter parameters used in the query. Subsequent requests using the exact same filters within this timeframe will receive the cached response.  ### Rate Limits: > The rate limits below are **shared across all analytics endpoints**.  | Type | Limit | | ---- | ----- | | IP | 200req/min | | Key | 400req/min | | Global | 2000req/min |     
+* Lane Matchup Stats (Subject to Change)
+*/
+export function laneMatchupStats<T>(requestParameters: LaneMatchupStatsRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<LaneMatchupStats>>): QueryConfig<T> {
+    return laneMatchupStatsRaw(requestParameters, requestConfig);
+}
+
+/**
+ *  > **⚠️ Subject to change:** This endpoint is newly added and not yet stable. Its parameters, response fields and semantics may change or be removed without notice.  Retrieves how a duo\'s lead over the duo they laned against develops over the course of the match.  The curve is not interpolated: it carries exactly the samples the game records, which are every 180 seconds up to the 15 minute mark and every 300 seconds after that. It runs from `min_time_s` (180 by default) to `max_time_s`, which is open by default, so a matchup is followed until its matches end. `sample_matches` reports how many matchups were still running at each point, and thins out towards the end of the curve.  Only lanes where *both* sides fielded exactly two players are counted, and each lane contributes one row per side, so every matchup appears twice with the two sides swapped.  Souls are always reported, in `net_worth_diff`. Pass `stats` for curves of any other per-tick stat the game records — kills, denies, player damage, healing, level and so on — each as the duo\'s own combined value *and* as its lead over the enemy duo.  `group_by` chooses what a row stands for. The default groups all three dimensions, giving one row per duo-versus-duo matchup per lane. Dropping `enemy_hero_ids` gives a duo\'s curve across every opponent, dropping `hero_ids` gives what a duo is up against, and dropping `assigned_lane` merges the lanes. Folded dimensions come back as `0` / an empty array.  Pass `hero_ids` and `enemy_hero_ids` to scope the response to the duos you care about. Without them the full duo-versus-duo matrix is computed, which is a considerably more expensive query.  Results are cached for **1 hour** based on the combination of query parameters provided. Subsequent identical requests within this timeframe will receive the cached response.  ### Rate Limits: > The rate limits below are **shared across all analytics endpoints**.  | Type | Limit | | ---- | ----- | | IP | 200req/min | | Key | 400req/min | | Global | 2000req/min |     
+ * Lane Soul Curve (Subject to Change)
+ */
+function laneSoulCurveRaw<T>(requestParameters: LaneSoulCurveRequest, requestConfig: runtime.TypedQueryConfig<T, Array<LaneSoulCurve>> = {}): QueryConfig<T> {
+    let queryParameters = null;
+
+    queryParameters = {};
+
+
+    if (requestParameters.gameMode !== undefined) {
+        queryParameters['game_mode'] = requestParameters.gameMode;
+    }
+
+
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
+    }
+
+
+    if (requestParameters.minUnixTimestamp !== undefined) {
+        queryParameters['min_unix_timestamp'] = requestParameters.minUnixTimestamp;
+    }
+
+
+    if (requestParameters.maxUnixTimestamp !== undefined) {
+        queryParameters['max_unix_timestamp'] = requestParameters.maxUnixTimestamp;
+    }
+
+
+    if (requestParameters.minDurationS !== undefined) {
+        queryParameters['min_duration_s'] = requestParameters.minDurationS;
+    }
+
+
+    if (requestParameters.maxDurationS !== undefined) {
+        queryParameters['max_duration_s'] = requestParameters.maxDurationS;
+    }
+
+
+    if (requestParameters.minAverageBadge !== undefined) {
+        queryParameters['min_average_badge'] = requestParameters.minAverageBadge;
+    }
+
+
+    if (requestParameters.maxAverageBadge !== undefined) {
+        queryParameters['max_average_badge'] = requestParameters.maxAverageBadge;
+    }
+
+
+    if (requestParameters.minMatchId !== undefined) {
+        queryParameters['min_match_id'] = requestParameters.minMatchId;
+    }
+
+
+    if (requestParameters.maxMatchId !== undefined) {
+        queryParameters['max_match_id'] = requestParameters.maxMatchId;
+    }
+
+
+    if (requestParameters.minTimeS !== undefined) {
+        queryParameters['min_time_s'] = requestParameters.minTimeS;
+    }
+
+
+    if (requestParameters.maxTimeS !== undefined) {
+        queryParameters['max_time_s'] = requestParameters.maxTimeS;
+    }
+
+
+    if (requestParameters.assignedLanes !== undefined) {
+        queryParameters['assigned_lanes'] = requestParameters.assignedLanes;
+    }
+
+
+    if (requestParameters.heroIds) {
+        queryParameters['hero_ids'] = requestParameters.heroIds;
+    }
+
+
+    if (requestParameters.enemyHeroIds) {
+        queryParameters['enemy_hero_ids'] = requestParameters.enemyHeroIds;
+    }
+
+
+    if (requestParameters.stats !== undefined) {
+        queryParameters['stats'] = requestParameters.stats;
+    }
+
+
+    if (requestParameters.groupBy !== undefined) {
+        queryParameters['group_by'] = requestParameters.groupBy;
+    }
+
+
+    if (requestParameters.minMatches !== undefined) {
+        queryParameters['min_matches'] = requestParameters.minMatches;
+    }
+
+
+    if (requestParameters.maxMatches !== undefined) {
+        queryParameters['max_matches'] = requestParameters.maxMatches;
+    }
+
+
+    if (requestParameters.accountIds) {
+        queryParameters['account_ids'] = requestParameters.accountIds;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/v1/analytics/lane-soul-curve`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(LaneSoulCurveFromJSON), text);
+    }
+
+    return config;
+}
+
+/**
+*  > **⚠️ Subject to change:** This endpoint is newly added and not yet stable. Its parameters, response fields and semantics may change or be removed without notice.  Retrieves how a duo\'s lead over the duo they laned against develops over the course of the match.  The curve is not interpolated: it carries exactly the samples the game records, which are every 180 seconds up to the 15 minute mark and every 300 seconds after that. It runs from `min_time_s` (180 by default) to `max_time_s`, which is open by default, so a matchup is followed until its matches end. `sample_matches` reports how many matchups were still running at each point, and thins out towards the end of the curve.  Only lanes where *both* sides fielded exactly two players are counted, and each lane contributes one row per side, so every matchup appears twice with the two sides swapped.  Souls are always reported, in `net_worth_diff`. Pass `stats` for curves of any other per-tick stat the game records — kills, denies, player damage, healing, level and so on — each as the duo\'s own combined value *and* as its lead over the enemy duo.  `group_by` chooses what a row stands for. The default groups all three dimensions, giving one row per duo-versus-duo matchup per lane. Dropping `enemy_hero_ids` gives a duo\'s curve across every opponent, dropping `hero_ids` gives what a duo is up against, and dropping `assigned_lane` merges the lanes. Folded dimensions come back as `0` / an empty array.  Pass `hero_ids` and `enemy_hero_ids` to scope the response to the duos you care about. Without them the full duo-versus-duo matrix is computed, which is a considerably more expensive query.  Results are cached for **1 hour** based on the combination of query parameters provided. Subsequent identical requests within this timeframe will receive the cached response.  ### Rate Limits: > The rate limits below are **shared across all analytics endpoints**.  | Type | Limit | | ---- | ----- | | IP | 200req/min | | Key | 400req/min | | Global | 2000req/min |     
+* Lane Soul Curve (Subject to Change)
+*/
+export function laneSoulCurve<T>(requestParameters: LaneSoulCurveRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<LaneSoulCurve>>): QueryConfig<T> {
+    return laneSoulCurveRaw(requestParameters, requestConfig);
+}
+
+/**
  *  Retrieves player performance statistics (net worth, kills, deaths, assists) over time throughout matches.  Results are cached for **1 hour** based on the unique combination of query parameters provided.  ### Rate Limits: > The rate limits below are **shared across all analytics endpoints**.  | Type | Limit | | ---- | ----- | | IP | 200req/min | | Key | 400req/min | | Global | 2000req/min |     
  * Player Performance Curve
  */
@@ -2376,6 +2799,11 @@ function playerPerformanceCurveRaw<T>(requestParameters: PlayerPerformanceCurveR
 
     if (requestParameters.gameMode !== undefined) {
         queryParameters['game_mode'] = requestParameters.gameMode;
+    }
+
+
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
     }
 
 
@@ -2513,6 +2941,11 @@ function playerScoreboardRaw<T>(requestParameters: PlayerScoreboardRequest, requ
     }
 
 
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
+    }
+
+
     if (requestParameters.heroId !== undefined) {
         queryParameters['hero_id'] = requestParameters.heroId;
     }
@@ -2645,6 +3078,11 @@ function playerStatsMetricsRaw<T>(requestParameters: PlayerStatsMetricsRequest, 
 
     if (requestParameters.gameMode !== undefined) {
         queryParameters['game_mode'] = requestParameters.gameMode;
+    }
+
+
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
     }
 
 
@@ -2834,6 +3272,7 @@ export enum HeroCountersStatsGameModeEnum {
     */
 export enum HeroScoreboardSortByEnum {
     Matches = 'matches',
+    Rank = 'rank',
     Wins = 'wins',
     Losses = 'losses',
     Winrate = 'winrate',
@@ -3009,6 +3448,26 @@ export enum KillDeathStatsGameModeEnum {
     * @export
     * @enum {string}
     */
+export enum LaneMatchupStatsGameModeEnum {
+    Normal = 'normal',
+    StreetBrawl = 'street_brawl',
+    ExploreNYC = 'explore_n_y_c',
+    Internal = 'internal'
+}
+/**
+    * @export
+    * @enum {string}
+    */
+export enum LaneSoulCurveGameModeEnum {
+    Normal = 'normal',
+    StreetBrawl = 'street_brawl',
+    ExploreNYC = 'explore_n_y_c',
+    Internal = 'internal'
+}
+/**
+    * @export
+    * @enum {string}
+    */
 export enum PlayerPerformanceCurveGameModeEnum {
     Normal = 'normal',
     StreetBrawl = 'street_brawl',
@@ -3021,6 +3480,7 @@ export enum PlayerPerformanceCurveGameModeEnum {
     */
 export enum PlayerScoreboardSortByEnum {
     Matches = 'matches',
+    Rank = 'rank',
     Wins = 'wins',
     Losses = 'losses',
     Winrate = 'winrate',

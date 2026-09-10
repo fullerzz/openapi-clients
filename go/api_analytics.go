@@ -29,6 +29,7 @@ type ApiAbilityOrderStatsRequest struct {
 	ApiService *AnalyticsAPIService
 	heroId *int32
 	gameMode *string
+	matchMode *string
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
 	minDurationS *int64
@@ -57,6 +58,12 @@ func (r ApiAbilityOrderStatsRequest) HeroId(heroId int32) ApiAbilityOrderStatsRe
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiAbilityOrderStatsRequest) GameMode(gameMode string) ApiAbilityOrderStatsRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiAbilityOrderStatsRequest) MatchMode(matchMode string) ApiAbilityOrderStatsRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -224,10 +231,13 @@ func (a *AnalyticsAPIService) AbilityOrderStatsExecute(r ApiAbilityOrderStatsReq
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -365,6 +375,7 @@ type ApiBadgeDistributionRequest struct {
 	ctx context.Context
 	ApiService *AnalyticsAPIService
 	gameMode *string
+	matchMode *string
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
 	minDurationS *int64
@@ -382,7 +393,13 @@ func (r ApiBadgeDistributionRequest) GameMode(gameMode string) ApiBadgeDistribut
 	return r
 }
 
-// Filter matches based on their start time (Unix timestamp). **Default:** 30 days ago.
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiBadgeDistributionRequest) MatchMode(matchMode string) ApiBadgeDistributionRequest {
+	r.matchMode = &matchMode
+	return r
+}
+
+// Filter matches based on their start time (Unix timestamp). Values below the start of the first ranked season (1785430800) are clamped to it. **Default:** 30 days ago.
 func (r ApiBadgeDistributionRequest) MinUnixTimestamp(minUnixTimestamp int64) ApiBadgeDistributionRequest {
 	r.minUnixTimestamp = &minUnixTimestamp
 	return r
@@ -446,6 +463,13 @@ BadgeDistribution Badge Distribution
 
 This endpoint returns the player badge distribution.
 
+`total_matches` counts matches by their average badge, while `unique_players` counts players by the
+rank Valve reported at the end of their latest ranked match within the filtered range. Since only
+ranked matches carry a rank, `unique_players` ignores the `match_mode` filter and always looks at
+ranked matches.
+
+Ranks exist only from the first ranked season on, so `min_unix_timestamp` is clamped to its start.
+
 ### Rate Limits:
 > The rate limits below are **shared across all analytics endpoints**.
 
@@ -490,10 +514,13 @@ func (a *AnalyticsAPIService) BadgeDistributionExecute(r ApiBadgeDistributionReq
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -660,7 +687,7 @@ func (a *AnalyticsAPIService) BuildItemStatsExecute(r ApiBuildItemStatsRequest) 
 	if r.minLastUpdatedUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_last_updated_unix_timestamp", r.minLastUpdatedUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_last_updated_unix_timestamp", defaultValue, "form", "")
 		r.minLastUpdatedUnixTimestamp = &defaultValue
 	}
@@ -726,6 +753,7 @@ type ApiGameStatsRequest struct {
 	ApiService *AnalyticsAPIService
 	bucket *string
 	gameMode *string
+	matchMode *string
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
 	minDurationS *int64
@@ -751,6 +779,12 @@ func (r ApiGameStatsRequest) Bucket(bucket string) ApiGameStatsRequest {
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiGameStatsRequest) GameMode(gameMode string) ApiGameStatsRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiGameStatsRequest) MatchMode(matchMode string) ApiGameStatsRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -895,10 +929,13 @@ func (a *AnalyticsAPIService) GameStatsExecute(r ApiGameStatsRequest) ([]Analyti
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -1030,6 +1067,7 @@ func (a *AnalyticsAPIService) GameStatsExecute(r ApiGameStatsRequest) ([]Analyti
 type ApiHeroBanStatsRequest struct {
 	ctx context.Context
 	ApiService *AnalyticsAPIService
+	matchMode *string
 	bucket *string
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
@@ -1039,6 +1077,12 @@ type ApiHeroBanStatsRequest struct {
 	maxAverageBadge *int32
 	minMatchId *int64
 	maxMatchId *int64
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiHeroBanStatsRequest) MatchMode(matchMode string) ApiHeroBanStatsRequest {
+	r.matchMode = &matchMode
+	return r
 }
 
 // Bucket allows you to group the stats by a specific field.
@@ -1150,13 +1194,16 @@ func (a *AnalyticsAPIService) HeroBanStatsExecute(r ApiHeroBanStatsRequest) ([]H
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.bucket != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "bucket", r.bucket, "form", "")
 	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -1239,6 +1286,7 @@ type ApiHeroBuildStatsRequest struct {
 	ctx context.Context
 	ApiService *AnalyticsAPIService
 	heroId int32
+	matchMode *string
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
 	minDurationS *int64
@@ -1251,6 +1299,12 @@ type ApiHeroBuildStatsRequest struct {
 	minMatches *int64
 	accountId *int32
 	accountIds *[]int32
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiHeroBuildStatsRequest) MatchMode(matchMode string) ApiHeroBuildStatsRequest {
+	r.matchMode = &matchMode
+	return r
 }
 
 // Filter matches based on their start time (Unix timestamp). **Default:** 30 days ago. **Minimum:** March 1, 2026.
@@ -1389,10 +1443,13 @@ func (a *AnalyticsAPIService) HeroBuildStatsExecute(r ApiHeroBuildStatsRequest) 
 		return localVarReturnValue, nil, reportError("heroId must be greater than 0")
 	}
 
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -1499,6 +1556,7 @@ type ApiHeroCombStatsRequest struct {
 	ctx context.Context
 	ApiService *AnalyticsAPIService
 	gameMode *string
+	matchMode *string
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
 	minDurationS *int64
@@ -1523,6 +1581,12 @@ type ApiHeroCombStatsRequest struct {
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiHeroCombStatsRequest) GameMode(gameMode string) ApiHeroCombStatsRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiHeroCombStatsRequest) MatchMode(matchMode string) ApiHeroCombStatsRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -1697,10 +1761,13 @@ func (a *AnalyticsAPIService) HeroCombStatsExecute(r ApiHeroCombStatsRequest) ([
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -1864,6 +1931,7 @@ type ApiHeroCountersStatsRequest struct {
 	ctx context.Context
 	ApiService *AnalyticsAPIService
 	gameMode *string
+	matchMode *string
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
 	minDurationS *int64
@@ -1886,6 +1954,12 @@ type ApiHeroCountersStatsRequest struct {
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiHeroCountersStatsRequest) GameMode(gameMode string) ApiHeroCountersStatsRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiHeroCountersStatsRequest) MatchMode(matchMode string) ApiHeroCountersStatsRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -2050,10 +2124,13 @@ func (a *AnalyticsAPIService) HeroCountersStatsExecute(r ApiHeroCountersStatsReq
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -2181,6 +2258,7 @@ type ApiHeroScoreboardRequest struct {
 	sortBy *string
 	sortDirection *string
 	gameMode *string
+	matchMode *string
 	minMatches *int32
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
@@ -2211,6 +2289,12 @@ func (r ApiHeroScoreboardRequest) SortDirection(sortDirection string) ApiHeroSco
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiHeroScoreboardRequest) GameMode(gameMode string) ApiHeroScoreboardRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiHeroScoreboardRequest) MatchMode(matchMode string) ApiHeroScoreboardRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -2354,13 +2438,16 @@ func (a *AnalyticsAPIService) HeroScoreboardExecute(r ApiHeroScoreboardRequest) 
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.minMatches != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_matches", r.minMatches, "form", "")
 	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -2464,6 +2551,7 @@ type ApiHeroStatsRequest struct {
 	ApiService *AnalyticsAPIService
 	bucket *string
 	gameMode *string
+	matchMode *string
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
 	minDurationS *int64
@@ -2493,6 +2581,12 @@ func (r ApiHeroStatsRequest) Bucket(bucket string) ApiHeroStatsRequest {
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiHeroStatsRequest) GameMode(gameMode string) ApiHeroStatsRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiHeroStatsRequest) MatchMode(matchMode string) ApiHeroStatsRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -2662,10 +2756,13 @@ func (a *AnalyticsAPIService) HeroStatsExecute(r ApiHeroStatsRequest) ([]Analyti
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -2802,6 +2899,7 @@ type ApiHeroSynergiesStatsRequest struct {
 	ctx context.Context
 	ApiService *AnalyticsAPIService
 	gameMode *string
+	matchMode *string
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
 	minDurationS *int64
@@ -2822,6 +2920,12 @@ type ApiHeroSynergiesStatsRequest struct {
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiHeroSynergiesStatsRequest) GameMode(gameMode string) ApiHeroSynergiesStatsRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiHeroSynergiesStatsRequest) MatchMode(matchMode string) ApiHeroSynergiesStatsRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -2974,10 +3078,13 @@ func (a *AnalyticsAPIService) HeroSynergiesStatsExecute(r ApiHeroSynergiesStatsR
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -3099,6 +3206,7 @@ type ApiItemFlowStatsRequest struct {
 	phaseIntervalS *int32
 	phaseCount *int32
 	gameMode *string
+	matchMode *string
 	heroIds *string
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
@@ -3133,6 +3241,12 @@ func (r ApiItemFlowStatsRequest) PhaseCount(phaseCount int32) ApiItemFlowStatsRe
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiItemFlowStatsRequest) GameMode(gameMode string) ApiItemFlowStatsRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiItemFlowStatsRequest) MatchMode(matchMode string) ApiItemFlowStatsRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -3322,13 +3436,16 @@ func (a *AnalyticsAPIService) ItemFlowStatsExecute(r ApiItemFlowStatsRequest) (*
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.heroIds != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "hero_ids", r.heroIds, "form", "")
 	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -3483,6 +3600,7 @@ type ApiItemPermutationStatsRequest struct {
 	minMatches *int32
 	maxMatches *int32
 	gameMode *string
+	matchMode *string
 	heroIds *string
 	heroId *int32
 	minUnixTimestamp *int64
@@ -3526,6 +3644,12 @@ func (r ApiItemPermutationStatsRequest) MaxMatches(maxMatches int32) ApiItemPerm
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiItemPermutationStatsRequest) GameMode(gameMode string) ApiItemPermutationStatsRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiItemPermutationStatsRequest) MatchMode(matchMode string) ApiItemPermutationStatsRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -3699,6 +3823,9 @@ func (a *AnalyticsAPIService) ItemPermutationStatsExecute(r ApiItemPermutationSt
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.heroIds != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "hero_ids", r.heroIds, "form", "")
 	}
@@ -3708,7 +3835,7 @@ func (a *AnalyticsAPIService) ItemPermutationStatsExecute(r ApiItemPermutationSt
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -3812,6 +3939,7 @@ type ApiItemStatsRequest struct {
 	ApiService *AnalyticsAPIService
 	bucket *string
 	gameMode *string
+	matchMode *string
 	heroIds *string
 	heroId *int32
 	enemyHeroIds *string
@@ -3849,6 +3977,12 @@ func (r ApiItemStatsRequest) Bucket(bucket string) ApiItemStatsRequest {
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiItemStatsRequest) GameMode(gameMode string) ApiItemStatsRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiItemStatsRequest) MatchMode(matchMode string) ApiItemStatsRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -4069,6 +4203,9 @@ func (a *AnalyticsAPIService) ItemStatsExecute(r ApiItemStatsRequest) ([]ItemSta
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.heroIds != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "hero_ids", r.heroIds, "form", "")
 	}
@@ -4093,7 +4230,7 @@ func (a *AnalyticsAPIService) ItemStatsExecute(r ApiItemStatsRequest) ([]ItemSta
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -4246,6 +4383,7 @@ type ApiKillDeathStatsRequest struct {
 	ApiService *AnalyticsAPIService
 	team *int32
 	gameMode *string
+	matchMode *string
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
 	minDurationS *int64
@@ -4278,6 +4416,12 @@ func (r ApiKillDeathStatsRequest) Team(team int32) ApiKillDeathStatsRequest {
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiKillDeathStatsRequest) GameMode(gameMode string) ApiKillDeathStatsRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiKillDeathStatsRequest) MatchMode(matchMode string) ApiKillDeathStatsRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -4464,10 +4608,13 @@ func (a *AnalyticsAPIService) KillDeathStatsExecute(r ApiKillDeathStatsRequest) 
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -4593,11 +4740,720 @@ func (a *AnalyticsAPIService) KillDeathStatsExecute(r ApiKillDeathStatsRequest) 
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiLaneMatchupStatsRequest struct {
+	ctx context.Context
+	ApiService *AnalyticsAPIService
+	gameMode *string
+	matchMode *string
+	minUnixTimestamp *int64
+	maxUnixTimestamp *int64
+	minDurationS *int64
+	maxDurationS *int64
+	minAverageBadge *int32
+	maxAverageBadge *int32
+	minMatchId *int64
+	maxMatchId *int64
+	sampleTimeS *int32
+	assignedLanes *string
+	heroIds *[]int32
+	enemyHeroIds *[]int32
+	stats *string
+	groupBy *string
+	minMatches *int64
+	maxMatches *int64
+	accountIds *[]int32
+}
+
+// Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
+func (r ApiLaneMatchupStatsRequest) GameMode(gameMode string) ApiLaneMatchupStatsRequest {
+	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiLaneMatchupStatsRequest) MatchMode(matchMode string) ApiLaneMatchupStatsRequest {
+	r.matchMode = &matchMode
+	return r
+}
+
+// Filter matches based on their start time (Unix timestamp). **Default:** 30 days ago.
+func (r ApiLaneMatchupStatsRequest) MinUnixTimestamp(minUnixTimestamp int64) ApiLaneMatchupStatsRequest {
+	r.minUnixTimestamp = &minUnixTimestamp
+	return r
+}
+
+// Filter matches based on their start time (Unix timestamp).
+func (r ApiLaneMatchupStatsRequest) MaxUnixTimestamp(maxUnixTimestamp int64) ApiLaneMatchupStatsRequest {
+	r.maxUnixTimestamp = &maxUnixTimestamp
+	return r
+}
+
+// Filter matches based on their duration in seconds (up to 7000s).
+func (r ApiLaneMatchupStatsRequest) MinDurationS(minDurationS int64) ApiLaneMatchupStatsRequest {
+	r.minDurationS = &minDurationS
+	return r
+}
+
+// Filter matches based on their duration in seconds (up to 7000s).
+func (r ApiLaneMatchupStatsRequest) MaxDurationS(maxDurationS int64) ApiLaneMatchupStatsRequest {
+	r.maxDurationS = &maxDurationS
+	return r
+}
+
+// Filter matches based on the average badge level (tier &#x3D; first digits, subtier &#x3D; last digit) of *both* teams involved. See more: &lt;https://api.deadlock-api.com/v1/assets/ranks&gt;
+func (r ApiLaneMatchupStatsRequest) MinAverageBadge(minAverageBadge int32) ApiLaneMatchupStatsRequest {
+	r.minAverageBadge = &minAverageBadge
+	return r
+}
+
+// Filter matches based on the average badge level (tier &#x3D; first digits, subtier &#x3D; last digit) of *both* teams involved. See more: &lt;https://api.deadlock-api.com/v1/assets/ranks&gt;
+func (r ApiLaneMatchupStatsRequest) MaxAverageBadge(maxAverageBadge int32) ApiLaneMatchupStatsRequest {
+	r.maxAverageBadge = &maxAverageBadge
+	return r
+}
+
+// Filter matches based on their ID.
+func (r ApiLaneMatchupStatsRequest) MinMatchId(minMatchId int64) ApiLaneMatchupStatsRequest {
+	r.minMatchId = &minMatchId
+	return r
+}
+
+// Filter matches based on their ID.
+func (r ApiLaneMatchupStatsRequest) MaxMatchId(maxMatchId int64) ApiLaneMatchupStatsRequest {
+	r.maxMatchId = &maxMatchId
+	return r
+}
+
+// Seconds into the match the stat readings are taken at. **Default:** 900. Matchups whose match ended earlier are still counted in &#x60;wins&#x60; and &#x60;matches_played&#x60;, but contribute no reading; &#x60;sample_matches&#x60; reports how many did.
+func (r ApiLaneMatchupStatsRequest) SampleTimeS(sampleTimeS int32) ApiLaneMatchupStatsRequest {
+	r.sampleTimeS = &sampleTimeS
+	return r
+}
+
+// Comma separated list of &#x60;assigned_lane&#x60; values to restrict the response to. See the &#x60;lane_info&#x60; array of &lt;https://api.deadlock-api.com/v1/assets/generic-data&gt;.
+func (r ApiLaneMatchupStatsRequest) AssignedLanes(assignedLanes string) ApiLaneMatchupStatsRequest {
+	r.assignedLanes = &assignedLanes
+	return r
+}
+
+// Comma separated list of hero ids the *ally* duo has to be drawn from. Omit to return every duo. See more: &lt;https://api.deadlock-api.com/v1/assets/heroes&gt;
+func (r ApiLaneMatchupStatsRequest) HeroIds(heroIds []int32) ApiLaneMatchupStatsRequest {
+	r.heroIds = &heroIds
+	return r
+}
+
+// Comma separated list of hero ids the *enemy* duo has to be drawn from. Omit to return every duo. See more: &lt;https://api.deadlock-api.com/v1/assets/heroes&gt;
+func (r ApiLaneMatchupStatsRequest) EnemyHeroIds(enemyHeroIds []int32) ApiLaneMatchupStatsRequest {
+	r.enemyHeroIds = &enemyHeroIds
+	return r
+}
+
+// Comma separated list of extra per-tick stats to report, at most 8. **Default:** none.
+func (r ApiLaneMatchupStatsRequest) Stats(stats string) ApiLaneMatchupStatsRequest {
+	r.stats = &stats
+	return r
+}
+
+// Comma separated list of dimensions to group by. Valid values: &#x60;assigned_lane&#x60;, &#x60;hero_ids&#x60;, &#x60;enemy_hero_ids&#x60;. **Default:** all three.
+func (r ApiLaneMatchupStatsRequest) GroupBy(groupBy string) ApiLaneMatchupStatsRequest {
+	r.groupBy = &groupBy
+	return r
+}
+
+// The minimum number of lane matchups behind a row for it to be included in the response.
+func (r ApiLaneMatchupStatsRequest) MinMatches(minMatches int64) ApiLaneMatchupStatsRequest {
+	r.minMatches = &minMatches
+	return r
+}
+
+// The maximum number of lane matchups behind a row for it to be included in the response.
+func (r ApiLaneMatchupStatsRequest) MaxMatches(maxMatches int64) ApiLaneMatchupStatsRequest {
+	r.maxMatches = &maxMatches
+	return r
+}
+
+// Comma separated list of account ids to include
+func (r ApiLaneMatchupStatsRequest) AccountIds(accountIds []int32) ApiLaneMatchupStatsRequest {
+	r.accountIds = &accountIds
+	return r
+}
+
+func (r ApiLaneMatchupStatsRequest) Execute() ([]LaneMatchupStats, *http.Response, error) {
+	return r.ApiService.LaneMatchupStatsExecute(r)
+}
+
+/*
+LaneMatchupStats Lane Matchup Stats (Subject to Change)
+
+
+> **⚠️ Subject to change:** This endpoint is newly added and not yet stable. Its parameters, response fields and semantics may change or be removed without notice.
+
+Retrieves duo-versus-duo lane statistics: how a pair of heroes sharing a lane performed against the pair of heroes they laned against.
+
+Win rate covers the whole match. Everything else is read at `sample_time_s` (900 by default, the last sample before the game's recording cadence coarsens) off the matchups that lasted that long, counted by `sample_matches`. Souls are always reported, in `net_worth_diff`; pass `stats` for any other per-tick stat the game records — kills, denies, player damage, healing, level and so on — each as the duo's own combined value *and* as its lead over the enemy duo.
+
+Only lanes where *both* sides fielded exactly two players are counted, and each lane contributes one row per side, so every matchup appears twice with the two sides swapped.
+
+`group_by` chooses what a row stands for. The default groups all three dimensions, giving one row per duo-versus-duo matchup per lane. Dropping `enemy_hero_ids` gives a duo's record across every opponent, dropping `hero_ids` gives what a duo is up against, and dropping `assigned_lane` merges the lanes. Folded dimensions come back as `0` / an empty array.
+
+Pass `hero_ids` and `enemy_hero_ids` to scope the response to the duos you care about. Without them the full duo-versus-duo matrix is computed, which is a considerably more expensive query.
+
+Results are cached for **1 hour**. The cache key is determined by the specific combination of filter parameters used in the query. Subsequent requests using the exact same filters within this timeframe will receive the cached response.
+
+### Rate Limits:
+> The rate limits below are **shared across all analytics endpoints**.
+
+| Type | Limit |
+| ---- | ----- |
+| IP | 200req/min |
+| Key | 400req/min |
+| Global | 2000req/min |
+    
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @return ApiLaneMatchupStatsRequest
+*/
+func (a *AnalyticsAPIService) LaneMatchupStats(ctx context.Context) ApiLaneMatchupStatsRequest {
+	return ApiLaneMatchupStatsRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+// Execute executes the request
+//  @return []LaneMatchupStats
+func (a *AnalyticsAPIService) LaneMatchupStatsExecute(r ApiLaneMatchupStatsRequest) ([]LaneMatchupStats, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodGet
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  []LaneMatchupStats
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AnalyticsAPIService.LaneMatchupStats")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/analytics/lane-matchup-stats"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.gameMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
+	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
+	if r.minUnixTimestamp != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
+	} else {
+		var defaultValue int64 = 1786320000
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
+		r.minUnixTimestamp = &defaultValue
+	}
+	if r.maxUnixTimestamp != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "max_unix_timestamp", r.maxUnixTimestamp, "form", "")
+	}
+	if r.minDurationS != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_duration_s", r.minDurationS, "form", "")
+	}
+	if r.maxDurationS != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "max_duration_s", r.maxDurationS, "form", "")
+	}
+	if r.minAverageBadge != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_average_badge", r.minAverageBadge, "form", "")
+	}
+	if r.maxAverageBadge != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "max_average_badge", r.maxAverageBadge, "form", "")
+	}
+	if r.minMatchId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_match_id", r.minMatchId, "form", "")
+	}
+	if r.maxMatchId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "max_match_id", r.maxMatchId, "form", "")
+	}
+	if r.sampleTimeS != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "sample_time_s", r.sampleTimeS, "form", "")
+	} else {
+		var defaultValue int32 = 900
+		parameterAddToHeaderOrQuery(localVarQueryParams, "sample_time_s", defaultValue, "form", "")
+		r.sampleTimeS = &defaultValue
+	}
+	if r.assignedLanes != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "assigned_lanes", r.assignedLanes, "form", "")
+	}
+	if r.heroIds != nil {
+		t := *r.heroIds
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				parameterAddToHeaderOrQuery(localVarQueryParams, "hero_ids", s.Index(i).Interface(), "form", "multi")
+			}
+		} else {
+			parameterAddToHeaderOrQuery(localVarQueryParams, "hero_ids", t, "form", "multi")
+		}
+	}
+	if r.enemyHeroIds != nil {
+		t := *r.enemyHeroIds
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				parameterAddToHeaderOrQuery(localVarQueryParams, "enemy_hero_ids", s.Index(i).Interface(), "form", "multi")
+			}
+		} else {
+			parameterAddToHeaderOrQuery(localVarQueryParams, "enemy_hero_ids", t, "form", "multi")
+		}
+	}
+	if r.stats != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "stats", r.stats, "form", "")
+	}
+	if r.groupBy != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "group_by", r.groupBy, "form", "")
+	}
+	if r.minMatches != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_matches", r.minMatches, "form", "")
+	} else {
+		var defaultValue int64 = 20
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_matches", defaultValue, "form", "")
+		r.minMatches = &defaultValue
+	}
+	if r.maxMatches != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "max_matches", r.maxMatches, "form", "")
+	}
+	if r.accountIds != nil {
+		t := *r.accountIds
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				parameterAddToHeaderOrQuery(localVarQueryParams, "account_ids", s.Index(i).Interface(), "form", "multi")
+			}
+		} else {
+			parameterAddToHeaderOrQuery(localVarQueryParams, "account_ids", t, "form", "multi")
+		}
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiLaneSoulCurveRequest struct {
+	ctx context.Context
+	ApiService *AnalyticsAPIService
+	gameMode *string
+	matchMode *string
+	minUnixTimestamp *int64
+	maxUnixTimestamp *int64
+	minDurationS *int64
+	maxDurationS *int64
+	minAverageBadge *int32
+	maxAverageBadge *int32
+	minMatchId *int64
+	maxMatchId *int64
+	minTimeS *int32
+	maxTimeS *int32
+	assignedLanes *string
+	heroIds *[]int32
+	enemyHeroIds *[]int32
+	stats *string
+	groupBy *string
+	minMatches *int64
+	maxMatches *int64
+	accountIds *[]int32
+}
+
+// Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
+func (r ApiLaneSoulCurveRequest) GameMode(gameMode string) ApiLaneSoulCurveRequest {
+	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiLaneSoulCurveRequest) MatchMode(matchMode string) ApiLaneSoulCurveRequest {
+	r.matchMode = &matchMode
+	return r
+}
+
+// Filter matches based on their start time (Unix timestamp). **Default:** 30 days ago.
+func (r ApiLaneSoulCurveRequest) MinUnixTimestamp(minUnixTimestamp int64) ApiLaneSoulCurveRequest {
+	r.minUnixTimestamp = &minUnixTimestamp
+	return r
+}
+
+// Filter matches based on their start time (Unix timestamp).
+func (r ApiLaneSoulCurveRequest) MaxUnixTimestamp(maxUnixTimestamp int64) ApiLaneSoulCurveRequest {
+	r.maxUnixTimestamp = &maxUnixTimestamp
+	return r
+}
+
+// Filter matches based on their duration in seconds (up to 7000s).
+func (r ApiLaneSoulCurveRequest) MinDurationS(minDurationS int64) ApiLaneSoulCurveRequest {
+	r.minDurationS = &minDurationS
+	return r
+}
+
+// Filter matches based on their duration in seconds (up to 7000s).
+func (r ApiLaneSoulCurveRequest) MaxDurationS(maxDurationS int64) ApiLaneSoulCurveRequest {
+	r.maxDurationS = &maxDurationS
+	return r
+}
+
+// Filter matches based on the average badge level (tier &#x3D; first digits, subtier &#x3D; last digit) of *both* teams involved. See more: &lt;https://api.deadlock-api.com/v1/assets/ranks&gt;
+func (r ApiLaneSoulCurveRequest) MinAverageBadge(minAverageBadge int32) ApiLaneSoulCurveRequest {
+	r.minAverageBadge = &minAverageBadge
+	return r
+}
+
+// Filter matches based on the average badge level (tier &#x3D; first digits, subtier &#x3D; last digit) of *both* teams involved. See more: &lt;https://api.deadlock-api.com/v1/assets/ranks&gt;
+func (r ApiLaneSoulCurveRequest) MaxAverageBadge(maxAverageBadge int32) ApiLaneSoulCurveRequest {
+	r.maxAverageBadge = &maxAverageBadge
+	return r
+}
+
+// Filter matches based on their ID.
+func (r ApiLaneSoulCurveRequest) MinMatchId(minMatchId int64) ApiLaneSoulCurveRequest {
+	r.minMatchId = &minMatchId
+	return r
+}
+
+// Filter matches based on their ID.
+func (r ApiLaneSoulCurveRequest) MaxMatchId(maxMatchId int64) ApiLaneSoulCurveRequest {
+	r.maxMatchId = &maxMatchId
+	return r
+}
+
+// Earliest sample to return, in seconds into the match. **Default:** 180.
+func (r ApiLaneSoulCurveRequest) MinTimeS(minTimeS int32) ApiLaneSoulCurveRequest {
+	r.minTimeS = &minTimeS
+	return r
+}
+
+// Latest sample to return, in seconds into the match. Omit to follow every matchup to the end of its match.
+func (r ApiLaneSoulCurveRequest) MaxTimeS(maxTimeS int32) ApiLaneSoulCurveRequest {
+	r.maxTimeS = &maxTimeS
+	return r
+}
+
+// Comma separated list of &#x60;assigned_lane&#x60; values to restrict the response to. See the &#x60;lane_info&#x60; array of &lt;https://api.deadlock-api.com/v1/assets/generic-data&gt;.
+func (r ApiLaneSoulCurveRequest) AssignedLanes(assignedLanes string) ApiLaneSoulCurveRequest {
+	r.assignedLanes = &assignedLanes
+	return r
+}
+
+// Comma separated list of hero ids the *ally* duo has to be drawn from. Omit to return every duo. See more: &lt;https://api.deadlock-api.com/v1/assets/heroes&gt;
+func (r ApiLaneSoulCurveRequest) HeroIds(heroIds []int32) ApiLaneSoulCurveRequest {
+	r.heroIds = &heroIds
+	return r
+}
+
+// Comma separated list of hero ids the *enemy* duo has to be drawn from. Omit to return every duo. See more: &lt;https://api.deadlock-api.com/v1/assets/heroes&gt;
+func (r ApiLaneSoulCurveRequest) EnemyHeroIds(enemyHeroIds []int32) ApiLaneSoulCurveRequest {
+	r.enemyHeroIds = &enemyHeroIds
+	return r
+}
+
+// Comma separated list of extra per-tick stats to return curves for, at most 8. **Default:** none.
+func (r ApiLaneSoulCurveRequest) Stats(stats string) ApiLaneSoulCurveRequest {
+	r.stats = &stats
+	return r
+}
+
+// Comma separated list of dimensions to group by. Valid values: &#x60;assigned_lane&#x60;, &#x60;hero_ids&#x60;, &#x60;enemy_hero_ids&#x60;. **Default:** all three.
+func (r ApiLaneSoulCurveRequest) GroupBy(groupBy string) ApiLaneSoulCurveRequest {
+	r.groupBy = &groupBy
+	return r
+}
+
+// The minimum number of lane matchups behind a row for it to be included in the response.
+func (r ApiLaneSoulCurveRequest) MinMatches(minMatches int64) ApiLaneSoulCurveRequest {
+	r.minMatches = &minMatches
+	return r
+}
+
+// The maximum number of lane matchups behind a row for it to be included in the response.
+func (r ApiLaneSoulCurveRequest) MaxMatches(maxMatches int64) ApiLaneSoulCurveRequest {
+	r.maxMatches = &maxMatches
+	return r
+}
+
+// Comma separated list of account ids to include
+func (r ApiLaneSoulCurveRequest) AccountIds(accountIds []int32) ApiLaneSoulCurveRequest {
+	r.accountIds = &accountIds
+	return r
+}
+
+func (r ApiLaneSoulCurveRequest) Execute() ([]LaneSoulCurve, *http.Response, error) {
+	return r.ApiService.LaneSoulCurveExecute(r)
+}
+
+/*
+LaneSoulCurve Lane Soul Curve (Subject to Change)
+
+
+> **⚠️ Subject to change:** This endpoint is newly added and not yet stable. Its parameters, response fields and semantics may change or be removed without notice.
+
+Retrieves how a duo's lead over the duo they laned against develops over the course of the match.
+
+The curve is not interpolated: it carries exactly the samples the game records, which are every 180 seconds up to the 15 minute mark and every 300 seconds after that. It runs from `min_time_s` (180 by default) to `max_time_s`, which is open by default, so a matchup is followed until its matches end. `sample_matches` reports how many matchups were still running at each point, and thins out towards the end of the curve.
+
+Only lanes where *both* sides fielded exactly two players are counted, and each lane contributes one row per side, so every matchup appears twice with the two sides swapped.
+
+Souls are always reported, in `net_worth_diff`. Pass `stats` for curves of any other per-tick stat the game records — kills, denies, player damage, healing, level and so on — each as the duo's own combined value *and* as its lead over the enemy duo.
+
+`group_by` chooses what a row stands for. The default groups all three dimensions, giving one row per duo-versus-duo matchup per lane. Dropping `enemy_hero_ids` gives a duo's curve across every opponent, dropping `hero_ids` gives what a duo is up against, and dropping `assigned_lane` merges the lanes. Folded dimensions come back as `0` / an empty array.
+
+Pass `hero_ids` and `enemy_hero_ids` to scope the response to the duos you care about. Without them the full duo-versus-duo matrix is computed, which is a considerably more expensive query.
+
+Results are cached for **1 hour** based on the combination of query parameters provided. Subsequent identical requests within this timeframe will receive the cached response.
+
+### Rate Limits:
+> The rate limits below are **shared across all analytics endpoints**.
+
+| Type | Limit |
+| ---- | ----- |
+| IP | 200req/min |
+| Key | 400req/min |
+| Global | 2000req/min |
+    
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @return ApiLaneSoulCurveRequest
+*/
+func (a *AnalyticsAPIService) LaneSoulCurve(ctx context.Context) ApiLaneSoulCurveRequest {
+	return ApiLaneSoulCurveRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+// Execute executes the request
+//  @return []LaneSoulCurve
+func (a *AnalyticsAPIService) LaneSoulCurveExecute(r ApiLaneSoulCurveRequest) ([]LaneSoulCurve, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodGet
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  []LaneSoulCurve
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AnalyticsAPIService.LaneSoulCurve")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/analytics/lane-soul-curve"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.gameMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
+	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
+	if r.minUnixTimestamp != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
+	} else {
+		var defaultValue int64 = 1786320000
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
+		r.minUnixTimestamp = &defaultValue
+	}
+	if r.maxUnixTimestamp != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "max_unix_timestamp", r.maxUnixTimestamp, "form", "")
+	}
+	if r.minDurationS != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_duration_s", r.minDurationS, "form", "")
+	}
+	if r.maxDurationS != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "max_duration_s", r.maxDurationS, "form", "")
+	}
+	if r.minAverageBadge != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_average_badge", r.minAverageBadge, "form", "")
+	}
+	if r.maxAverageBadge != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "max_average_badge", r.maxAverageBadge, "form", "")
+	}
+	if r.minMatchId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_match_id", r.minMatchId, "form", "")
+	}
+	if r.maxMatchId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "max_match_id", r.maxMatchId, "form", "")
+	}
+	if r.minTimeS != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_time_s", r.minTimeS, "form", "")
+	} else {
+		var defaultValue int32 = 180
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_time_s", defaultValue, "form", "")
+		r.minTimeS = &defaultValue
+	}
+	if r.maxTimeS != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "max_time_s", r.maxTimeS, "form", "")
+	}
+	if r.assignedLanes != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "assigned_lanes", r.assignedLanes, "form", "")
+	}
+	if r.heroIds != nil {
+		t := *r.heroIds
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				parameterAddToHeaderOrQuery(localVarQueryParams, "hero_ids", s.Index(i).Interface(), "form", "multi")
+			}
+		} else {
+			parameterAddToHeaderOrQuery(localVarQueryParams, "hero_ids", t, "form", "multi")
+		}
+	}
+	if r.enemyHeroIds != nil {
+		t := *r.enemyHeroIds
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				parameterAddToHeaderOrQuery(localVarQueryParams, "enemy_hero_ids", s.Index(i).Interface(), "form", "multi")
+			}
+		} else {
+			parameterAddToHeaderOrQuery(localVarQueryParams, "enemy_hero_ids", t, "form", "multi")
+		}
+	}
+	if r.stats != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "stats", r.stats, "form", "")
+	}
+	if r.groupBy != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "group_by", r.groupBy, "form", "")
+	}
+	if r.minMatches != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_matches", r.minMatches, "form", "")
+	} else {
+		var defaultValue int64 = 20
+		parameterAddToHeaderOrQuery(localVarQueryParams, "min_matches", defaultValue, "form", "")
+		r.minMatches = &defaultValue
+	}
+	if r.maxMatches != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "max_matches", r.maxMatches, "form", "")
+	}
+	if r.accountIds != nil {
+		t := *r.accountIds
+		if reflect.TypeOf(t).Kind() == reflect.Slice {
+			s := reflect.ValueOf(t)
+			for i := 0; i < s.Len(); i++ {
+				parameterAddToHeaderOrQuery(localVarQueryParams, "account_ids", s.Index(i).Interface(), "form", "multi")
+			}
+		} else {
+			parameterAddToHeaderOrQuery(localVarQueryParams, "account_ids", t, "form", "multi")
+		}
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
 type ApiPlayerPerformanceCurveRequest struct {
 	ctx context.Context
 	ApiService *AnalyticsAPIService
 	resolution *int32
 	gameMode *string
+	matchMode *string
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
 	minDurationS *int64
@@ -4623,6 +5479,12 @@ func (r ApiPlayerPerformanceCurveRequest) Resolution(resolution int32) ApiPlayer
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiPlayerPerformanceCurveRequest) GameMode(gameMode string) ApiPlayerPerformanceCurveRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiPlayerPerformanceCurveRequest) MatchMode(matchMode string) ApiPlayerPerformanceCurveRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -4773,10 +5635,13 @@ func (a *AnalyticsAPIService) PlayerPerformanceCurveExecute(r ApiPlayerPerforman
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}
@@ -4903,6 +5768,7 @@ type ApiPlayerScoreboardRequest struct {
 	sortBy *string
 	sortDirection *string
 	gameMode *string
+	matchMode *string
 	heroId *int32
 	minMatches *int32
 	maxMatches *int32
@@ -4936,6 +5802,12 @@ func (r ApiPlayerScoreboardRequest) SortDirection(sortDirection string) ApiPlaye
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiPlayerScoreboardRequest) GameMode(gameMode string) ApiPlayerScoreboardRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiPlayerScoreboardRequest) MatchMode(matchMode string) ApiPlayerScoreboardRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -5096,6 +5968,9 @@ func (a *AnalyticsAPIService) PlayerScoreboardExecute(r ApiPlayerScoreboardReque
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.heroId != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "hero_id", r.heroId, "form", "")
 	}
@@ -5219,6 +6094,7 @@ type ApiPlayerStatsMetricsRequest struct {
 	ApiService *AnalyticsAPIService
 	heroIds *string
 	gameMode *string
+	matchMode *string
 	minUnixTimestamp *int64
 	maxUnixTimestamp *int64
 	minDurationS *int64
@@ -5244,6 +6120,12 @@ func (r ApiPlayerStatsMetricsRequest) HeroIds(heroIds string) ApiPlayerStatsMetr
 // Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;.
 func (r ApiPlayerStatsMetricsRequest) GameMode(gameMode string) ApiPlayerStatsMetricsRequest {
 	r.gameMode = &gameMode
+	return r
+}
+
+// Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;.
+func (r ApiPlayerStatsMetricsRequest) MatchMode(matchMode string) ApiPlayerStatsMetricsRequest {
+	r.matchMode = &matchMode
 	return r
 }
 
@@ -5392,10 +6274,13 @@ func (a *AnalyticsAPIService) PlayerStatsMetricsExecute(r ApiPlayerStatsMetricsR
 	if r.gameMode != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "game_mode", r.gameMode, "form", "")
 	}
+	if r.matchMode != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "match_mode", r.matchMode, "form", "")
+	}
 	if r.minUnixTimestamp != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", r.minUnixTimestamp, "form", "")
 	} else {
-		var defaultValue int64 = 1782172800
+		var defaultValue int64 = 1786320000
 		parameterAddToHeaderOrQuery(localVarQueryParams, "min_unix_timestamp", defaultValue, "form", "")
 		r.minUnixTimestamp = &defaultValue
 	}

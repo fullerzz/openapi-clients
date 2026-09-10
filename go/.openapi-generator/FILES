@@ -28,6 +28,7 @@ api_mmr.go
 api_npc_units.go
 api_patches.go
 api_players.go
+api_ranked_seasons.go
 api_ranks.go
 api_servers.go
 api_sql.go
@@ -94,6 +95,9 @@ docs/EnemyStats.md
 docs/FeedItem.md
 docs/FeedItemOneOf.md
 docs/FeedItemOneOf1.md
+docs/FeedbackKind.md
+docs/FeedbackSubmission.md
+docs/FeedbackTarget.md
 docs/FlashData.md
 docs/ForumPatch.md
 docs/GameMode.md
@@ -147,6 +151,11 @@ docs/ItemsAPI.md
 docs/JobStatus.md
 docs/KillDeathStats.md
 docs/LaneInfo.md
+docs/LaneMatchupStat.md
+docs/LaneMatchupStats.md
+docs/LaneSoulCurve.md
+docs/LaneStatCurve.md
+docs/LastRankedMatch.md
 docs/Leaderboard.md
 docs/LeaderboardAPI.md
 docs/LeaderboardEntry.md
@@ -194,8 +203,9 @@ docs/PlayerPerformanceCurvePoint.md
 docs/PlayersAPI.md
 docs/Rank.md
 docs/RankImages.md
-docs/RankPredictResponse.md
-docs/RankPrediction.md
+docs/RankResponse.md
+docs/RankedSeason.md
+docs/RankedSeasonsAPI.md
 docs/RanksAPI.md
 docs/RawAbilityUpgrade.md
 docs/RawAbilityUpgradePropertyUpgrade.md
@@ -211,6 +221,7 @@ docs/RegionMode.md
 docs/RejuvParams.md
 docs/SQLAPI.md
 docs/ScriptValues.md
+docs/SeasonInterval.md
 docs/ServerRegion.md
 docs/ServerStatusRequest.md
 docs/ServerStatusResponse.md
@@ -219,6 +230,7 @@ docs/ShopSpiritStatsDisplay.md
 docs/ShopStatDisplay.md
 docs/ShopVitalityStatsDisplay.md
 docs/ShopWeaponStatsDisplay.md
+docs/SourceLocation.md
 docs/SpreadPenalty.md
 docs/StartingStat.md
 docs/StartingStats.md
@@ -264,6 +276,7 @@ docs/UpgradeTooltipSectionAttribute.md
 docs/VariableCategory.md
 docs/VariableDescription.md
 docs/VerticalRecoil.md
+docs/Viewport.md
 docs/Weapon.md
 docs/WeaponInfo.md
 docs/ZiplanePath.md
@@ -319,6 +332,9 @@ model_enemy_stats.go
 model_feed_item.go
 model_feed_item_one_of.go
 model_feed_item_one_of_1.go
+model_feedback_kind.go
+model_feedback_submission.go
+model_feedback_target.go
 model_flash_data.go
 model_forum_patch.go
 model_game_mode.go
@@ -366,6 +382,11 @@ model_item_type.go
 model_job_status.go
 model_kill_death_stats.go
 model_lane_info.go
+model_lane_matchup_stat.go
+model_lane_matchup_stats.go
+model_lane_soul_curve.go
+model_lane_stat_curve.go
+model_last_ranked_match.go
 model_leaderboard.go
 model_leaderboard_entry.go
 model_list_servers_response.go
@@ -404,8 +425,8 @@ model_player_match_history_entry.go
 model_player_performance_curve_point.go
 model_rank.go
 model_rank_images.go
-model_rank_predict_response.go
-model_rank_prediction.go
+model_rank_response.go
+model_ranked_season.go
 model_raw_ability_upgrade.go
 model_raw_ability_upgrade_property_upgrade.go
 model_raw_custom_crosshair_settings.go
@@ -419,6 +440,7 @@ model_recoil_range.go
 model_region_mode.go
 model_rejuv_params.go
 model_script_values.go
+model_season_interval.go
 model_server_region.go
 model_server_status_request.go
 model_server_status_response.go
@@ -426,6 +448,7 @@ model_shop_spirit_stats_display.go
 model_shop_stat_display.go
 model_shop_vitality_stats_display.go
 model_shop_weapon_stats_display.go
+model_source_location.go
 model_spread_penalty.go
 model_starting_stat.go
 model_starting_stats.go
@@ -469,6 +492,7 @@ model_upgrade_tooltip_section_attribute.go
 model_variable_category.go
 model_variable_description.go
 model_vertical_recoil.go
+model_viewport.go
 model_weapon.go
 model_weapon_info.go
 model_ziplane_path.go
@@ -498,6 +522,7 @@ test/api_mmr_test.go
 test/api_npc_units_test.go
 test/api_patches_test.go
 test/api_players_test.go
+test/api_ranked_seasons_test.go
 test/api_ranks_test.go
 test/api_servers_test.go
 test/api_sql_test.go

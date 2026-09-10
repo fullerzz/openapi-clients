@@ -10,9 +10,12 @@ All URIs are relative to *https://api.deadlock-api.com*
 |[**matchHistory**](#matchhistory) | **GET** /v1/players/{account_id}/match-history | Match History|
 |[**mateStats**](#matestats) | **GET** /v1/players/{account_id}/mate-stats | Mate Stats|
 |[**playerHeroStats**](#playerherostats) | **GET** /v1/players/hero-stats | Hero Stats|
-|[**rankPredict**](#rankpredict) | **GET** /v1/players/{account_id}/rank-predict | Rank Predict|
-|[**rankPredictAvgImage**](#rankpredictavgimage) | **GET** /v1/players/rank-predict/image | Rank Predict Avg Image|
-|[**rankPredictImage**](#rankpredictimage) | **GET** /v1/players/{account_id}/rank-predict/image | Rank Predict Image|
+|[**rank**](#rank) | **GET** /v1/players/{account_id}/rank | Rank|
+|[**rankAvgImage**](#rankavgimage) | **GET** /v1/players/rank/image | Rank Avg Image|
+|[**rankImage**](#rankimage) | **GET** /v1/players/{account_id}/rank/image | Rank Image|
+|[**rankPredict**](#rankpredict) | **GET** /v1/players/{account_id}/rank-predict | Rank Predict (Deprecated)|
+|[**rankPredictAvgImage**](#rankpredictavgimage) | **GET** /v1/players/rank-predict/image | Rank Predict Avg Image (Deprecated)|
+|[**rankPredictImage**](#rankpredictimage) | **GET** /v1/players/{account_id}/rank-predict/image | Rank Predict Image (Deprecated)|
 
 # **accountStats**
 > PlayerAccountStats accountStats()
@@ -362,6 +365,7 @@ const apiInstance = new PlayersApi(configuration);
 
 let accountIds: Array<number>; //Comma separated list of account ids, Account IDs are in `SteamID3` format. (default to undefined)
 let gameMode: 'normal' | 'street_brawl' | 'explore_n_y_c' | 'internal'; //Filter matches based on their game mode. Valid values: `normal`, `street_brawl`. **Default:** `normal`. (optional) (default to undefined)
+let matchMode: string; //Filter matches based on the match mode. Valid values: `unranked`, `private_lobby`, `coop_bot`, `ranked`, `server_test`, `tutorial`, `hero_labs`. **Default:** `ranked,unranked`. (optional) (default to undefined)
 let heroIds: string; //Filter matches based on the hero IDs. See more: <https://api.deadlock-api.com/v1/assets/heroes> (optional) (default to undefined)
 let minUnixTimestamp: number; //Filter matches based on their start time (Unix timestamp). (optional) (default to undefined)
 let maxUnixTimestamp: number; //Filter matches based on their start time (Unix timestamp). (optional) (default to undefined)
@@ -377,6 +381,7 @@ let maxMatchId: number; //Filter matches based on their ID. (optional) (default 
 const { status, data } = await apiInstance.playerHeroStats(
     accountIds,
     gameMode,
+    matchMode,
     heroIds,
     minUnixTimestamp,
     maxUnixTimestamp,
@@ -397,6 +402,7 @@ const { status, data } = await apiInstance.playerHeroStats(
 |------------- | ------------- | ------------- | -------------|
 | **accountIds** | **Array&lt;number&gt;** | Comma separated list of account ids, Account IDs are in &#x60;SteamID3&#x60; format. | defaults to undefined|
 | **gameMode** | [**&#39;normal&#39; | &#39;street_brawl&#39; | &#39;explore_n_y_c&#39; | &#39;internal&#39;**]**Array<&#39;normal&#39; &#124; &#39;street_brawl&#39; &#124; &#39;explore_n_y_c&#39; &#124; &#39;internal&#39;>** | Filter matches based on their game mode. Valid values: &#x60;normal&#x60;, &#x60;street_brawl&#x60;. **Default:** &#x60;normal&#x60;. | (optional) defaults to undefined|
+| **matchMode** | [**string**] | Filter matches based on the match mode. Valid values: &#x60;unranked&#x60;, &#x60;private_lobby&#x60;, &#x60;coop_bot&#x60;, &#x60;ranked&#x60;, &#x60;server_test&#x60;, &#x60;tutorial&#x60;, &#x60;hero_labs&#x60;. **Default:** &#x60;ranked,unranked&#x60;. | (optional) defaults to undefined|
 | **heroIds** | [**string**] | Filter matches based on the hero IDs. See more: &lt;https://api.deadlock-api.com/v1/assets/heroes&gt; | (optional) defaults to undefined|
 | **minUnixTimestamp** | [**number**] | Filter matches based on their start time (Unix timestamp). | (optional) defaults to undefined|
 | **maxUnixTimestamp** | [**number**] | Filter matches based on their start time (Unix timestamp). | (optional) defaults to undefined|
@@ -433,10 +439,180 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **rankPredict**
-> RankPredictResponse rankPredict()
+# **rank**
+> RankResponse rank()
 
- Predicts a player\'s current rank badge from their last 30 ranked/unranked matches. Requires at least 30 eligible matches (Ranked or Unranked, Normal game mode) with valid badge data.  > **This is an ML prediction and may be inaccurate.** The model has no access to the player\'s > actual hidden MMR — it infers rank from match context signals only.  ### Model Accuracy (5-fold cross-validation)  | Metric | Value | |--------|-------| | R²     | 0.949 | | MAE    | 1.08 sub-ranks | | RMSE   | 1.89 sub-ranks | | Within ±1 sub-rank | 77.6% | | Within ±3 sub-rank | 93.9% | | Within ±5 sub-rank | 97.7% | | Within ±6 sub-rank | 98.6% | | Within ±10 sub-rank | 99.6% |  Accuracy by tier:  | Tier range | n | MAE | |------------|---|-----| | Low (1-4)  | 404 | 3.68 sub-ranks | | Mid (5-7)  | 777 | 2.91 sub-ranks | | High (8-11)| 25,556 | 0.98 sub-ranks |  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 100req/s | | Key | - | | Global | - | 
+ Returns the player\'s rank at the end of their latest ranked match, i.e. the rank they entered that match with plus the progress the match awarded. A subrank spans 1000 progress points, so a single match can move the badge. Eternus subranks are instead percentile cuts Valve recomputes daily, so within Eternus the badge is the one the player entered the match with.  Only ranked matches carry a rank, and it stays unset while the player is in placement games. When none of the player\'s recent ranked matches reports a rank, `badge`, `rank` and `subrank` are all `0`, which is the `Obscurus` (unranked) tier, and `last_match` is `null`.  `last_match` carries the rank metadata Valve reported on that match, e.g. rank progress, remaining placement games and demotion protection. 
+
+### Example
+
+```typescript
+import {
+    PlayersApi,
+    Configuration
+} from 'deadlock_api_client';
+
+const configuration = new Configuration();
+const apiInstance = new PlayersApi(configuration);
+
+let accountId: number; //The players `SteamID3` (default to undefined)
+
+const { status, data } = await apiInstance.rank(
+    accountId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **accountId** | [**number**] | The players &#x60;SteamID3&#x60; | defaults to undefined|
+
+
+### Return type
+
+**RankResponse**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** |  |  -  |
+|**400** | Invalid account ID |  -  |
+|**403** | User is protected or endpoint unavailable |  -  |
+|**500** | Rank lookup failed |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **rankAvgImage**
+> Array<number> rankAvgImage()
+
+Returns the average rank badge image (binary) for a comma-separated list of account IDs. Accounts without a rank are left out of the average; if none of them has one, the `Obscurus` image is returned. Use `?format=webp` for WebP.
+
+### Example
+
+```typescript
+import {
+    PlayersApi,
+    Configuration
+} from 'deadlock_api_client';
+
+const configuration = new Configuration();
+const apiInstance = new PlayersApi(configuration);
+
+let accountIds: Array<number>; //Comma-separated list of account IDs (max 12). (default to undefined)
+let format: 'png' | 'webp'; //Image format. Defaults to `png`. Supported: `png`, `webp`. (optional) (default to undefined)
+
+const { status, data } = await apiInstance.rankAvgImage(
+    accountIds,
+    format
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **accountIds** | **Array&lt;number&gt;** | Comma-separated list of account IDs (max 12). | defaults to undefined|
+| **format** | [**&#39;png&#39; | &#39;webp&#39;**]**Array<&#39;png&#39; &#124; &#39;webp&#39;>** | Image format. Defaults to &#x60;png&#x60;. Supported: &#x60;png&#x60;, &#x60;webp&#x60;. | (optional) defaults to undefined|
+
+
+### Return type
+
+**Array<number>**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: image/png, image/webp
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Average rank badge image |  -  |
+|**400** | Invalid or missing account IDs |  -  |
+|**403** | One of the users is protected |  -  |
+|**404** | No image available for the rank |  -  |
+|**500** | Rank lookup failed |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **rankImage**
+> Array<number> rankImage()
+
+Returns the rank badge image directly (binary), not a URL, with the player\'s I-VI division numeral drawn on it. Players whose recent ranked matches carry no rank, and players still in placement, get the plain tier badge. Use `?format=webp` for WebP.
+
+### Example
+
+```typescript
+import {
+    PlayersApi,
+    Configuration
+} from 'deadlock_api_client';
+
+const configuration = new Configuration();
+const apiInstance = new PlayersApi(configuration);
+
+let accountId: number; //The players `SteamID3` (default to undefined)
+let format: 'png' | 'webp'; //Image format. Defaults to `png`. Supported: `png`, `webp`. (optional) (default to undefined)
+
+const { status, data } = await apiInstance.rankImage(
+    accountId,
+    format
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **accountId** | [**number**] | The players &#x60;SteamID3&#x60; | defaults to undefined|
+| **format** | [**&#39;png&#39; | &#39;webp&#39;**]**Array<&#39;png&#39; &#124; &#39;webp&#39;>** | Image format. Defaults to &#x60;png&#x60;. Supported: &#x60;png&#x60;, &#x60;webp&#x60;. | (optional) defaults to undefined|
+
+
+### Return type
+
+**Array<number>**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: image/png, image/webp
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Rank badge image |  -  |
+|**400** | Invalid account ID |  -  |
+|**403** | User is protected or endpoint unavailable |  -  |
+|**404** | No image available for the rank |  -  |
+|**500** | Rank lookup failed |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **rankPredict**
+> RankResponse rankPredict()
+
+Deprecated alias of `/v1/players/{account_id}/rank`. The rank is no longer predicted, it is read from the player\'s latest ranked match.
 
 ### Example
 
@@ -465,7 +641,7 @@ const { status, data } = await apiInstance.rankPredict(
 
 ### Return type
 
-**RankPredictResponse**
+**RankResponse**
 
 ### Authorization
 
@@ -483,17 +659,14 @@ No authorization required
 |**200** |  |  -  |
 |**400** | Invalid account ID |  -  |
 |**403** | User is protected or endpoint unavailable |  -  |
-|**422** | Not enough recent ranked matches (need 30) |  -  |
-|**429** | Rate limit exceeded |  -  |
-|**500** | Prediction failed |  -  |
-|**503** | Rank prediction model not loaded |  -  |
+|**500** | Rank lookup failed |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **rankPredictAvgImage**
 > Array<number> rankPredictAvgImage()
 
-Returns the average predicted rank badge image (binary) for a comma-separated list of account IDs. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
+Deprecated alias of `/v1/players/rank/image`. The rank is no longer predicted, it is read from each player\'s latest ranked match.
 
 ### Example
 
@@ -508,12 +681,10 @@ const apiInstance = new PlayersApi(configuration);
 
 let accountIds: Array<number>; //Comma-separated list of account IDs (max 12). (default to undefined)
 let format: 'png' | 'webp'; //Image format. Defaults to `png`. Supported: `png`, `webp`. (optional) (default to undefined)
-let size: 'large' | 'small'; //Image size. Defaults to `large`. Supported: `large`, `small`. (optional) (default to undefined)
 
 const { status, data } = await apiInstance.rankPredictAvgImage(
     accountIds,
-    format,
-    size
+    format
 );
 ```
 
@@ -523,7 +694,6 @@ const { status, data } = await apiInstance.rankPredictAvgImage(
 |------------- | ------------- | ------------- | -------------|
 | **accountIds** | **Array&lt;number&gt;** | Comma-separated list of account IDs (max 12). | defaults to undefined|
 | **format** | [**&#39;png&#39; | &#39;webp&#39;**]**Array<&#39;png&#39; &#124; &#39;webp&#39;>** | Image format. Defaults to &#x60;png&#x60;. Supported: &#x60;png&#x60;, &#x60;webp&#x60;. | (optional) defaults to undefined|
-| **size** | [**&#39;large&#39; | &#39;small&#39;**]**Array<&#39;large&#39; &#124; &#39;small&#39;>** | Image size. Defaults to &#x60;large&#x60;. Supported: &#x60;large&#x60;, &#x60;small&#x60;. | (optional) defaults to undefined|
 
 
 ### Return type
@@ -543,21 +713,18 @@ No authorization required
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** | Average predicted rank badge image |  -  |
+|**200** | Average rank badge image |  -  |
 |**400** | Invalid or missing account IDs |  -  |
 |**403** | One of the users is protected |  -  |
-|**404** | No image available for the predicted rank |  -  |
-|**422** | Not enough recent ranked matches for one or more accounts |  -  |
-|**429** | Rate limit exceeded |  -  |
-|**500** | Prediction failed |  -  |
-|**503** | Rank prediction model not loaded |  -  |
+|**404** | No image available for the rank |  -  |
+|**500** | Rank lookup failed |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **rankPredictImage**
 > Array<number> rankPredictImage()
 
-Returns the predicted rank badge image directly (binary), not a URL. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
+Deprecated alias of `/v1/players/{account_id}/rank/image`. The rank is no longer predicted, it is read from the player\'s latest ranked match.
 
 ### Example
 
@@ -572,12 +739,10 @@ const apiInstance = new PlayersApi(configuration);
 
 let accountId: number; //The players `SteamID3` (default to undefined)
 let format: 'png' | 'webp'; //Image format. Defaults to `png`. Supported: `png`, `webp`. (optional) (default to undefined)
-let size: 'large' | 'small'; //Image size. Defaults to `large`. Supported: `large`, `small`. (optional) (default to undefined)
 
 const { status, data } = await apiInstance.rankPredictImage(
     accountId,
-    format,
-    size
+    format
 );
 ```
 
@@ -587,7 +752,6 @@ const { status, data } = await apiInstance.rankPredictImage(
 |------------- | ------------- | ------------- | -------------|
 | **accountId** | [**number**] | The players &#x60;SteamID3&#x60; | defaults to undefined|
 | **format** | [**&#39;png&#39; | &#39;webp&#39;**]**Array<&#39;png&#39; &#124; &#39;webp&#39;>** | Image format. Defaults to &#x60;png&#x60;. Supported: &#x60;png&#x60;, &#x60;webp&#x60;. | (optional) defaults to undefined|
-| **size** | [**&#39;large&#39; | &#39;small&#39;**]**Array<&#39;large&#39; &#124; &#39;small&#39;>** | Image size. Defaults to &#x60;large&#x60;. Supported: &#x60;large&#x60;, &#x60;small&#x60;. | (optional) defaults to undefined|
 
 
 ### Return type
@@ -607,14 +771,11 @@ No authorization required
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** | Predicted rank badge image |  -  |
+|**200** | Rank badge image |  -  |
 |**400** | Invalid account ID |  -  |
 |**403** | User is protected or endpoint unavailable |  -  |
-|**404** | No image available for the predicted rank |  -  |
-|**422** | Not enough recent ranked matches (need 30) |  -  |
-|**429** | Rate limit exceeded |  -  |
-|**500** | Prediction failed |  -  |
-|**503** | Rank prediction model not loaded |  -  |
+|**404** | No image available for the rank |  -  |
+|**500** | Rank lookup failed |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

@@ -19,34 +19,75 @@ var _ MappedNullable = &RankImages{}
 
 // RankImages Image URLs for a single rank tier. Field declaration order is load-bearing: it sets the JSON key order, which is stable across versions of this API.
 type RankImages struct {
+	Chalk NullableString `json:"chalk,omitempty"`
+	ChalkWebp NullableString `json:"chalk_webp,omitempty"`
 	Large NullableString `json:"large,omitempty"`
+	// Deprecated
 	LargeSubrank1 NullableString `json:"large_subrank1,omitempty"`
+	// Deprecated
 	LargeSubrank1Webp NullableString `json:"large_subrank1_webp,omitempty"`
+	// Deprecated
 	LargeSubrank2 NullableString `json:"large_subrank2,omitempty"`
+	// Deprecated
 	LargeSubrank2Webp NullableString `json:"large_subrank2_webp,omitempty"`
+	// Deprecated
 	LargeSubrank3 NullableString `json:"large_subrank3,omitempty"`
+	// Deprecated
 	LargeSubrank3Webp NullableString `json:"large_subrank3_webp,omitempty"`
+	// Deprecated
 	LargeSubrank4 NullableString `json:"large_subrank4,omitempty"`
+	// Deprecated
 	LargeSubrank4Webp NullableString `json:"large_subrank4_webp,omitempty"`
+	// Deprecated
 	LargeSubrank5 NullableString `json:"large_subrank5,omitempty"`
+	// Deprecated
 	LargeSubrank5Webp NullableString `json:"large_subrank5_webp,omitempty"`
+	// Deprecated
 	LargeSubrank6 NullableString `json:"large_subrank6,omitempty"`
+	// Deprecated
 	LargeSubrank6Webp NullableString `json:"large_subrank6_webp,omitempty"`
 	LargeWebp NullableString `json:"large_webp,omitempty"`
+	// Deprecated
 	Small NullableString `json:"small,omitempty"`
+	// Deprecated
 	SmallSubrank1 NullableString `json:"small_subrank1,omitempty"`
+	// Deprecated
 	SmallSubrank1Webp NullableString `json:"small_subrank1_webp,omitempty"`
+	// Deprecated
 	SmallSubrank2 NullableString `json:"small_subrank2,omitempty"`
+	// Deprecated
 	SmallSubrank2Webp NullableString `json:"small_subrank2_webp,omitempty"`
+	// Deprecated
 	SmallSubrank3 NullableString `json:"small_subrank3,omitempty"`
+	// Deprecated
 	SmallSubrank3Webp NullableString `json:"small_subrank3_webp,omitempty"`
+	// Deprecated
 	SmallSubrank4 NullableString `json:"small_subrank4,omitempty"`
+	// Deprecated
 	SmallSubrank4Webp NullableString `json:"small_subrank4_webp,omitempty"`
+	// Deprecated
 	SmallSubrank5 NullableString `json:"small_subrank5,omitempty"`
+	// Deprecated
 	SmallSubrank5Webp NullableString `json:"small_subrank5_webp,omitempty"`
+	// Deprecated
 	SmallSubrank6 NullableString `json:"small_subrank6,omitempty"`
+	// Deprecated
 	SmallSubrank6Webp NullableString `json:"small_subrank6_webp,omitempty"`
+	// Deprecated
 	SmallWebp NullableString `json:"small_webp,omitempty"`
+	// Tier badge with the division numeral drawn on it, composed on demand by this API.
+	Subrank1 NullableString `json:"subrank1,omitempty"`
+	Subrank1Webp NullableString `json:"subrank1_webp,omitempty"`
+	Subrank2 NullableString `json:"subrank2,omitempty"`
+	Subrank2Webp NullableString `json:"subrank2_webp,omitempty"`
+	Subrank3 NullableString `json:"subrank3,omitempty"`
+	Subrank3Webp NullableString `json:"subrank3_webp,omitempty"`
+	Subrank4 NullableString `json:"subrank4,omitempty"`
+	Subrank4Webp NullableString `json:"subrank4_webp,omitempty"`
+	Subrank5 NullableString `json:"subrank5,omitempty"`
+	Subrank5Webp NullableString `json:"subrank5_webp,omitempty"`
+	Subrank6 NullableString `json:"subrank6,omitempty"`
+	Subrank6Webp NullableString `json:"subrank6_webp,omitempty"`
 }
 
 // NewRankImages instantiates a new RankImages object
@@ -64,6 +105,90 @@ func NewRankImages() *RankImages {
 func NewRankImagesWithDefaults() *RankImages {
 	this := RankImages{}
 	return &this
+}
+
+// GetChalk returns the Chalk field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetChalk() string {
+	if o == nil || IsNil(o.Chalk.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Chalk.Get()
+}
+
+// GetChalkOk returns a tuple with the Chalk field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetChalkOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Chalk.Get(), o.Chalk.IsSet()
+}
+
+// HasChalk returns a boolean if a field has been set.
+func (o *RankImages) HasChalk() bool {
+	if o != nil && o.Chalk.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetChalk gets a reference to the given NullableString and assigns it to the Chalk field.
+func (o *RankImages) SetChalk(v string) {
+	o.Chalk.Set(&v)
+}
+// SetChalkNil sets the value for Chalk to be an explicit nil
+func (o *RankImages) SetChalkNil() {
+	o.Chalk.Set(nil)
+}
+
+// UnsetChalk ensures that no value is present for Chalk, not even an explicit nil
+func (o *RankImages) UnsetChalk() {
+	o.Chalk.Unset()
+}
+
+// GetChalkWebp returns the ChalkWebp field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetChalkWebp() string {
+	if o == nil || IsNil(o.ChalkWebp.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ChalkWebp.Get()
+}
+
+// GetChalkWebpOk returns a tuple with the ChalkWebp field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetChalkWebpOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ChalkWebp.Get(), o.ChalkWebp.IsSet()
+}
+
+// HasChalkWebp returns a boolean if a field has been set.
+func (o *RankImages) HasChalkWebp() bool {
+	if o != nil && o.ChalkWebp.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetChalkWebp gets a reference to the given NullableString and assigns it to the ChalkWebp field.
+func (o *RankImages) SetChalkWebp(v string) {
+	o.ChalkWebp.Set(&v)
+}
+// SetChalkWebpNil sets the value for ChalkWebp to be an explicit nil
+func (o *RankImages) SetChalkWebpNil() {
+	o.ChalkWebp.Set(nil)
+}
+
+// UnsetChalkWebp ensures that no value is present for ChalkWebp, not even an explicit nil
+func (o *RankImages) UnsetChalkWebp() {
+	o.ChalkWebp.Unset()
 }
 
 // GetLarge returns the Large field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -109,6 +234,7 @@ func (o *RankImages) UnsetLarge() {
 }
 
 // GetLargeSubrank1 returns the LargeSubrank1 field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetLargeSubrank1() string {
 	if o == nil || IsNil(o.LargeSubrank1.Get()) {
 		var ret string
@@ -120,6 +246,7 @@ func (o *RankImages) GetLargeSubrank1() string {
 // GetLargeSubrank1Ok returns a tuple with the LargeSubrank1 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetLargeSubrank1Ok() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -137,6 +264,7 @@ func (o *RankImages) HasLargeSubrank1() bool {
 }
 
 // SetLargeSubrank1 gets a reference to the given NullableString and assigns it to the LargeSubrank1 field.
+// Deprecated
 func (o *RankImages) SetLargeSubrank1(v string) {
 	o.LargeSubrank1.Set(&v)
 }
@@ -151,6 +279,7 @@ func (o *RankImages) UnsetLargeSubrank1() {
 }
 
 // GetLargeSubrank1Webp returns the LargeSubrank1Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetLargeSubrank1Webp() string {
 	if o == nil || IsNil(o.LargeSubrank1Webp.Get()) {
 		var ret string
@@ -162,6 +291,7 @@ func (o *RankImages) GetLargeSubrank1Webp() string {
 // GetLargeSubrank1WebpOk returns a tuple with the LargeSubrank1Webp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetLargeSubrank1WebpOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -179,6 +309,7 @@ func (o *RankImages) HasLargeSubrank1Webp() bool {
 }
 
 // SetLargeSubrank1Webp gets a reference to the given NullableString and assigns it to the LargeSubrank1Webp field.
+// Deprecated
 func (o *RankImages) SetLargeSubrank1Webp(v string) {
 	o.LargeSubrank1Webp.Set(&v)
 }
@@ -193,6 +324,7 @@ func (o *RankImages) UnsetLargeSubrank1Webp() {
 }
 
 // GetLargeSubrank2 returns the LargeSubrank2 field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetLargeSubrank2() string {
 	if o == nil || IsNil(o.LargeSubrank2.Get()) {
 		var ret string
@@ -204,6 +336,7 @@ func (o *RankImages) GetLargeSubrank2() string {
 // GetLargeSubrank2Ok returns a tuple with the LargeSubrank2 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetLargeSubrank2Ok() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -221,6 +354,7 @@ func (o *RankImages) HasLargeSubrank2() bool {
 }
 
 // SetLargeSubrank2 gets a reference to the given NullableString and assigns it to the LargeSubrank2 field.
+// Deprecated
 func (o *RankImages) SetLargeSubrank2(v string) {
 	o.LargeSubrank2.Set(&v)
 }
@@ -235,6 +369,7 @@ func (o *RankImages) UnsetLargeSubrank2() {
 }
 
 // GetLargeSubrank2Webp returns the LargeSubrank2Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetLargeSubrank2Webp() string {
 	if o == nil || IsNil(o.LargeSubrank2Webp.Get()) {
 		var ret string
@@ -246,6 +381,7 @@ func (o *RankImages) GetLargeSubrank2Webp() string {
 // GetLargeSubrank2WebpOk returns a tuple with the LargeSubrank2Webp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetLargeSubrank2WebpOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -263,6 +399,7 @@ func (o *RankImages) HasLargeSubrank2Webp() bool {
 }
 
 // SetLargeSubrank2Webp gets a reference to the given NullableString and assigns it to the LargeSubrank2Webp field.
+// Deprecated
 func (o *RankImages) SetLargeSubrank2Webp(v string) {
 	o.LargeSubrank2Webp.Set(&v)
 }
@@ -277,6 +414,7 @@ func (o *RankImages) UnsetLargeSubrank2Webp() {
 }
 
 // GetLargeSubrank3 returns the LargeSubrank3 field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetLargeSubrank3() string {
 	if o == nil || IsNil(o.LargeSubrank3.Get()) {
 		var ret string
@@ -288,6 +426,7 @@ func (o *RankImages) GetLargeSubrank3() string {
 // GetLargeSubrank3Ok returns a tuple with the LargeSubrank3 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetLargeSubrank3Ok() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -305,6 +444,7 @@ func (o *RankImages) HasLargeSubrank3() bool {
 }
 
 // SetLargeSubrank3 gets a reference to the given NullableString and assigns it to the LargeSubrank3 field.
+// Deprecated
 func (o *RankImages) SetLargeSubrank3(v string) {
 	o.LargeSubrank3.Set(&v)
 }
@@ -319,6 +459,7 @@ func (o *RankImages) UnsetLargeSubrank3() {
 }
 
 // GetLargeSubrank3Webp returns the LargeSubrank3Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetLargeSubrank3Webp() string {
 	if o == nil || IsNil(o.LargeSubrank3Webp.Get()) {
 		var ret string
@@ -330,6 +471,7 @@ func (o *RankImages) GetLargeSubrank3Webp() string {
 // GetLargeSubrank3WebpOk returns a tuple with the LargeSubrank3Webp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetLargeSubrank3WebpOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -347,6 +489,7 @@ func (o *RankImages) HasLargeSubrank3Webp() bool {
 }
 
 // SetLargeSubrank3Webp gets a reference to the given NullableString and assigns it to the LargeSubrank3Webp field.
+// Deprecated
 func (o *RankImages) SetLargeSubrank3Webp(v string) {
 	o.LargeSubrank3Webp.Set(&v)
 }
@@ -361,6 +504,7 @@ func (o *RankImages) UnsetLargeSubrank3Webp() {
 }
 
 // GetLargeSubrank4 returns the LargeSubrank4 field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetLargeSubrank4() string {
 	if o == nil || IsNil(o.LargeSubrank4.Get()) {
 		var ret string
@@ -372,6 +516,7 @@ func (o *RankImages) GetLargeSubrank4() string {
 // GetLargeSubrank4Ok returns a tuple with the LargeSubrank4 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetLargeSubrank4Ok() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -389,6 +534,7 @@ func (o *RankImages) HasLargeSubrank4() bool {
 }
 
 // SetLargeSubrank4 gets a reference to the given NullableString and assigns it to the LargeSubrank4 field.
+// Deprecated
 func (o *RankImages) SetLargeSubrank4(v string) {
 	o.LargeSubrank4.Set(&v)
 }
@@ -403,6 +549,7 @@ func (o *RankImages) UnsetLargeSubrank4() {
 }
 
 // GetLargeSubrank4Webp returns the LargeSubrank4Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetLargeSubrank4Webp() string {
 	if o == nil || IsNil(o.LargeSubrank4Webp.Get()) {
 		var ret string
@@ -414,6 +561,7 @@ func (o *RankImages) GetLargeSubrank4Webp() string {
 // GetLargeSubrank4WebpOk returns a tuple with the LargeSubrank4Webp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetLargeSubrank4WebpOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -431,6 +579,7 @@ func (o *RankImages) HasLargeSubrank4Webp() bool {
 }
 
 // SetLargeSubrank4Webp gets a reference to the given NullableString and assigns it to the LargeSubrank4Webp field.
+// Deprecated
 func (o *RankImages) SetLargeSubrank4Webp(v string) {
 	o.LargeSubrank4Webp.Set(&v)
 }
@@ -445,6 +594,7 @@ func (o *RankImages) UnsetLargeSubrank4Webp() {
 }
 
 // GetLargeSubrank5 returns the LargeSubrank5 field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetLargeSubrank5() string {
 	if o == nil || IsNil(o.LargeSubrank5.Get()) {
 		var ret string
@@ -456,6 +606,7 @@ func (o *RankImages) GetLargeSubrank5() string {
 // GetLargeSubrank5Ok returns a tuple with the LargeSubrank5 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetLargeSubrank5Ok() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -473,6 +624,7 @@ func (o *RankImages) HasLargeSubrank5() bool {
 }
 
 // SetLargeSubrank5 gets a reference to the given NullableString and assigns it to the LargeSubrank5 field.
+// Deprecated
 func (o *RankImages) SetLargeSubrank5(v string) {
 	o.LargeSubrank5.Set(&v)
 }
@@ -487,6 +639,7 @@ func (o *RankImages) UnsetLargeSubrank5() {
 }
 
 // GetLargeSubrank5Webp returns the LargeSubrank5Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetLargeSubrank5Webp() string {
 	if o == nil || IsNil(o.LargeSubrank5Webp.Get()) {
 		var ret string
@@ -498,6 +651,7 @@ func (o *RankImages) GetLargeSubrank5Webp() string {
 // GetLargeSubrank5WebpOk returns a tuple with the LargeSubrank5Webp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetLargeSubrank5WebpOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -515,6 +669,7 @@ func (o *RankImages) HasLargeSubrank5Webp() bool {
 }
 
 // SetLargeSubrank5Webp gets a reference to the given NullableString and assigns it to the LargeSubrank5Webp field.
+// Deprecated
 func (o *RankImages) SetLargeSubrank5Webp(v string) {
 	o.LargeSubrank5Webp.Set(&v)
 }
@@ -529,6 +684,7 @@ func (o *RankImages) UnsetLargeSubrank5Webp() {
 }
 
 // GetLargeSubrank6 returns the LargeSubrank6 field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetLargeSubrank6() string {
 	if o == nil || IsNil(o.LargeSubrank6.Get()) {
 		var ret string
@@ -540,6 +696,7 @@ func (o *RankImages) GetLargeSubrank6() string {
 // GetLargeSubrank6Ok returns a tuple with the LargeSubrank6 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetLargeSubrank6Ok() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -557,6 +714,7 @@ func (o *RankImages) HasLargeSubrank6() bool {
 }
 
 // SetLargeSubrank6 gets a reference to the given NullableString and assigns it to the LargeSubrank6 field.
+// Deprecated
 func (o *RankImages) SetLargeSubrank6(v string) {
 	o.LargeSubrank6.Set(&v)
 }
@@ -571,6 +729,7 @@ func (o *RankImages) UnsetLargeSubrank6() {
 }
 
 // GetLargeSubrank6Webp returns the LargeSubrank6Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetLargeSubrank6Webp() string {
 	if o == nil || IsNil(o.LargeSubrank6Webp.Get()) {
 		var ret string
@@ -582,6 +741,7 @@ func (o *RankImages) GetLargeSubrank6Webp() string {
 // GetLargeSubrank6WebpOk returns a tuple with the LargeSubrank6Webp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetLargeSubrank6WebpOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -599,6 +759,7 @@ func (o *RankImages) HasLargeSubrank6Webp() bool {
 }
 
 // SetLargeSubrank6Webp gets a reference to the given NullableString and assigns it to the LargeSubrank6Webp field.
+// Deprecated
 func (o *RankImages) SetLargeSubrank6Webp(v string) {
 	o.LargeSubrank6Webp.Set(&v)
 }
@@ -655,6 +816,7 @@ func (o *RankImages) UnsetLargeWebp() {
 }
 
 // GetSmall returns the Small field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmall() string {
 	if o == nil || IsNil(o.Small.Get()) {
 		var ret string
@@ -666,6 +828,7 @@ func (o *RankImages) GetSmall() string {
 // GetSmallOk returns a tuple with the Small field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -683,6 +846,7 @@ func (o *RankImages) HasSmall() bool {
 }
 
 // SetSmall gets a reference to the given NullableString and assigns it to the Small field.
+// Deprecated
 func (o *RankImages) SetSmall(v string) {
 	o.Small.Set(&v)
 }
@@ -697,6 +861,7 @@ func (o *RankImages) UnsetSmall() {
 }
 
 // GetSmallSubrank1 returns the SmallSubrank1 field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmallSubrank1() string {
 	if o == nil || IsNil(o.SmallSubrank1.Get()) {
 		var ret string
@@ -708,6 +873,7 @@ func (o *RankImages) GetSmallSubrank1() string {
 // GetSmallSubrank1Ok returns a tuple with the SmallSubrank1 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallSubrank1Ok() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -725,6 +891,7 @@ func (o *RankImages) HasSmallSubrank1() bool {
 }
 
 // SetSmallSubrank1 gets a reference to the given NullableString and assigns it to the SmallSubrank1 field.
+// Deprecated
 func (o *RankImages) SetSmallSubrank1(v string) {
 	o.SmallSubrank1.Set(&v)
 }
@@ -739,6 +906,7 @@ func (o *RankImages) UnsetSmallSubrank1() {
 }
 
 // GetSmallSubrank1Webp returns the SmallSubrank1Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmallSubrank1Webp() string {
 	if o == nil || IsNil(o.SmallSubrank1Webp.Get()) {
 		var ret string
@@ -750,6 +918,7 @@ func (o *RankImages) GetSmallSubrank1Webp() string {
 // GetSmallSubrank1WebpOk returns a tuple with the SmallSubrank1Webp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallSubrank1WebpOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -767,6 +936,7 @@ func (o *RankImages) HasSmallSubrank1Webp() bool {
 }
 
 // SetSmallSubrank1Webp gets a reference to the given NullableString and assigns it to the SmallSubrank1Webp field.
+// Deprecated
 func (o *RankImages) SetSmallSubrank1Webp(v string) {
 	o.SmallSubrank1Webp.Set(&v)
 }
@@ -781,6 +951,7 @@ func (o *RankImages) UnsetSmallSubrank1Webp() {
 }
 
 // GetSmallSubrank2 returns the SmallSubrank2 field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmallSubrank2() string {
 	if o == nil || IsNil(o.SmallSubrank2.Get()) {
 		var ret string
@@ -792,6 +963,7 @@ func (o *RankImages) GetSmallSubrank2() string {
 // GetSmallSubrank2Ok returns a tuple with the SmallSubrank2 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallSubrank2Ok() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -809,6 +981,7 @@ func (o *RankImages) HasSmallSubrank2() bool {
 }
 
 // SetSmallSubrank2 gets a reference to the given NullableString and assigns it to the SmallSubrank2 field.
+// Deprecated
 func (o *RankImages) SetSmallSubrank2(v string) {
 	o.SmallSubrank2.Set(&v)
 }
@@ -823,6 +996,7 @@ func (o *RankImages) UnsetSmallSubrank2() {
 }
 
 // GetSmallSubrank2Webp returns the SmallSubrank2Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmallSubrank2Webp() string {
 	if o == nil || IsNil(o.SmallSubrank2Webp.Get()) {
 		var ret string
@@ -834,6 +1008,7 @@ func (o *RankImages) GetSmallSubrank2Webp() string {
 // GetSmallSubrank2WebpOk returns a tuple with the SmallSubrank2Webp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallSubrank2WebpOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -851,6 +1026,7 @@ func (o *RankImages) HasSmallSubrank2Webp() bool {
 }
 
 // SetSmallSubrank2Webp gets a reference to the given NullableString and assigns it to the SmallSubrank2Webp field.
+// Deprecated
 func (o *RankImages) SetSmallSubrank2Webp(v string) {
 	o.SmallSubrank2Webp.Set(&v)
 }
@@ -865,6 +1041,7 @@ func (o *RankImages) UnsetSmallSubrank2Webp() {
 }
 
 // GetSmallSubrank3 returns the SmallSubrank3 field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmallSubrank3() string {
 	if o == nil || IsNil(o.SmallSubrank3.Get()) {
 		var ret string
@@ -876,6 +1053,7 @@ func (o *RankImages) GetSmallSubrank3() string {
 // GetSmallSubrank3Ok returns a tuple with the SmallSubrank3 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallSubrank3Ok() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -893,6 +1071,7 @@ func (o *RankImages) HasSmallSubrank3() bool {
 }
 
 // SetSmallSubrank3 gets a reference to the given NullableString and assigns it to the SmallSubrank3 field.
+// Deprecated
 func (o *RankImages) SetSmallSubrank3(v string) {
 	o.SmallSubrank3.Set(&v)
 }
@@ -907,6 +1086,7 @@ func (o *RankImages) UnsetSmallSubrank3() {
 }
 
 // GetSmallSubrank3Webp returns the SmallSubrank3Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmallSubrank3Webp() string {
 	if o == nil || IsNil(o.SmallSubrank3Webp.Get()) {
 		var ret string
@@ -918,6 +1098,7 @@ func (o *RankImages) GetSmallSubrank3Webp() string {
 // GetSmallSubrank3WebpOk returns a tuple with the SmallSubrank3Webp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallSubrank3WebpOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -935,6 +1116,7 @@ func (o *RankImages) HasSmallSubrank3Webp() bool {
 }
 
 // SetSmallSubrank3Webp gets a reference to the given NullableString and assigns it to the SmallSubrank3Webp field.
+// Deprecated
 func (o *RankImages) SetSmallSubrank3Webp(v string) {
 	o.SmallSubrank3Webp.Set(&v)
 }
@@ -949,6 +1131,7 @@ func (o *RankImages) UnsetSmallSubrank3Webp() {
 }
 
 // GetSmallSubrank4 returns the SmallSubrank4 field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmallSubrank4() string {
 	if o == nil || IsNil(o.SmallSubrank4.Get()) {
 		var ret string
@@ -960,6 +1143,7 @@ func (o *RankImages) GetSmallSubrank4() string {
 // GetSmallSubrank4Ok returns a tuple with the SmallSubrank4 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallSubrank4Ok() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -977,6 +1161,7 @@ func (o *RankImages) HasSmallSubrank4() bool {
 }
 
 // SetSmallSubrank4 gets a reference to the given NullableString and assigns it to the SmallSubrank4 field.
+// Deprecated
 func (o *RankImages) SetSmallSubrank4(v string) {
 	o.SmallSubrank4.Set(&v)
 }
@@ -991,6 +1176,7 @@ func (o *RankImages) UnsetSmallSubrank4() {
 }
 
 // GetSmallSubrank4Webp returns the SmallSubrank4Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmallSubrank4Webp() string {
 	if o == nil || IsNil(o.SmallSubrank4Webp.Get()) {
 		var ret string
@@ -1002,6 +1188,7 @@ func (o *RankImages) GetSmallSubrank4Webp() string {
 // GetSmallSubrank4WebpOk returns a tuple with the SmallSubrank4Webp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallSubrank4WebpOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -1019,6 +1206,7 @@ func (o *RankImages) HasSmallSubrank4Webp() bool {
 }
 
 // SetSmallSubrank4Webp gets a reference to the given NullableString and assigns it to the SmallSubrank4Webp field.
+// Deprecated
 func (o *RankImages) SetSmallSubrank4Webp(v string) {
 	o.SmallSubrank4Webp.Set(&v)
 }
@@ -1033,6 +1221,7 @@ func (o *RankImages) UnsetSmallSubrank4Webp() {
 }
 
 // GetSmallSubrank5 returns the SmallSubrank5 field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmallSubrank5() string {
 	if o == nil || IsNil(o.SmallSubrank5.Get()) {
 		var ret string
@@ -1044,6 +1233,7 @@ func (o *RankImages) GetSmallSubrank5() string {
 // GetSmallSubrank5Ok returns a tuple with the SmallSubrank5 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallSubrank5Ok() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -1061,6 +1251,7 @@ func (o *RankImages) HasSmallSubrank5() bool {
 }
 
 // SetSmallSubrank5 gets a reference to the given NullableString and assigns it to the SmallSubrank5 field.
+// Deprecated
 func (o *RankImages) SetSmallSubrank5(v string) {
 	o.SmallSubrank5.Set(&v)
 }
@@ -1075,6 +1266,7 @@ func (o *RankImages) UnsetSmallSubrank5() {
 }
 
 // GetSmallSubrank5Webp returns the SmallSubrank5Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmallSubrank5Webp() string {
 	if o == nil || IsNil(o.SmallSubrank5Webp.Get()) {
 		var ret string
@@ -1086,6 +1278,7 @@ func (o *RankImages) GetSmallSubrank5Webp() string {
 // GetSmallSubrank5WebpOk returns a tuple with the SmallSubrank5Webp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallSubrank5WebpOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -1103,6 +1296,7 @@ func (o *RankImages) HasSmallSubrank5Webp() bool {
 }
 
 // SetSmallSubrank5Webp gets a reference to the given NullableString and assigns it to the SmallSubrank5Webp field.
+// Deprecated
 func (o *RankImages) SetSmallSubrank5Webp(v string) {
 	o.SmallSubrank5Webp.Set(&v)
 }
@@ -1117,6 +1311,7 @@ func (o *RankImages) UnsetSmallSubrank5Webp() {
 }
 
 // GetSmallSubrank6 returns the SmallSubrank6 field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmallSubrank6() string {
 	if o == nil || IsNil(o.SmallSubrank6.Get()) {
 		var ret string
@@ -1128,6 +1323,7 @@ func (o *RankImages) GetSmallSubrank6() string {
 // GetSmallSubrank6Ok returns a tuple with the SmallSubrank6 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallSubrank6Ok() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -1145,6 +1341,7 @@ func (o *RankImages) HasSmallSubrank6() bool {
 }
 
 // SetSmallSubrank6 gets a reference to the given NullableString and assigns it to the SmallSubrank6 field.
+// Deprecated
 func (o *RankImages) SetSmallSubrank6(v string) {
 	o.SmallSubrank6.Set(&v)
 }
@@ -1159,6 +1356,7 @@ func (o *RankImages) UnsetSmallSubrank6() {
 }
 
 // GetSmallSubrank6Webp returns the SmallSubrank6Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmallSubrank6Webp() string {
 	if o == nil || IsNil(o.SmallSubrank6Webp.Get()) {
 		var ret string
@@ -1170,6 +1368,7 @@ func (o *RankImages) GetSmallSubrank6Webp() string {
 // GetSmallSubrank6WebpOk returns a tuple with the SmallSubrank6Webp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallSubrank6WebpOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -1187,6 +1386,7 @@ func (o *RankImages) HasSmallSubrank6Webp() bool {
 }
 
 // SetSmallSubrank6Webp gets a reference to the given NullableString and assigns it to the SmallSubrank6Webp field.
+// Deprecated
 func (o *RankImages) SetSmallSubrank6Webp(v string) {
 	o.SmallSubrank6Webp.Set(&v)
 }
@@ -1201,6 +1401,7 @@ func (o *RankImages) UnsetSmallSubrank6Webp() {
 }
 
 // GetSmallWebp returns the SmallWebp field value if set, zero value otherwise (both if not set or set to explicit null).
+// Deprecated
 func (o *RankImages) GetSmallWebp() string {
 	if o == nil || IsNil(o.SmallWebp.Get()) {
 		var ret string
@@ -1212,6 +1413,7 @@ func (o *RankImages) GetSmallWebp() string {
 // GetSmallWebpOk returns a tuple with the SmallWebp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
+// Deprecated
 func (o *RankImages) GetSmallWebpOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -1229,6 +1431,7 @@ func (o *RankImages) HasSmallWebp() bool {
 }
 
 // SetSmallWebp gets a reference to the given NullableString and assigns it to the SmallWebp field.
+// Deprecated
 func (o *RankImages) SetSmallWebp(v string) {
 	o.SmallWebp.Set(&v)
 }
@@ -1242,6 +1445,510 @@ func (o *RankImages) UnsetSmallWebp() {
 	o.SmallWebp.Unset()
 }
 
+// GetSubrank1 returns the Subrank1 field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetSubrank1() string {
+	if o == nil || IsNil(o.Subrank1.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Subrank1.Get()
+}
+
+// GetSubrank1Ok returns a tuple with the Subrank1 field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetSubrank1Ok() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Subrank1.Get(), o.Subrank1.IsSet()
+}
+
+// HasSubrank1 returns a boolean if a field has been set.
+func (o *RankImages) HasSubrank1() bool {
+	if o != nil && o.Subrank1.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSubrank1 gets a reference to the given NullableString and assigns it to the Subrank1 field.
+func (o *RankImages) SetSubrank1(v string) {
+	o.Subrank1.Set(&v)
+}
+// SetSubrank1Nil sets the value for Subrank1 to be an explicit nil
+func (o *RankImages) SetSubrank1Nil() {
+	o.Subrank1.Set(nil)
+}
+
+// UnsetSubrank1 ensures that no value is present for Subrank1, not even an explicit nil
+func (o *RankImages) UnsetSubrank1() {
+	o.Subrank1.Unset()
+}
+
+// GetSubrank1Webp returns the Subrank1Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetSubrank1Webp() string {
+	if o == nil || IsNil(o.Subrank1Webp.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Subrank1Webp.Get()
+}
+
+// GetSubrank1WebpOk returns a tuple with the Subrank1Webp field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetSubrank1WebpOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Subrank1Webp.Get(), o.Subrank1Webp.IsSet()
+}
+
+// HasSubrank1Webp returns a boolean if a field has been set.
+func (o *RankImages) HasSubrank1Webp() bool {
+	if o != nil && o.Subrank1Webp.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSubrank1Webp gets a reference to the given NullableString and assigns it to the Subrank1Webp field.
+func (o *RankImages) SetSubrank1Webp(v string) {
+	o.Subrank1Webp.Set(&v)
+}
+// SetSubrank1WebpNil sets the value for Subrank1Webp to be an explicit nil
+func (o *RankImages) SetSubrank1WebpNil() {
+	o.Subrank1Webp.Set(nil)
+}
+
+// UnsetSubrank1Webp ensures that no value is present for Subrank1Webp, not even an explicit nil
+func (o *RankImages) UnsetSubrank1Webp() {
+	o.Subrank1Webp.Unset()
+}
+
+// GetSubrank2 returns the Subrank2 field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetSubrank2() string {
+	if o == nil || IsNil(o.Subrank2.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Subrank2.Get()
+}
+
+// GetSubrank2Ok returns a tuple with the Subrank2 field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetSubrank2Ok() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Subrank2.Get(), o.Subrank2.IsSet()
+}
+
+// HasSubrank2 returns a boolean if a field has been set.
+func (o *RankImages) HasSubrank2() bool {
+	if o != nil && o.Subrank2.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSubrank2 gets a reference to the given NullableString and assigns it to the Subrank2 field.
+func (o *RankImages) SetSubrank2(v string) {
+	o.Subrank2.Set(&v)
+}
+// SetSubrank2Nil sets the value for Subrank2 to be an explicit nil
+func (o *RankImages) SetSubrank2Nil() {
+	o.Subrank2.Set(nil)
+}
+
+// UnsetSubrank2 ensures that no value is present for Subrank2, not even an explicit nil
+func (o *RankImages) UnsetSubrank2() {
+	o.Subrank2.Unset()
+}
+
+// GetSubrank2Webp returns the Subrank2Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetSubrank2Webp() string {
+	if o == nil || IsNil(o.Subrank2Webp.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Subrank2Webp.Get()
+}
+
+// GetSubrank2WebpOk returns a tuple with the Subrank2Webp field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetSubrank2WebpOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Subrank2Webp.Get(), o.Subrank2Webp.IsSet()
+}
+
+// HasSubrank2Webp returns a boolean if a field has been set.
+func (o *RankImages) HasSubrank2Webp() bool {
+	if o != nil && o.Subrank2Webp.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSubrank2Webp gets a reference to the given NullableString and assigns it to the Subrank2Webp field.
+func (o *RankImages) SetSubrank2Webp(v string) {
+	o.Subrank2Webp.Set(&v)
+}
+// SetSubrank2WebpNil sets the value for Subrank2Webp to be an explicit nil
+func (o *RankImages) SetSubrank2WebpNil() {
+	o.Subrank2Webp.Set(nil)
+}
+
+// UnsetSubrank2Webp ensures that no value is present for Subrank2Webp, not even an explicit nil
+func (o *RankImages) UnsetSubrank2Webp() {
+	o.Subrank2Webp.Unset()
+}
+
+// GetSubrank3 returns the Subrank3 field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetSubrank3() string {
+	if o == nil || IsNil(o.Subrank3.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Subrank3.Get()
+}
+
+// GetSubrank3Ok returns a tuple with the Subrank3 field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetSubrank3Ok() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Subrank3.Get(), o.Subrank3.IsSet()
+}
+
+// HasSubrank3 returns a boolean if a field has been set.
+func (o *RankImages) HasSubrank3() bool {
+	if o != nil && o.Subrank3.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSubrank3 gets a reference to the given NullableString and assigns it to the Subrank3 field.
+func (o *RankImages) SetSubrank3(v string) {
+	o.Subrank3.Set(&v)
+}
+// SetSubrank3Nil sets the value for Subrank3 to be an explicit nil
+func (o *RankImages) SetSubrank3Nil() {
+	o.Subrank3.Set(nil)
+}
+
+// UnsetSubrank3 ensures that no value is present for Subrank3, not even an explicit nil
+func (o *RankImages) UnsetSubrank3() {
+	o.Subrank3.Unset()
+}
+
+// GetSubrank3Webp returns the Subrank3Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetSubrank3Webp() string {
+	if o == nil || IsNil(o.Subrank3Webp.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Subrank3Webp.Get()
+}
+
+// GetSubrank3WebpOk returns a tuple with the Subrank3Webp field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetSubrank3WebpOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Subrank3Webp.Get(), o.Subrank3Webp.IsSet()
+}
+
+// HasSubrank3Webp returns a boolean if a field has been set.
+func (o *RankImages) HasSubrank3Webp() bool {
+	if o != nil && o.Subrank3Webp.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSubrank3Webp gets a reference to the given NullableString and assigns it to the Subrank3Webp field.
+func (o *RankImages) SetSubrank3Webp(v string) {
+	o.Subrank3Webp.Set(&v)
+}
+// SetSubrank3WebpNil sets the value for Subrank3Webp to be an explicit nil
+func (o *RankImages) SetSubrank3WebpNil() {
+	o.Subrank3Webp.Set(nil)
+}
+
+// UnsetSubrank3Webp ensures that no value is present for Subrank3Webp, not even an explicit nil
+func (o *RankImages) UnsetSubrank3Webp() {
+	o.Subrank3Webp.Unset()
+}
+
+// GetSubrank4 returns the Subrank4 field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetSubrank4() string {
+	if o == nil || IsNil(o.Subrank4.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Subrank4.Get()
+}
+
+// GetSubrank4Ok returns a tuple with the Subrank4 field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetSubrank4Ok() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Subrank4.Get(), o.Subrank4.IsSet()
+}
+
+// HasSubrank4 returns a boolean if a field has been set.
+func (o *RankImages) HasSubrank4() bool {
+	if o != nil && o.Subrank4.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSubrank4 gets a reference to the given NullableString and assigns it to the Subrank4 field.
+func (o *RankImages) SetSubrank4(v string) {
+	o.Subrank4.Set(&v)
+}
+// SetSubrank4Nil sets the value for Subrank4 to be an explicit nil
+func (o *RankImages) SetSubrank4Nil() {
+	o.Subrank4.Set(nil)
+}
+
+// UnsetSubrank4 ensures that no value is present for Subrank4, not even an explicit nil
+func (o *RankImages) UnsetSubrank4() {
+	o.Subrank4.Unset()
+}
+
+// GetSubrank4Webp returns the Subrank4Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetSubrank4Webp() string {
+	if o == nil || IsNil(o.Subrank4Webp.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Subrank4Webp.Get()
+}
+
+// GetSubrank4WebpOk returns a tuple with the Subrank4Webp field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetSubrank4WebpOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Subrank4Webp.Get(), o.Subrank4Webp.IsSet()
+}
+
+// HasSubrank4Webp returns a boolean if a field has been set.
+func (o *RankImages) HasSubrank4Webp() bool {
+	if o != nil && o.Subrank4Webp.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSubrank4Webp gets a reference to the given NullableString and assigns it to the Subrank4Webp field.
+func (o *RankImages) SetSubrank4Webp(v string) {
+	o.Subrank4Webp.Set(&v)
+}
+// SetSubrank4WebpNil sets the value for Subrank4Webp to be an explicit nil
+func (o *RankImages) SetSubrank4WebpNil() {
+	o.Subrank4Webp.Set(nil)
+}
+
+// UnsetSubrank4Webp ensures that no value is present for Subrank4Webp, not even an explicit nil
+func (o *RankImages) UnsetSubrank4Webp() {
+	o.Subrank4Webp.Unset()
+}
+
+// GetSubrank5 returns the Subrank5 field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetSubrank5() string {
+	if o == nil || IsNil(o.Subrank5.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Subrank5.Get()
+}
+
+// GetSubrank5Ok returns a tuple with the Subrank5 field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetSubrank5Ok() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Subrank5.Get(), o.Subrank5.IsSet()
+}
+
+// HasSubrank5 returns a boolean if a field has been set.
+func (o *RankImages) HasSubrank5() bool {
+	if o != nil && o.Subrank5.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSubrank5 gets a reference to the given NullableString and assigns it to the Subrank5 field.
+func (o *RankImages) SetSubrank5(v string) {
+	o.Subrank5.Set(&v)
+}
+// SetSubrank5Nil sets the value for Subrank5 to be an explicit nil
+func (o *RankImages) SetSubrank5Nil() {
+	o.Subrank5.Set(nil)
+}
+
+// UnsetSubrank5 ensures that no value is present for Subrank5, not even an explicit nil
+func (o *RankImages) UnsetSubrank5() {
+	o.Subrank5.Unset()
+}
+
+// GetSubrank5Webp returns the Subrank5Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetSubrank5Webp() string {
+	if o == nil || IsNil(o.Subrank5Webp.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Subrank5Webp.Get()
+}
+
+// GetSubrank5WebpOk returns a tuple with the Subrank5Webp field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetSubrank5WebpOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Subrank5Webp.Get(), o.Subrank5Webp.IsSet()
+}
+
+// HasSubrank5Webp returns a boolean if a field has been set.
+func (o *RankImages) HasSubrank5Webp() bool {
+	if o != nil && o.Subrank5Webp.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSubrank5Webp gets a reference to the given NullableString and assigns it to the Subrank5Webp field.
+func (o *RankImages) SetSubrank5Webp(v string) {
+	o.Subrank5Webp.Set(&v)
+}
+// SetSubrank5WebpNil sets the value for Subrank5Webp to be an explicit nil
+func (o *RankImages) SetSubrank5WebpNil() {
+	o.Subrank5Webp.Set(nil)
+}
+
+// UnsetSubrank5Webp ensures that no value is present for Subrank5Webp, not even an explicit nil
+func (o *RankImages) UnsetSubrank5Webp() {
+	o.Subrank5Webp.Unset()
+}
+
+// GetSubrank6 returns the Subrank6 field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetSubrank6() string {
+	if o == nil || IsNil(o.Subrank6.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Subrank6.Get()
+}
+
+// GetSubrank6Ok returns a tuple with the Subrank6 field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetSubrank6Ok() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Subrank6.Get(), o.Subrank6.IsSet()
+}
+
+// HasSubrank6 returns a boolean if a field has been set.
+func (o *RankImages) HasSubrank6() bool {
+	if o != nil && o.Subrank6.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSubrank6 gets a reference to the given NullableString and assigns it to the Subrank6 field.
+func (o *RankImages) SetSubrank6(v string) {
+	o.Subrank6.Set(&v)
+}
+// SetSubrank6Nil sets the value for Subrank6 to be an explicit nil
+func (o *RankImages) SetSubrank6Nil() {
+	o.Subrank6.Set(nil)
+}
+
+// UnsetSubrank6 ensures that no value is present for Subrank6, not even an explicit nil
+func (o *RankImages) UnsetSubrank6() {
+	o.Subrank6.Unset()
+}
+
+// GetSubrank6Webp returns the Subrank6Webp field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RankImages) GetSubrank6Webp() string {
+	if o == nil || IsNil(o.Subrank6Webp.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Subrank6Webp.Get()
+}
+
+// GetSubrank6WebpOk returns a tuple with the Subrank6Webp field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RankImages) GetSubrank6WebpOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Subrank6Webp.Get(), o.Subrank6Webp.IsSet()
+}
+
+// HasSubrank6Webp returns a boolean if a field has been set.
+func (o *RankImages) HasSubrank6Webp() bool {
+	if o != nil && o.Subrank6Webp.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSubrank6Webp gets a reference to the given NullableString and assigns it to the Subrank6Webp field.
+func (o *RankImages) SetSubrank6Webp(v string) {
+	o.Subrank6Webp.Set(&v)
+}
+// SetSubrank6WebpNil sets the value for Subrank6Webp to be an explicit nil
+func (o *RankImages) SetSubrank6WebpNil() {
+	o.Subrank6Webp.Set(nil)
+}
+
+// UnsetSubrank6Webp ensures that no value is present for Subrank6Webp, not even an explicit nil
+func (o *RankImages) UnsetSubrank6Webp() {
+	o.Subrank6Webp.Unset()
+}
+
 func (o RankImages) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -1252,6 +1959,12 @@ func (o RankImages) MarshalJSON() ([]byte, error) {
 
 func (o RankImages) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if o.Chalk.IsSet() {
+		toSerialize["chalk"] = o.Chalk.Get()
+	}
+	if o.ChalkWebp.IsSet() {
+		toSerialize["chalk_webp"] = o.ChalkWebp.Get()
+	}
 	if o.Large.IsSet() {
 		toSerialize["large"] = o.Large.Get()
 	}
@@ -1335,6 +2048,42 @@ func (o RankImages) ToMap() (map[string]interface{}, error) {
 	}
 	if o.SmallWebp.IsSet() {
 		toSerialize["small_webp"] = o.SmallWebp.Get()
+	}
+	if o.Subrank1.IsSet() {
+		toSerialize["subrank1"] = o.Subrank1.Get()
+	}
+	if o.Subrank1Webp.IsSet() {
+		toSerialize["subrank1_webp"] = o.Subrank1Webp.Get()
+	}
+	if o.Subrank2.IsSet() {
+		toSerialize["subrank2"] = o.Subrank2.Get()
+	}
+	if o.Subrank2Webp.IsSet() {
+		toSerialize["subrank2_webp"] = o.Subrank2Webp.Get()
+	}
+	if o.Subrank3.IsSet() {
+		toSerialize["subrank3"] = o.Subrank3.Get()
+	}
+	if o.Subrank3Webp.IsSet() {
+		toSerialize["subrank3_webp"] = o.Subrank3Webp.Get()
+	}
+	if o.Subrank4.IsSet() {
+		toSerialize["subrank4"] = o.Subrank4.Get()
+	}
+	if o.Subrank4Webp.IsSet() {
+		toSerialize["subrank4_webp"] = o.Subrank4Webp.Get()
+	}
+	if o.Subrank5.IsSet() {
+		toSerialize["subrank5"] = o.Subrank5.Get()
+	}
+	if o.Subrank5Webp.IsSet() {
+		toSerialize["subrank5_webp"] = o.Subrank5Webp.Get()
+	}
+	if o.Subrank6.IsSet() {
+		toSerialize["subrank6"] = o.Subrank6.Get()
+	}
+	if o.Subrank6Webp.IsSet() {
+		toSerialize["subrank6_webp"] = o.Subrank6Webp.Get()
 	}
 	return toSerialize, nil
 }

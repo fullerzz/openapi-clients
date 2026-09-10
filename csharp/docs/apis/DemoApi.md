@@ -15,7 +15,7 @@ All URIs are relative to *https://api.deadlock-api.com*
 
 Live Demo Query (SSE)
 
- Run a SQL query over a match's **live** broadcast and stream result rows over Server-Sent Events as the match plays, instead of waiting for the demo to finish (see the async `/demo/query`).  Provide either `match_id` (the server spectates the lobby to obtain the broadcast URL) or an explicit `broadcast_url` from `/live/urls`.  Projection/filter queries emit rows continuously as they are decoded. A whole-match aggregation (`GROUP BY` / `ORDER BY`) can only produce its final rows once the broadcast ends.  ### Rate Limits: | Type | Limit | | - -- - | - -- -- | | IP | 20req/m | | Global | 100req/m | 
+ Run a SQL query over a match's **live** broadcast and stream result rows over Server-Sent Events as the match plays, instead of waiting for the demo to finish (see the async `/demo/query`).  Provide either `match_id` (the server spectates the lobby to obtain the broadcast URL) or an explicit `broadcast_url` from `/live/urls`.  Projection/filter queries emit rows continuously as they are decoded. A whole-match aggregation (`GROUP BY` / `ORDER BY`) can only produce its final rows once the broadcast ends.  ### Rate Limits: | Type | Limit | | - -- - | - -- -- | | IP | With broadcast_url: 20req/m<br>With match_id: 6req/h | | Key | With broadcast_url: -<br>With match_id: 20req/10m, 100req/h | | Global | With broadcast_url: 100req/m<br>With match_id: 100req/10m, 500req/h | 
 
 
 ### Parameters
@@ -43,7 +43,7 @@ No authorization required
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **200** | SSE stream of result rows. Each &#x60;message&#x60; event&#39;s &#x60;data&#x60; is one result row as a JSON object; a terminal &#x60;end&#x60; event marks the end of the broadcast, and an &#x60;error&#x60; event carries any mid-stream failure. |  -  |
+| **200** | SSE stream of result rows. Each &#x60;message&#x60; event&#39;s &#x60;data&#x60; is one result row as a JSON object; a terminal &#x60;end&#x60; event marks the end of the broadcast, and an &#x60;error&#x60; event carries any mid-stream failure. While the broadcast relay is still spinning up (common right after spectating a fresh match), &#x60;status&#x60; events report retry progress instead of the stream going quiet. |  -  |
 | **400** | Neither match_id nor broadcast_url given, or the query is invalid. |  -  |
 | **429** | Rate limit exceeded |  -  |
 | **500** | Failed to start the live query |  -  |

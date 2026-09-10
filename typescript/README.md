@@ -69,6 +69,8 @@ Class | Method | HTTP request | Description
 *AnalyticsApi* | [**itemPermutationStats**](docs/AnalyticsApi.md#itempermutationstats) | **GET** /v1/analytics/item-permutation-stats | Item Permutation Stats
 *AnalyticsApi* | [**itemStats**](docs/AnalyticsApi.md#itemstats) | **GET** /v1/analytics/item-stats | Item Stats
 *AnalyticsApi* | [**killDeathStats**](docs/AnalyticsApi.md#killdeathstats) | **GET** /v1/analytics/kill-death-stats | Kill Death Stats
+*AnalyticsApi* | [**laneMatchupStats**](docs/AnalyticsApi.md#lanematchupstats) | **GET** /v1/analytics/lane-matchup-stats | Lane Matchup Stats (Subject to Change)
+*AnalyticsApi* | [**laneSoulCurve**](docs/AnalyticsApi.md#lanesoulcurve) | **GET** /v1/analytics/lane-soul-curve | Lane Soul Curve (Subject to Change)
 *AnalyticsApi* | [**playerPerformanceCurve**](docs/AnalyticsApi.md#playerperformancecurve) | **GET** /v1/analytics/player-performance-curve | Player Performance Curve
 *AnalyticsApi* | [**playerScoreboard**](docs/AnalyticsApi.md#playerscoreboard) | **GET** /v1/analytics/scoreboards/players | Player Scoreboard
 *AnalyticsApi* | [**playerStatsMetrics**](docs/AnalyticsApi.md#playerstatsmetrics) | **GET** /v1/analytics/player-stats/metrics | Player Stats Metrics
@@ -79,6 +81,8 @@ Class | Method | HTTP request | Description
 *BuildTagsApi* | [**getBuildTag**](docs/BuildTagsApi.md#getbuildtag) | **GET** /v1/assets/build-tags/{build_tag_id} | Get Build Tag
 *BuildTagsApi* | [**getBuildTagByName**](docs/BuildTagsApi.md#getbuildtagbyname) | **GET** /v1/assets/build-tags/by-name/{name} | Get Build Tag By Name
 *BuildTagsApi* | [**listBuildTags**](docs/BuildTagsApi.md#listbuildtags) | **GET** /v1/assets/build-tags | List Build Tags
+*BuildsApi* | [**fetchBuildLive**](docs/BuildsApi.md#fetchbuildlive) | **GET** /v1/builds/{hero_id}/{build_id} | Fetch Live
+*BuildsApi* | [**fetchBuildsByAuthorLive**](docs/BuildsApi.md#fetchbuildsbyauthorlive) | **GET** /v1/builds/by-author/{account_id} | Fetch Live by Author
 *BuildsApi* | [**searchBuilds**](docs/BuildsApi.md#searchbuilds) | **GET** /v1/builds | Search
 *ClientVersionsApi* | [**listClientVersions**](docs/ClientVersionsApi.md#listclientversions) | **GET** /v1/assets/client-versions | List Client Versions
 *ColorsApi* | [**listColors**](docs/ColorsApi.md#listcolors) | **GET** /v1/assets/colors | List Colors
@@ -104,6 +108,7 @@ Class | Method | HTTP request | Description
 *InfoApi* | [**healthCheck**](docs/InfoApi.md#healthcheck) | **GET** /v1/info/health | Health Check
 *InfoApi* | [**info**](docs/InfoApi.md#info) | **GET** /v1/info | API Info
 *InternalApi* | [**ingestSalts**](docs/InternalApi.md#ingestsalts) | **POST** /v1/matches/salts | Match Salts Ingest
+*InternalApi* | [**submitFeedback**](docs/InternalApi.md#submitfeedback) | **POST** /v1/feedback | Submit Website Feedback
 *ItemsApi* | [**getItem**](docs/ItemsApi.md#getitem) | **GET** /v1/assets/items/{id_or_class_name} | Get Item
 *ItemsApi* | [**getItemsByHeroId**](docs/ItemsApi.md#getitemsbyheroid) | **GET** /v1/assets/items/by-hero-id/{id} | List Items By Hero
 *ItemsApi* | [**getItemsBySlotType**](docs/ItemsApi.md#getitemsbyslottype) | **GET** /v1/assets/items/by-slot-type/{slot_type} | List Items By Slot Type
@@ -114,12 +119,12 @@ Class | Method | HTTP request | Description
 *LeaderboardApi* | [**leaderboardHeroRaw**](docs/LeaderboardApi.md#leaderboardheroraw) | **GET** /v1/leaderboard/{region}/{hero_id}/raw | Hero Leaderboard as Protobuf
 *LeaderboardApi* | [**leaderboardRaw**](docs/LeaderboardApi.md#leaderboardraw) | **GET** /v1/leaderboard/{region}/raw | Leaderboard as Protobuf
 *LootTablesApi* | [**listLootTables**](docs/LootTablesApi.md#listloottables) | **GET** /v1/assets/loot-tables | List Loot Tables
-*MMRApi* | [**heroMmr**](docs/MMRApi.md#herommr) | **GET** /v1/players/mmr/{hero_id} | Batch Hero MMR
-*MMRApi* | [**heroMmrDistribution**](docs/MMRApi.md#herommrdistribution) | **GET** /v1/players/mmr/distribution/{hero_id} | Hero MMR Distribution
-*MMRApi* | [**heroMmrHistory**](docs/MMRApi.md#herommrhistory) | **GET** /v1/players/{account_id}/mmr-history/{hero_id} | Hero MMR History
-*MMRApi* | [**mmr**](docs/MMRApi.md#mmr) | **GET** /v1/players/mmr | Batch MMR
-*MMRApi* | [**mmrDistribution**](docs/MMRApi.md#mmrdistribution) | **GET** /v1/players/mmr/distribution | MMR Distribution
-*MMRApi* | [**mmrHistory**](docs/MMRApi.md#mmrhistory) | **GET** /v1/players/{account_id}/mmr-history | MMR History
+*MMRApi* | [**heroMmr**](docs/MMRApi.md#herommr) | **GET** /v1/players/mmr/{hero_id} | Batch Hero MMR (Deprecated)
+*MMRApi* | [**heroMmrDistribution**](docs/MMRApi.md#herommrdistribution) | **GET** /v1/players/mmr/distribution/{hero_id} | Hero MMR Distribution (Deprecated)
+*MMRApi* | [**heroMmrHistory**](docs/MMRApi.md#herommrhistory) | **GET** /v1/players/{account_id}/mmr-history/{hero_id} | Hero MMR History (Deprecated)
+*MMRApi* | [**mmr**](docs/MMRApi.md#mmr) | **GET** /v1/players/mmr | Batch MMR (Deprecated)
+*MMRApi* | [**mmrDistribution**](docs/MMRApi.md#mmrdistribution) | **GET** /v1/players/mmr/distribution | MMR Distribution (Deprecated)
+*MMRApi* | [**mmrHistory**](docs/MMRApi.md#mmrhistory) | **GET** /v1/players/{account_id}/mmr-history | MMR History (Deprecated)
 *MapApi* | [**getMap**](docs/MapApi.md#getmap) | **GET** /v1/assets/map | Map
 *MatchesApi* | [**activeMatches**](docs/MatchesApi.md#activematches) | **GET** /v1/matches/active | Active
 *MatchesApi* | [**activeMatchesRaw**](docs/MatchesApi.md#activematchesraw) | **GET** /v1/matches/active/raw | Active as Protobuf
@@ -144,11 +149,16 @@ Class | Method | HTTP request | Description
 *PlayersApi* | [**matchHistory**](docs/PlayersApi.md#matchhistory) | **GET** /v1/players/{account_id}/match-history | Match History
 *PlayersApi* | [**mateStats**](docs/PlayersApi.md#matestats) | **GET** /v1/players/{account_id}/mate-stats | Mate Stats
 *PlayersApi* | [**playerHeroStats**](docs/PlayersApi.md#playerherostats) | **GET** /v1/players/hero-stats | Hero Stats
-*PlayersApi* | [**rankPredict**](docs/PlayersApi.md#rankpredict) | **GET** /v1/players/{account_id}/rank-predict | Rank Predict
-*PlayersApi* | [**rankPredictAvgImage**](docs/PlayersApi.md#rankpredictavgimage) | **GET** /v1/players/rank-predict/image | Rank Predict Avg Image
-*PlayersApi* | [**rankPredictImage**](docs/PlayersApi.md#rankpredictimage) | **GET** /v1/players/{account_id}/rank-predict/image | Rank Predict Image
+*PlayersApi* | [**rank**](docs/PlayersApi.md#rank) | **GET** /v1/players/{account_id}/rank | Rank
+*PlayersApi* | [**rankAvgImage**](docs/PlayersApi.md#rankavgimage) | **GET** /v1/players/rank/image | Rank Avg Image
+*PlayersApi* | [**rankImage**](docs/PlayersApi.md#rankimage) | **GET** /v1/players/{account_id}/rank/image | Rank Image
+*PlayersApi* | [**rankPredict**](docs/PlayersApi.md#rankpredict) | **GET** /v1/players/{account_id}/rank-predict | Rank Predict (Deprecated)
+*PlayersApi* | [**rankPredictAvgImage**](docs/PlayersApi.md#rankpredictavgimage) | **GET** /v1/players/rank-predict/image | Rank Predict Avg Image (Deprecated)
+*PlayersApi* | [**rankPredictImage**](docs/PlayersApi.md#rankpredictimage) | **GET** /v1/players/{account_id}/rank-predict/image | Rank Predict Image (Deprecated)
+*RankedSeasonsApi* | [**listRankedSeasons**](docs/RankedSeasonsApi.md#listrankedseasons) | **GET** /v1/assets/ranked-seasons | List Ranked Seasons
 *RanksApi* | [**getRank**](docs/RanksApi.md#getrank) | **GET** /v1/assets/ranks/{tier} | Get Rank
 *RanksApi* | [**listRanks**](docs/RanksApi.md#listranks) | **GET** /v1/assets/ranks | List Ranks
+*RanksApi* | [**subrankImage**](docs/RanksApi.md#subrankimage) | **GET** /v1/assets/ranks/{tier}/{subrank}/image | Rank Subrank Image
 *SQLApi* | [**listTables**](docs/SQLApi.md#listtables) | **GET** /v1/sql/tables | List Tables
 *SQLApi* | [**sql**](docs/SQLApi.md#sql) | **GET** /v1/sql | Query
 *SQLApi* | [**tableSchema**](docs/SQLApi.md#tableschema) | **GET** /v1/sql/tables/{table}/schema | Table Schema
@@ -213,6 +223,9 @@ Class | Method | HTTP request | Description
  - [FeedItem](docs/FeedItem.md)
  - [FeedItemOneOf](docs/FeedItemOneOf.md)
  - [FeedItemOneOf1](docs/FeedItemOneOf1.md)
+ - [FeedbackKind](docs/FeedbackKind.md)
+ - [FeedbackSubmission](docs/FeedbackSubmission.md)
+ - [FeedbackTarget](docs/FeedbackTarget.md)
  - [FlashData](docs/FlashData.md)
  - [ForumPatch](docs/ForumPatch.md)
  - [GameMode](docs/GameMode.md)
@@ -260,6 +273,11 @@ Class | Method | HTTP request | Description
  - [JobStatus](docs/JobStatus.md)
  - [KillDeathStats](docs/KillDeathStats.md)
  - [LaneInfo](docs/LaneInfo.md)
+ - [LaneMatchupStat](docs/LaneMatchupStat.md)
+ - [LaneMatchupStats](docs/LaneMatchupStats.md)
+ - [LaneSoulCurve](docs/LaneSoulCurve.md)
+ - [LaneStatCurve](docs/LaneStatCurve.md)
+ - [LastRankedMatch](docs/LastRankedMatch.md)
  - [Leaderboard](docs/Leaderboard.md)
  - [LeaderboardEntry](docs/LeaderboardEntry.md)
  - [ListServersResponse](docs/ListServersResponse.md)
@@ -298,8 +316,8 @@ Class | Method | HTTP request | Description
  - [PlayerPerformanceCurvePoint](docs/PlayerPerformanceCurvePoint.md)
  - [Rank](docs/Rank.md)
  - [RankImages](docs/RankImages.md)
- - [RankPredictResponse](docs/RankPredictResponse.md)
- - [RankPrediction](docs/RankPrediction.md)
+ - [RankResponse](docs/RankResponse.md)
+ - [RankedSeason](docs/RankedSeason.md)
  - [RawAbilityUpgrade](docs/RawAbilityUpgrade.md)
  - [RawAbilityUpgradePropertyUpgrade](docs/RawAbilityUpgradePropertyUpgrade.md)
  - [RawCustomCrosshairSettings](docs/RawCustomCrosshairSettings.md)
@@ -313,6 +331,7 @@ Class | Method | HTTP request | Description
  - [RegionMode](docs/RegionMode.md)
  - [RejuvParams](docs/RejuvParams.md)
  - [ScriptValues](docs/ScriptValues.md)
+ - [SeasonInterval](docs/SeasonInterval.md)
  - [ServerRegion](docs/ServerRegion.md)
  - [ServerStatusRequest](docs/ServerStatusRequest.md)
  - [ServerStatusResponse](docs/ServerStatusResponse.md)
@@ -320,6 +339,7 @@ Class | Method | HTTP request | Description
  - [ShopStatDisplay](docs/ShopStatDisplay.md)
  - [ShopVitalityStatsDisplay](docs/ShopVitalityStatsDisplay.md)
  - [ShopWeaponStatsDisplay](docs/ShopWeaponStatsDisplay.md)
+ - [SourceLocation](docs/SourceLocation.md)
  - [SpreadPenalty](docs/SpreadPenalty.md)
  - [StartingStat](docs/StartingStat.md)
  - [StartingStats](docs/StartingStats.md)
@@ -363,6 +383,7 @@ Class | Method | HTTP request | Description
  - [VariableCategory](docs/VariableCategory.md)
  - [VariableDescription](docs/VariableDescription.md)
  - [VerticalRecoil](docs/VerticalRecoil.md)
+ - [Viewport](docs/Viewport.md)
  - [Weapon](docs/Weapon.md)
  - [WeaponInfo](docs/WeaponInfo.md)
  - [ZiplanePath](docs/ZiplanePath.md)

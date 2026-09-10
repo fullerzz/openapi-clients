@@ -28,6 +28,7 @@ api/Api/MiscEntitiesApi.php
 api/Api/NPCUnitsApi.php
 api/Api/PatchesApi.php
 api/Api/PlayersApi.php
+api/Api/RankedSeasonsApi.php
 api/Api/RanksApi.php
 api/Api/SQLApi.php
 api/Api/ServersApi.php
@@ -86,6 +87,9 @@ api/Model/EnemyStats.php
 api/Model/FeedItem.php
 api/Model/FeedItemOneOf.php
 api/Model/FeedItemOneOf1.php
+api/Model/FeedbackKind.php
+api/Model/FeedbackSubmission.php
+api/Model/FeedbackTarget.php
 api/Model/FlashData.php
 api/Model/ForumPatch.php
 api/Model/GameMode.php
@@ -133,6 +137,11 @@ api/Model/ItemType.php
 api/Model/JobStatus.php
 api/Model/KillDeathStats.php
 api/Model/LaneInfo.php
+api/Model/LaneMatchupStat.php
+api/Model/LaneMatchupStats.php
+api/Model/LaneSoulCurve.php
+api/Model/LaneStatCurve.php
+api/Model/LastRankedMatch.php
 api/Model/Leaderboard.php
 api/Model/LeaderboardEntry.php
 api/Model/ListServersResponse.php
@@ -172,8 +181,8 @@ api/Model/PlayerMatchHistoryEntry.php
 api/Model/PlayerPerformanceCurvePoint.php
 api/Model/Rank.php
 api/Model/RankImages.php
-api/Model/RankPredictResponse.php
-api/Model/RankPrediction.php
+api/Model/RankResponse.php
+api/Model/RankedSeason.php
 api/Model/RawAbilityUpgrade.php
 api/Model/RawAbilityUpgradePropertyUpgrade.php
 api/Model/RawCustomCrosshairSettings.php
@@ -187,6 +196,7 @@ api/Model/RecoilRange.php
 api/Model/RegionMode.php
 api/Model/RejuvParams.php
 api/Model/ScriptValues.php
+api/Model/SeasonInterval.php
 api/Model/ServerRegion.php
 api/Model/ServerStatusRequest.php
 api/Model/ServerStatusResponse.php
@@ -194,6 +204,7 @@ api/Model/ShopSpiritStatsDisplay.php
 api/Model/ShopStatDisplay.php
 api/Model/ShopVitalityStatsDisplay.php
 api/Model/ShopWeaponStatsDisplay.php
+api/Model/SourceLocation.php
 api/Model/SpreadPenalty.php
 api/Model/StartingStat.php
 api/Model/StartingStats.php
@@ -237,6 +248,7 @@ api/Model/UpgradeTooltipSectionAttribute.php
 api/Model/VariableCategory.php
 api/Model/VariableDescription.php
 api/Model/VerticalRecoil.php
+api/Model/Viewport.php
 api/Model/Weapon.php
 api/Model/WeaponInfo.php
 api/Model/ZiplanePath.php
@@ -267,6 +279,7 @@ docs/Api/MiscEntitiesApi.md
 docs/Api/NPCUnitsApi.md
 docs/Api/PatchesApi.md
 docs/Api/PlayersApi.md
+docs/Api/RankedSeasonsApi.md
 docs/Api/RanksApi.md
 docs/Api/SQLApi.md
 docs/Api/ServersApi.md
@@ -321,6 +334,9 @@ docs/Model/EnemyStats.md
 docs/Model/FeedItem.md
 docs/Model/FeedItemOneOf.md
 docs/Model/FeedItemOneOf1.md
+docs/Model/FeedbackKind.md
+docs/Model/FeedbackSubmission.md
+docs/Model/FeedbackTarget.md
 docs/Model/FlashData.md
 docs/Model/ForumPatch.md
 docs/Model/GameMode.md
@@ -368,6 +384,11 @@ docs/Model/ItemType.md
 docs/Model/JobStatus.md
 docs/Model/KillDeathStats.md
 docs/Model/LaneInfo.md
+docs/Model/LaneMatchupStat.md
+docs/Model/LaneMatchupStats.md
+docs/Model/LaneSoulCurve.md
+docs/Model/LaneStatCurve.md
+docs/Model/LastRankedMatch.md
 docs/Model/Leaderboard.md
 docs/Model/LeaderboardEntry.md
 docs/Model/ListServersResponse.md
@@ -406,8 +427,8 @@ docs/Model/PlayerMatchHistoryEntry.md
 docs/Model/PlayerPerformanceCurvePoint.md
 docs/Model/Rank.md
 docs/Model/RankImages.md
-docs/Model/RankPredictResponse.md
-docs/Model/RankPrediction.md
+docs/Model/RankResponse.md
+docs/Model/RankedSeason.md
 docs/Model/RawAbilityUpgrade.md
 docs/Model/RawAbilityUpgradePropertyUpgrade.md
 docs/Model/RawCustomCrosshairSettings.md
@@ -421,6 +442,7 @@ docs/Model/RecoilRange.md
 docs/Model/RegionMode.md
 docs/Model/RejuvParams.md
 docs/Model/ScriptValues.md
+docs/Model/SeasonInterval.md
 docs/Model/ServerRegion.md
 docs/Model/ServerStatusRequest.md
 docs/Model/ServerStatusResponse.md
@@ -428,6 +450,7 @@ docs/Model/ShopSpiritStatsDisplay.md
 docs/Model/ShopStatDisplay.md
 docs/Model/ShopVitalityStatsDisplay.md
 docs/Model/ShopWeaponStatsDisplay.md
+docs/Model/SourceLocation.md
 docs/Model/SpreadPenalty.md
 docs/Model/StartingStat.md
 docs/Model/StartingStats.md
@@ -471,6 +494,7 @@ docs/Model/UpgradeTooltipSectionAttribute.md
 docs/Model/VariableCategory.md
 docs/Model/VariableDescription.md
 docs/Model/VerticalRecoil.md
+docs/Model/Viewport.md
 docs/Model/Weapon.md
 docs/Model/WeaponInfo.md
 docs/Model/ZiplanePath.md
@@ -501,6 +525,7 @@ test/Api/MiscEntitiesApiTest.php
 test/Api/NPCUnitsApiTest.php
 test/Api/PatchesApiTest.php
 test/Api/PlayersApiTest.php
+test/Api/RankedSeasonsApiTest.php
 test/Api/RanksApiTest.php
 test/Api/SQLApiTest.php
 test/Api/ServersApiTest.php
@@ -555,6 +580,9 @@ test/Model/EnemyStatsTest.php
 test/Model/FeedItemOneOf1Test.php
 test/Model/FeedItemOneOfTest.php
 test/Model/FeedItemTest.php
+test/Model/FeedbackKindTest.php
+test/Model/FeedbackSubmissionTest.php
+test/Model/FeedbackTargetTest.php
 test/Model/FlashDataTest.php
 test/Model/ForumPatchTest.php
 test/Model/GameModeTest.php
@@ -602,6 +630,11 @@ test/Model/ItemTypeTest.php
 test/Model/JobStatusTest.php
 test/Model/KillDeathStatsTest.php
 test/Model/LaneInfoTest.php
+test/Model/LaneMatchupStatTest.php
+test/Model/LaneMatchupStatsTest.php
+test/Model/LaneSoulCurveTest.php
+test/Model/LaneStatCurveTest.php
+test/Model/LastRankedMatchTest.php
 test/Model/LeaderboardEntryTest.php
 test/Model/LeaderboardTest.php
 test/Model/ListServersResponseTest.php
@@ -639,9 +672,9 @@ test/Model/PlayerEntryTest.php
 test/Model/PlayerMatchHistoryEntryTest.php
 test/Model/PlayerPerformanceCurvePointTest.php
 test/Model/RankImagesTest.php
-test/Model/RankPredictResponseTest.php
-test/Model/RankPredictionTest.php
+test/Model/RankResponseTest.php
 test/Model/RankTest.php
+test/Model/RankedSeasonTest.php
 test/Model/RawAbilityUpgradePropertyUpgradeTest.php
 test/Model/RawAbilityUpgradeTest.php
 test/Model/RawCustomCrosshairSettingsTest.php
@@ -655,6 +688,7 @@ test/Model/RecoilRangeTest.php
 test/Model/RegionModeTest.php
 test/Model/RejuvParamsTest.php
 test/Model/ScriptValuesTest.php
+test/Model/SeasonIntervalTest.php
 test/Model/ServerRegionTest.php
 test/Model/ServerStatusRequestTest.php
 test/Model/ServerStatusResponseTest.php
@@ -662,6 +696,7 @@ test/Model/ShopSpiritStatsDisplayTest.php
 test/Model/ShopStatDisplayTest.php
 test/Model/ShopVitalityStatsDisplayTest.php
 test/Model/ShopWeaponStatsDisplayTest.php
+test/Model/SourceLocationTest.php
 test/Model/SpreadPenaltyTest.php
 test/Model/StartingStatTest.php
 test/Model/StartingStatsTest.php
@@ -705,6 +740,7 @@ test/Model/UpgradeTooltipSectionTest.php
 test/Model/VariableCategoryTest.php
 test/Model/VariableDescriptionTest.php
 test/Model/VerticalRecoilTest.php
+test/Model/ViewportTest.php
 test/Model/WeaponInfoTest.php
 test/Model/WeaponTest.php
 test/Model/ZiplanePathTest.php

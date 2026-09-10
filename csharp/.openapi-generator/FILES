@@ -29,6 +29,7 @@ docs/apis/MiscEntitiesApi.md
 docs/apis/NPCUnitsApi.md
 docs/apis/PatchesApi.md
 docs/apis/PlayersApi.md
+docs/apis/RankedSeasonsApi.md
 docs/apis/RanksApi.md
 docs/apis/SQLApi.md
 docs/apis/ServersApi.md
@@ -83,6 +84,9 @@ docs/models/EnemyStats.md
 docs/models/FeedItem.md
 docs/models/FeedItemOneOf.md
 docs/models/FeedItemOneOf1.md
+docs/models/FeedbackKind.md
+docs/models/FeedbackSubmission.md
+docs/models/FeedbackTarget.md
 docs/models/FlashData.md
 docs/models/ForumPatch.md
 docs/models/GameMode.md
@@ -130,6 +134,11 @@ docs/models/ItemType.md
 docs/models/JobStatus.md
 docs/models/KillDeathStats.md
 docs/models/LaneInfo.md
+docs/models/LaneMatchupStat.md
+docs/models/LaneMatchupStats.md
+docs/models/LaneSoulCurve.md
+docs/models/LaneStatCurve.md
+docs/models/LastRankedMatch.md
 docs/models/Leaderboard.md
 docs/models/LeaderboardEntry.md
 docs/models/ListServersResponse.md
@@ -168,8 +177,8 @@ docs/models/PlayerMatchHistoryEntry.md
 docs/models/PlayerPerformanceCurvePoint.md
 docs/models/Rank.md
 docs/models/RankImages.md
-docs/models/RankPredictResponse.md
-docs/models/RankPrediction.md
+docs/models/RankResponse.md
+docs/models/RankedSeason.md
 docs/models/RawAbilityUpgrade.md
 docs/models/RawAbilityUpgradePropertyUpgrade.md
 docs/models/RawCustomCrosshairSettings.md
@@ -183,6 +192,7 @@ docs/models/RecoilRange.md
 docs/models/RegionMode.md
 docs/models/RejuvParams.md
 docs/models/ScriptValues.md
+docs/models/SeasonInterval.md
 docs/models/ServerRegion.md
 docs/models/ServerStatusRequest.md
 docs/models/ServerStatusResponse.md
@@ -190,6 +200,7 @@ docs/models/ShopSpiritStatsDisplay.md
 docs/models/ShopStatDisplay.md
 docs/models/ShopVitalityStatsDisplay.md
 docs/models/ShopWeaponStatsDisplay.md
+docs/models/SourceLocation.md
 docs/models/SpreadPenalty.md
 docs/models/StartingStat.md
 docs/models/StartingStats.md
@@ -233,6 +244,7 @@ docs/models/UpgradeTooltipSectionAttribute.md
 docs/models/VariableCategory.md
 docs/models/VariableDescription.md
 docs/models/VerticalRecoil.md
+docs/models/Viewport.md
 docs/models/Weapon.md
 docs/models/WeaponInfo.md
 docs/models/ZiplanePath.md
@@ -265,6 +277,7 @@ src/DeadlockApiClient.Test/Api/MiscEntitiesApiTests.cs
 src/DeadlockApiClient.Test/Api/NPCUnitsApiTests.cs
 src/DeadlockApiClient.Test/Api/PatchesApiTests.cs
 src/DeadlockApiClient.Test/Api/PlayersApiTests.cs
+src/DeadlockApiClient.Test/Api/RankedSeasonsApiTests.cs
 src/DeadlockApiClient.Test/Api/RanksApiTests.cs
 src/DeadlockApiClient.Test/Api/SQLApiTests.cs
 src/DeadlockApiClient.Test/Api/ServersApiTests.cs
@@ -320,6 +333,9 @@ src/DeadlockApiClient.Test/Model/EnemyStatsTests.cs
 src/DeadlockApiClient.Test/Model/FeedItemOneOf1Tests.cs
 src/DeadlockApiClient.Test/Model/FeedItemOneOfTests.cs
 src/DeadlockApiClient.Test/Model/FeedItemTests.cs
+src/DeadlockApiClient.Test/Model/FeedbackKindTests.cs
+src/DeadlockApiClient.Test/Model/FeedbackSubmissionTests.cs
+src/DeadlockApiClient.Test/Model/FeedbackTargetTests.cs
 src/DeadlockApiClient.Test/Model/FlashDataTests.cs
 src/DeadlockApiClient.Test/Model/ForumPatchTests.cs
 src/DeadlockApiClient.Test/Model/GameModeTests.cs
@@ -367,6 +383,11 @@ src/DeadlockApiClient.Test/Model/ItemTypeTests.cs
 src/DeadlockApiClient.Test/Model/JobStatusTests.cs
 src/DeadlockApiClient.Test/Model/KillDeathStatsTests.cs
 src/DeadlockApiClient.Test/Model/LaneInfoTests.cs
+src/DeadlockApiClient.Test/Model/LaneMatchupStatTests.cs
+src/DeadlockApiClient.Test/Model/LaneMatchupStatsTests.cs
+src/DeadlockApiClient.Test/Model/LaneSoulCurveTests.cs
+src/DeadlockApiClient.Test/Model/LaneStatCurveTests.cs
+src/DeadlockApiClient.Test/Model/LastRankedMatchTests.cs
 src/DeadlockApiClient.Test/Model/LeaderboardEntryTests.cs
 src/DeadlockApiClient.Test/Model/LeaderboardTests.cs
 src/DeadlockApiClient.Test/Model/ListServersResponseTests.cs
@@ -404,9 +425,9 @@ src/DeadlockApiClient.Test/Model/PlayerEntryTests.cs
 src/DeadlockApiClient.Test/Model/PlayerMatchHistoryEntryTests.cs
 src/DeadlockApiClient.Test/Model/PlayerPerformanceCurvePointTests.cs
 src/DeadlockApiClient.Test/Model/RankImagesTests.cs
-src/DeadlockApiClient.Test/Model/RankPredictResponseTests.cs
-src/DeadlockApiClient.Test/Model/RankPredictionTests.cs
+src/DeadlockApiClient.Test/Model/RankResponseTests.cs
 src/DeadlockApiClient.Test/Model/RankTests.cs
+src/DeadlockApiClient.Test/Model/RankedSeasonTests.cs
 src/DeadlockApiClient.Test/Model/RawAbilityUpgradePropertyUpgradeTests.cs
 src/DeadlockApiClient.Test/Model/RawAbilityUpgradeTests.cs
 src/DeadlockApiClient.Test/Model/RawCustomCrosshairSettingsTests.cs
@@ -420,6 +441,7 @@ src/DeadlockApiClient.Test/Model/RecoilRangeTests.cs
 src/DeadlockApiClient.Test/Model/RegionModeTests.cs
 src/DeadlockApiClient.Test/Model/RejuvParamsTests.cs
 src/DeadlockApiClient.Test/Model/ScriptValuesTests.cs
+src/DeadlockApiClient.Test/Model/SeasonIntervalTests.cs
 src/DeadlockApiClient.Test/Model/ServerRegionTests.cs
 src/DeadlockApiClient.Test/Model/ServerStatusRequestTests.cs
 src/DeadlockApiClient.Test/Model/ServerStatusResponseTests.cs
@@ -427,6 +449,7 @@ src/DeadlockApiClient.Test/Model/ShopSpiritStatsDisplayTests.cs
 src/DeadlockApiClient.Test/Model/ShopStatDisplayTests.cs
 src/DeadlockApiClient.Test/Model/ShopVitalityStatsDisplayTests.cs
 src/DeadlockApiClient.Test/Model/ShopWeaponStatsDisplayTests.cs
+src/DeadlockApiClient.Test/Model/SourceLocationTests.cs
 src/DeadlockApiClient.Test/Model/SpreadPenaltyTests.cs
 src/DeadlockApiClient.Test/Model/StartingStatTests.cs
 src/DeadlockApiClient.Test/Model/StartingStatsTests.cs
@@ -470,6 +493,7 @@ src/DeadlockApiClient.Test/Model/UpgradeTooltipSectionTests.cs
 src/DeadlockApiClient.Test/Model/VariableCategoryTests.cs
 src/DeadlockApiClient.Test/Model/VariableDescriptionTests.cs
 src/DeadlockApiClient.Test/Model/VerticalRecoilTests.cs
+src/DeadlockApiClient.Test/Model/ViewportTests.cs
 src/DeadlockApiClient.Test/Model/WeaponInfoTests.cs
 src/DeadlockApiClient.Test/Model/WeaponTests.cs
 src/DeadlockApiClient.Test/Model/ZiplanePathTests.cs
@@ -500,6 +524,7 @@ src/DeadlockApiClient/Api/MiscEntitiesApi.cs
 src/DeadlockApiClient/Api/NPCUnitsApi.cs
 src/DeadlockApiClient/Api/PatchesApi.cs
 src/DeadlockApiClient/Api/PlayersApi.cs
+src/DeadlockApiClient/Api/RankedSeasonsApi.cs
 src/DeadlockApiClient/Api/RanksApi.cs
 src/DeadlockApiClient/Api/SQLApi.cs
 src/DeadlockApiClient/Api/ServersApi.cs
@@ -579,6 +604,9 @@ src/DeadlockApiClient/Model/EnemyStats.cs
 src/DeadlockApiClient/Model/FeedItem.cs
 src/DeadlockApiClient/Model/FeedItemOneOf.cs
 src/DeadlockApiClient/Model/FeedItemOneOf1.cs
+src/DeadlockApiClient/Model/FeedbackKind.cs
+src/DeadlockApiClient/Model/FeedbackSubmission.cs
+src/DeadlockApiClient/Model/FeedbackTarget.cs
 src/DeadlockApiClient/Model/FlashData.cs
 src/DeadlockApiClient/Model/ForumPatch.cs
 src/DeadlockApiClient/Model/GameMode.cs
@@ -626,6 +654,11 @@ src/DeadlockApiClient/Model/ItemType.cs
 src/DeadlockApiClient/Model/JobStatus.cs
 src/DeadlockApiClient/Model/KillDeathStats.cs
 src/DeadlockApiClient/Model/LaneInfo.cs
+src/DeadlockApiClient/Model/LaneMatchupStat.cs
+src/DeadlockApiClient/Model/LaneMatchupStats.cs
+src/DeadlockApiClient/Model/LaneSoulCurve.cs
+src/DeadlockApiClient/Model/LaneStatCurve.cs
+src/DeadlockApiClient/Model/LastRankedMatch.cs
 src/DeadlockApiClient/Model/Leaderboard.cs
 src/DeadlockApiClient/Model/LeaderboardEntry.cs
 src/DeadlockApiClient/Model/ListServersResponse.cs
@@ -664,8 +697,8 @@ src/DeadlockApiClient/Model/PlayerMatchHistoryEntry.cs
 src/DeadlockApiClient/Model/PlayerPerformanceCurvePoint.cs
 src/DeadlockApiClient/Model/Rank.cs
 src/DeadlockApiClient/Model/RankImages.cs
-src/DeadlockApiClient/Model/RankPredictResponse.cs
-src/DeadlockApiClient/Model/RankPrediction.cs
+src/DeadlockApiClient/Model/RankResponse.cs
+src/DeadlockApiClient/Model/RankedSeason.cs
 src/DeadlockApiClient/Model/RawAbilityUpgrade.cs
 src/DeadlockApiClient/Model/RawAbilityUpgradePropertyUpgrade.cs
 src/DeadlockApiClient/Model/RawCustomCrosshairSettings.cs
@@ -679,6 +712,7 @@ src/DeadlockApiClient/Model/RecoilRange.cs
 src/DeadlockApiClient/Model/RegionMode.cs
 src/DeadlockApiClient/Model/RejuvParams.cs
 src/DeadlockApiClient/Model/ScriptValues.cs
+src/DeadlockApiClient/Model/SeasonInterval.cs
 src/DeadlockApiClient/Model/ServerRegion.cs
 src/DeadlockApiClient/Model/ServerStatusRequest.cs
 src/DeadlockApiClient/Model/ServerStatusResponse.cs
@@ -686,6 +720,7 @@ src/DeadlockApiClient/Model/ShopSpiritStatsDisplay.cs
 src/DeadlockApiClient/Model/ShopStatDisplay.cs
 src/DeadlockApiClient/Model/ShopVitalityStatsDisplay.cs
 src/DeadlockApiClient/Model/ShopWeaponStatsDisplay.cs
+src/DeadlockApiClient/Model/SourceLocation.cs
 src/DeadlockApiClient/Model/SpreadPenalty.cs
 src/DeadlockApiClient/Model/StartingStat.cs
 src/DeadlockApiClient/Model/StartingStats.cs
@@ -729,6 +764,7 @@ src/DeadlockApiClient/Model/UpgradeTooltipSectionAttribute.cs
 src/DeadlockApiClient/Model/VariableCategory.cs
 src/DeadlockApiClient/Model/VariableDescription.cs
 src/DeadlockApiClient/Model/VerticalRecoil.cs
+src/DeadlockApiClient/Model/Viewport.cs
 src/DeadlockApiClient/Model/Weapon.cs
 src/DeadlockApiClient/Model/WeaponInfo.cs
 src/DeadlockApiClient/Model/ZiplanePath.cs

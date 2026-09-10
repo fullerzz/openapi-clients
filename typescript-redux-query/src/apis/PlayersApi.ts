@@ -33,9 +33,9 @@ import {
     PlayerMatchHistoryEntry,
     PlayerMatchHistoryEntryFromJSON,
     PlayerMatchHistoryEntryToJSON,
-    RankPredictResponse,
-    RankPredictResponseFromJSON,
-    RankPredictResponseToJSON,
+    RankResponse,
+    RankResponseFromJSON,
+    RankResponseToJSON,
 } from '../models';
 
 export interface AccountStatsRequest {
@@ -81,6 +81,7 @@ export interface MateStatsRequest {
 export interface PlayerHeroStatsRequest {
     accountIds: Array<number>;
     gameMode?: PlayerHeroStatsGameModeEnum;
+    matchMode?: string;
     heroIds?: string;
     minUnixTimestamp?: number;
     maxUnixTimestamp?: number;
@@ -94,6 +95,20 @@ export interface PlayerHeroStatsRequest {
     maxMatchId?: number;
 }
 
+export interface RankRequest {
+    accountId: number;
+}
+
+export interface RankAvgImageRequest {
+    accountIds: Array<number>;
+    format?: RankAvgImageFormatEnum;
+}
+
+export interface RankImageRequest {
+    accountId: number;
+    format?: RankImageFormatEnum;
+}
+
 export interface RankPredictRequest {
     accountId: number;
 }
@@ -101,13 +116,11 @@ export interface RankPredictRequest {
 export interface RankPredictAvgImageRequest {
     accountIds: Array<number>;
     format?: RankPredictAvgImageFormatEnum;
-    size?: RankPredictAvgImageSizeEnum;
 }
 
 export interface RankPredictImageRequest {
     accountId: number;
     format?: RankPredictImageFormatEnum;
-    size?: RankPredictImageSizeEnum;
 }
 
 
@@ -478,6 +491,11 @@ function playerHeroStatsRaw<T>(requestParameters: PlayerHeroStatsRequest, reques
     }
 
 
+    if (requestParameters.matchMode !== undefined) {
+        queryParameters['match_mode'] = requestParameters.matchMode;
+    }
+
+
     if (requestParameters.heroIds !== undefined) {
         queryParameters['hero_ids'] = requestParameters.heroIds;
     }
@@ -569,10 +587,169 @@ export function playerHeroStats<T>(requestParameters: PlayerHeroStatsRequest, re
 }
 
 /**
- *  Predicts a player\'s current rank badge from their last 30 ranked/unranked matches. Requires at least 30 eligible matches (Ranked or Unranked, Normal game mode) with valid badge data.  > **This is an ML prediction and may be inaccurate.** The model has no access to the player\'s > actual hidden MMR — it infers rank from match context signals only.  ### Model Accuracy (5-fold cross-validation)  | Metric | Value | |--------|-------| | R²     | 0.949 | | MAE    | 1.08 sub-ranks | | RMSE   | 1.89 sub-ranks | | Within ±1 sub-rank | 77.6% | | Within ±3 sub-rank | 93.9% | | Within ±5 sub-rank | 97.7% | | Within ±6 sub-rank | 98.6% | | Within ±10 sub-rank | 99.6% |  Accuracy by tier:  | Tier range | n | MAE | |------------|---|-----| | Low (1-4)  | 404 | 3.68 sub-ranks | | Mid (5-7)  | 777 | 2.91 sub-ranks | | High (8-11)| 25,556 | 0.98 sub-ranks |  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 100req/s | | Key | - | | Global | - | 
- * Rank Predict
+ *  Returns the player\'s rank at the end of their latest ranked match, i.e. the rank they entered that match with plus the progress the match awarded. A subrank spans 1000 progress points, so a single match can move the badge. Eternus subranks are instead percentile cuts Valve recomputes daily, so within Eternus the badge is the one the player entered the match with.  Only ranked matches carry a rank, and it stays unset while the player is in placement games. When none of the player\'s recent ranked matches reports a rank, `badge`, `rank` and `subrank` are all `0`, which is the `Obscurus` (unranked) tier, and `last_match` is `null`.  `last_match` carries the rank metadata Valve reported on that match, e.g. rank progress, remaining placement games and demotion protection. 
+ * Rank
  */
-function rankPredictRaw<T>(requestParameters: RankPredictRequest, requestConfig: runtime.TypedQueryConfig<T, RankPredictResponse> = {}): QueryConfig<T> {
+function rankRaw<T>(requestParameters: RankRequest, requestConfig: runtime.TypedQueryConfig<T, RankResponse> = {}): QueryConfig<T> {
+    if (requestParameters.accountId === null || requestParameters.accountId === undefined) {
+        throw new runtime.RequiredError('accountId','Required parameter requestParameters.accountId was null or undefined when calling rank.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/v1/players/{account_id}/rank`.replace('{account_id}', encodeURIComponent(String(requestParameters.accountId))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RankResponseFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+*  Returns the player\'s rank at the end of their latest ranked match, i.e. the rank they entered that match with plus the progress the match awarded. A subrank spans 1000 progress points, so a single match can move the badge. Eternus subranks are instead percentile cuts Valve recomputes daily, so within Eternus the badge is the one the player entered the match with.  Only ranked matches carry a rank, and it stays unset while the player is in placement games. When none of the player\'s recent ranked matches reports a rank, `badge`, `rank` and `subrank` are all `0`, which is the `Obscurus` (unranked) tier, and `last_match` is `null`.  `last_match` carries the rank metadata Valve reported on that match, e.g. rank progress, remaining placement games and demotion protection. 
+* Rank
+*/
+export function rank<T>(requestParameters: RankRequest, requestConfig?: runtime.TypedQueryConfig<T, RankResponse>): QueryConfig<T> {
+    return rankRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Returns the average rank badge image (binary) for a comma-separated list of account IDs. Accounts without a rank are left out of the average; if none of them has one, the `Obscurus` image is returned. Use `?format=webp` for WebP.
+ * Rank Avg Image
+ */
+function rankAvgImageRaw<T>(requestParameters: RankAvgImageRequest, requestConfig: runtime.TypedQueryConfig<T, Array<number>> = {}): QueryConfig<T> {
+    if (requestParameters.accountIds === null || requestParameters.accountIds === undefined) {
+        throw new runtime.RequiredError('accountIds','Required parameter requestParameters.accountIds was null or undefined when calling rankAvgImage.');
+    }
+
+    let queryParameters = null;
+
+    queryParameters = {};
+
+
+    if (requestParameters.accountIds) {
+        queryParameters['account_ids'] = requestParameters.accountIds;
+    }
+
+
+    if (requestParameters.format !== undefined) {
+        queryParameters['format'] = requestParameters.format;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/v1/players/rank/image`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
+}
+
+/**
+* Returns the average rank badge image (binary) for a comma-separated list of account IDs. Accounts without a rank are left out of the average; if none of them has one, the `Obscurus` image is returned. Use `?format=webp` for WebP.
+* Rank Avg Image
+*/
+export function rankAvgImage<T>(requestParameters: RankAvgImageRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<number>>): QueryConfig<T> {
+    return rankAvgImageRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Returns the rank badge image directly (binary), not a URL, with the player\'s I-VI division numeral drawn on it. Players whose recent ranked matches carry no rank, and players still in placement, get the plain tier badge. Use `?format=webp` for WebP.
+ * Rank Image
+ */
+function rankImageRaw<T>(requestParameters: RankImageRequest, requestConfig: runtime.TypedQueryConfig<T, Array<number>> = {}): QueryConfig<T> {
+    if (requestParameters.accountId === null || requestParameters.accountId === undefined) {
+        throw new runtime.RequiredError('accountId','Required parameter requestParameters.accountId was null or undefined when calling rankImage.');
+    }
+
+    let queryParameters = null;
+
+    queryParameters = {};
+
+
+    if (requestParameters.format !== undefined) {
+        queryParameters['format'] = requestParameters.format;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/v1/players/{account_id}/rank/image`.replace('{account_id}', encodeURIComponent(String(requestParameters.accountId))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
+}
+
+/**
+* Returns the rank badge image directly (binary), not a URL, with the player\'s I-VI division numeral drawn on it. Players whose recent ranked matches carry no rank, and players still in placement, get the plain tier badge. Use `?format=webp` for WebP.
+* Rank Image
+*/
+export function rankImage<T>(requestParameters: RankImageRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<number>>): QueryConfig<T> {
+    return rankImageRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Deprecated alias of `/v1/players/{account_id}/rank`. The rank is no longer predicted, it is read from the player\'s latest ranked match.
+ * Rank Predict (Deprecated)
+ */
+function rankPredictRaw<T>(requestParameters: RankPredictRequest, requestConfig: runtime.TypedQueryConfig<T, RankResponse> = {}): QueryConfig<T> {
     if (requestParameters.accountId === null || requestParameters.accountId === undefined) {
         throw new runtime.RequiredError('accountId','Required parameter requestParameters.accountId was null or undefined when calling rankPredict.');
     }
@@ -602,23 +779,23 @@ function rankPredictRaw<T>(requestParameters: RankPredictRequest, requestConfig:
 
     const { transform: requestTransform } = requestConfig;
     if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RankPredictResponseFromJSON(body), text);
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RankResponseFromJSON(body), text);
     }
 
     return config;
 }
 
 /**
-*  Predicts a player\'s current rank badge from their last 30 ranked/unranked matches. Requires at least 30 eligible matches (Ranked or Unranked, Normal game mode) with valid badge data.  > **This is an ML prediction and may be inaccurate.** The model has no access to the player\'s > actual hidden MMR — it infers rank from match context signals only.  ### Model Accuracy (5-fold cross-validation)  | Metric | Value | |--------|-------| | R²     | 0.949 | | MAE    | 1.08 sub-ranks | | RMSE   | 1.89 sub-ranks | | Within ±1 sub-rank | 77.6% | | Within ±3 sub-rank | 93.9% | | Within ±5 sub-rank | 97.7% | | Within ±6 sub-rank | 98.6% | | Within ±10 sub-rank | 99.6% |  Accuracy by tier:  | Tier range | n | MAE | |------------|---|-----| | Low (1-4)  | 404 | 3.68 sub-ranks | | Mid (5-7)  | 777 | 2.91 sub-ranks | | High (8-11)| 25,556 | 0.98 sub-ranks |  ### Rate Limits: | Type | Limit | | ---- | ----- | | IP | 100req/s | | Key | - | | Global | - | 
-* Rank Predict
+* Deprecated alias of `/v1/players/{account_id}/rank`. The rank is no longer predicted, it is read from the player\'s latest ranked match.
+* Rank Predict (Deprecated)
 */
-export function rankPredict<T>(requestParameters: RankPredictRequest, requestConfig?: runtime.TypedQueryConfig<T, RankPredictResponse>): QueryConfig<T> {
+export function rankPredict<T>(requestParameters: RankPredictRequest, requestConfig?: runtime.TypedQueryConfig<T, RankResponse>): QueryConfig<T> {
     return rankPredictRaw(requestParameters, requestConfig);
 }
 
 /**
- * Returns the average predicted rank badge image (binary) for a comma-separated list of account IDs. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
- * Rank Predict Avg Image
+ * Deprecated alias of `/v1/players/rank/image`. The rank is no longer predicted, it is read from each player\'s latest ranked match.
+ * Rank Predict Avg Image (Deprecated)
  */
 function rankPredictAvgImageRaw<T>(requestParameters: RankPredictAvgImageRequest, requestConfig: runtime.TypedQueryConfig<T, Array<number>> = {}): QueryConfig<T> {
     if (requestParameters.accountIds === null || requestParameters.accountIds === undefined) {
@@ -637,11 +814,6 @@ function rankPredictAvgImageRaw<T>(requestParameters: RankPredictAvgImageRequest
 
     if (requestParameters.format !== undefined) {
         queryParameters['format'] = requestParameters.format;
-    }
-
-
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
     }
 
     const headerParameters : runtime.HttpHeaders = {};
@@ -672,16 +844,16 @@ function rankPredictAvgImageRaw<T>(requestParameters: RankPredictAvgImageRequest
 }
 
 /**
-* Returns the average predicted rank badge image (binary) for a comma-separated list of account IDs. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
-* Rank Predict Avg Image
+* Deprecated alias of `/v1/players/rank/image`. The rank is no longer predicted, it is read from each player\'s latest ranked match.
+* Rank Predict Avg Image (Deprecated)
 */
 export function rankPredictAvgImage<T>(requestParameters: RankPredictAvgImageRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<number>>): QueryConfig<T> {
     return rankPredictAvgImageRaw(requestParameters, requestConfig);
 }
 
 /**
- * Returns the predicted rank badge image directly (binary), not a URL. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
- * Rank Predict Image
+ * Deprecated alias of `/v1/players/{account_id}/rank/image`. The rank is no longer predicted, it is read from the player\'s latest ranked match.
+ * Rank Predict Image (Deprecated)
  */
 function rankPredictImageRaw<T>(requestParameters: RankPredictImageRequest, requestConfig: runtime.TypedQueryConfig<T, Array<number>> = {}): QueryConfig<T> {
     if (requestParameters.accountId === null || requestParameters.accountId === undefined) {
@@ -695,11 +867,6 @@ function rankPredictImageRaw<T>(requestParameters: RankPredictImageRequest, requ
 
     if (requestParameters.format !== undefined) {
         queryParameters['format'] = requestParameters.format;
-    }
-
-
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
     }
 
     const headerParameters : runtime.HttpHeaders = {};
@@ -730,8 +897,8 @@ function rankPredictImageRaw<T>(requestParameters: RankPredictImageRequest, requ
 }
 
 /**
-* Returns the predicted rank badge image directly (binary), not a URL. Use `?format=webp` for WebP and `?size=small` for the small badge (defaults to large).
-* Rank Predict Image
+* Deprecated alias of `/v1/players/{account_id}/rank/image`. The rank is no longer predicted, it is read from the player\'s latest ranked match.
+* Rank Predict Image (Deprecated)
 */
 export function rankPredictImage<T>(requestParameters: RankPredictImageRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<number>>): QueryConfig<T> {
     return rankPredictImageRaw(requestParameters, requestConfig);
@@ -772,6 +939,22 @@ export enum PlayerHeroStatsGameModeEnum {
     * @export
     * @enum {string}
     */
+export enum RankAvgImageFormatEnum {
+    Png = 'png',
+    Webp = 'webp'
+}
+/**
+    * @export
+    * @enum {string}
+    */
+export enum RankImageFormatEnum {
+    Png = 'png',
+    Webp = 'webp'
+}
+/**
+    * @export
+    * @enum {string}
+    */
 export enum RankPredictAvgImageFormatEnum {
     Png = 'png',
     Webp = 'webp'
@@ -780,23 +963,7 @@ export enum RankPredictAvgImageFormatEnum {
     * @export
     * @enum {string}
     */
-export enum RankPredictAvgImageSizeEnum {
-    Large = 'large',
-    Small = 'small'
-}
-/**
-    * @export
-    * @enum {string}
-    */
 export enum RankPredictImageFormatEnum {
     Png = 'png',
     Webp = 'webp'
-}
-/**
-    * @export
-    * @enum {string}
-    */
-export enum RankPredictImageSizeEnum {
-    Large = 'large',
-    Small = 'small'
 }

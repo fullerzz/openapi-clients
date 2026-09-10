@@ -109,6 +109,8 @@ Class | Method | HTTP request | Description
 *AnalyticsApi* | [**itemPermutationStats**](docs/Api/AnalyticsApi.md#itempermutationstats) | **GET** /v1/analytics/item-permutation-stats | Item Permutation Stats
 *AnalyticsApi* | [**itemStats**](docs/Api/AnalyticsApi.md#itemstats) | **GET** /v1/analytics/item-stats | Item Stats
 *AnalyticsApi* | [**killDeathStats**](docs/Api/AnalyticsApi.md#killdeathstats) | **GET** /v1/analytics/kill-death-stats | Kill Death Stats
+*AnalyticsApi* | [**laneMatchupStats**](docs/Api/AnalyticsApi.md#lanematchupstats) | **GET** /v1/analytics/lane-matchup-stats | Lane Matchup Stats (Subject to Change)
+*AnalyticsApi* | [**laneSoulCurve**](docs/Api/AnalyticsApi.md#lanesoulcurve) | **GET** /v1/analytics/lane-soul-curve | Lane Soul Curve (Subject to Change)
 *AnalyticsApi* | [**playerPerformanceCurve**](docs/Api/AnalyticsApi.md#playerperformancecurve) | **GET** /v1/analytics/player-performance-curve | Player Performance Curve
 *AnalyticsApi* | [**playerScoreboard**](docs/Api/AnalyticsApi.md#playerscoreboard) | **GET** /v1/analytics/scoreboards/players | Player Scoreboard
 *AnalyticsApi* | [**playerStatsMetrics**](docs/Api/AnalyticsApi.md#playerstatsmetrics) | **GET** /v1/analytics/player-stats/metrics | Player Stats Metrics
@@ -119,6 +121,8 @@ Class | Method | HTTP request | Description
 *BuildTagsApi* | [**getBuildTag**](docs/Api/BuildTagsApi.md#getbuildtag) | **GET** /v1/assets/build-tags/{build_tag_id} | Get Build Tag
 *BuildTagsApi* | [**getBuildTagByName**](docs/Api/BuildTagsApi.md#getbuildtagbyname) | **GET** /v1/assets/build-tags/by-name/{name} | Get Build Tag By Name
 *BuildTagsApi* | [**listBuildTags**](docs/Api/BuildTagsApi.md#listbuildtags) | **GET** /v1/assets/build-tags | List Build Tags
+*BuildsApi* | [**fetchBuildLive**](docs/Api/BuildsApi.md#fetchbuildlive) | **GET** /v1/builds/{hero_id}/{build_id} | Fetch Live
+*BuildsApi* | [**fetchBuildsByAuthorLive**](docs/Api/BuildsApi.md#fetchbuildsbyauthorlive) | **GET** /v1/builds/by-author/{account_id} | Fetch Live by Author
 *BuildsApi* | [**searchBuilds**](docs/Api/BuildsApi.md#searchbuilds) | **GET** /v1/builds | Search
 *ClientVersionsApi* | [**listClientVersions**](docs/Api/ClientVersionsApi.md#listclientversions) | **GET** /v1/assets/client-versions | List Client Versions
 *ColorsApi* | [**listColors**](docs/Api/ColorsApi.md#listcolors) | **GET** /v1/assets/colors | List Colors
@@ -144,6 +148,7 @@ Class | Method | HTTP request | Description
 *InfoApi* | [**healthCheck**](docs/Api/InfoApi.md#healthcheck) | **GET** /v1/info/health | Health Check
 *InfoApi* | [**info**](docs/Api/InfoApi.md#info) | **GET** /v1/info | API Info
 *InternalApi* | [**ingestSalts**](docs/Api/InternalApi.md#ingestsalts) | **POST** /v1/matches/salts | Match Salts Ingest
+*InternalApi* | [**submitFeedback**](docs/Api/InternalApi.md#submitfeedback) | **POST** /v1/feedback | Submit Website Feedback
 *ItemsApi* | [**getItem**](docs/Api/ItemsApi.md#getitem) | **GET** /v1/assets/items/{id_or_class_name} | Get Item
 *ItemsApi* | [**getItemsByHeroId**](docs/Api/ItemsApi.md#getitemsbyheroid) | **GET** /v1/assets/items/by-hero-id/{id} | List Items By Hero
 *ItemsApi* | [**getItemsBySlotType**](docs/Api/ItemsApi.md#getitemsbyslottype) | **GET** /v1/assets/items/by-slot-type/{slot_type} | List Items By Slot Type
@@ -154,12 +159,12 @@ Class | Method | HTTP request | Description
 *LeaderboardApi* | [**leaderboardHeroRaw**](docs/Api/LeaderboardApi.md#leaderboardheroraw) | **GET** /v1/leaderboard/{region}/{hero_id}/raw | Hero Leaderboard as Protobuf
 *LeaderboardApi* | [**leaderboardRaw**](docs/Api/LeaderboardApi.md#leaderboardraw) | **GET** /v1/leaderboard/{region}/raw | Leaderboard as Protobuf
 *LootTablesApi* | [**listLootTables**](docs/Api/LootTablesApi.md#listloottables) | **GET** /v1/assets/loot-tables | List Loot Tables
-*MMRApi* | [**heroMmr**](docs/Api/MMRApi.md#herommr) | **GET** /v1/players/mmr/{hero_id} | Batch Hero MMR
-*MMRApi* | [**heroMmrDistribution**](docs/Api/MMRApi.md#herommrdistribution) | **GET** /v1/players/mmr/distribution/{hero_id} | Hero MMR Distribution
-*MMRApi* | [**heroMmrHistory**](docs/Api/MMRApi.md#herommrhistory) | **GET** /v1/players/{account_id}/mmr-history/{hero_id} | Hero MMR History
-*MMRApi* | [**mmr**](docs/Api/MMRApi.md#mmr) | **GET** /v1/players/mmr | Batch MMR
-*MMRApi* | [**mmrDistribution**](docs/Api/MMRApi.md#mmrdistribution) | **GET** /v1/players/mmr/distribution | MMR Distribution
-*MMRApi* | [**mmrHistory**](docs/Api/MMRApi.md#mmrhistory) | **GET** /v1/players/{account_id}/mmr-history | MMR History
+*MMRApi* | [**heroMmr**](docs/Api/MMRApi.md#herommr) | **GET** /v1/players/mmr/{hero_id} | Batch Hero MMR (Deprecated)
+*MMRApi* | [**heroMmrDistribution**](docs/Api/MMRApi.md#herommrdistribution) | **GET** /v1/players/mmr/distribution/{hero_id} | Hero MMR Distribution (Deprecated)
+*MMRApi* | [**heroMmrHistory**](docs/Api/MMRApi.md#herommrhistory) | **GET** /v1/players/{account_id}/mmr-history/{hero_id} | Hero MMR History (Deprecated)
+*MMRApi* | [**mmr**](docs/Api/MMRApi.md#mmr) | **GET** /v1/players/mmr | Batch MMR (Deprecated)
+*MMRApi* | [**mmrDistribution**](docs/Api/MMRApi.md#mmrdistribution) | **GET** /v1/players/mmr/distribution | MMR Distribution (Deprecated)
+*MMRApi* | [**mmrHistory**](docs/Api/MMRApi.md#mmrhistory) | **GET** /v1/players/{account_id}/mmr-history | MMR History (Deprecated)
 *MapApi* | [**getMap**](docs/Api/MapApi.md#getmap) | **GET** /v1/assets/map | Map
 *MatchesApi* | [**activeMatches**](docs/Api/MatchesApi.md#activematches) | **GET** /v1/matches/active | Active
 *MatchesApi* | [**activeMatchesRaw**](docs/Api/MatchesApi.md#activematchesraw) | **GET** /v1/matches/active/raw | Active as Protobuf
@@ -184,11 +189,16 @@ Class | Method | HTTP request | Description
 *PlayersApi* | [**matchHistory**](docs/Api/PlayersApi.md#matchhistory) | **GET** /v1/players/{account_id}/match-history | Match History
 *PlayersApi* | [**mateStats**](docs/Api/PlayersApi.md#matestats) | **GET** /v1/players/{account_id}/mate-stats | Mate Stats
 *PlayersApi* | [**playerHeroStats**](docs/Api/PlayersApi.md#playerherostats) | **GET** /v1/players/hero-stats | Hero Stats
-*PlayersApi* | [**rankPredict**](docs/Api/PlayersApi.md#rankpredict) | **GET** /v1/players/{account_id}/rank-predict | Rank Predict
-*PlayersApi* | [**rankPredictAvgImage**](docs/Api/PlayersApi.md#rankpredictavgimage) | **GET** /v1/players/rank-predict/image | Rank Predict Avg Image
-*PlayersApi* | [**rankPredictImage**](docs/Api/PlayersApi.md#rankpredictimage) | **GET** /v1/players/{account_id}/rank-predict/image | Rank Predict Image
+*PlayersApi* | [**rank**](docs/Api/PlayersApi.md#rank) | **GET** /v1/players/{account_id}/rank | Rank
+*PlayersApi* | [**rankAvgImage**](docs/Api/PlayersApi.md#rankavgimage) | **GET** /v1/players/rank/image | Rank Avg Image
+*PlayersApi* | [**rankImage**](docs/Api/PlayersApi.md#rankimage) | **GET** /v1/players/{account_id}/rank/image | Rank Image
+*PlayersApi* | [**rankPredict**](docs/Api/PlayersApi.md#rankpredict) | **GET** /v1/players/{account_id}/rank-predict | Rank Predict (Deprecated)
+*PlayersApi* | [**rankPredictAvgImage**](docs/Api/PlayersApi.md#rankpredictavgimage) | **GET** /v1/players/rank-predict/image | Rank Predict Avg Image (Deprecated)
+*PlayersApi* | [**rankPredictImage**](docs/Api/PlayersApi.md#rankpredictimage) | **GET** /v1/players/{account_id}/rank-predict/image | Rank Predict Image (Deprecated)
+*RankedSeasonsApi* | [**listRankedSeasons**](docs/Api/RankedSeasonsApi.md#listrankedseasons) | **GET** /v1/assets/ranked-seasons | List Ranked Seasons
 *RanksApi* | [**getRank**](docs/Api/RanksApi.md#getrank) | **GET** /v1/assets/ranks/{tier} | Get Rank
 *RanksApi* | [**listRanks**](docs/Api/RanksApi.md#listranks) | **GET** /v1/assets/ranks | List Ranks
+*RanksApi* | [**subrankImage**](docs/Api/RanksApi.md#subrankimage) | **GET** /v1/assets/ranks/{tier}/{subrank}/image | Rank Subrank Image
 *SQLApi* | [**listTables**](docs/Api/SQLApi.md#listtables) | **GET** /v1/sql/tables | List Tables
 *SQLApi* | [**sql**](docs/Api/SQLApi.md#sql) | **GET** /v1/sql | Query
 *SQLApi* | [**tableSchema**](docs/Api/SQLApi.md#tableschema) | **GET** /v1/sql/tables/{table}/schema | Table Schema
@@ -252,6 +262,9 @@ Class | Method | HTTP request | Description
 - [FeedItem](docs/Model/FeedItem.md)
 - [FeedItemOneOf](docs/Model/FeedItemOneOf.md)
 - [FeedItemOneOf1](docs/Model/FeedItemOneOf1.md)
+- [FeedbackKind](docs/Model/FeedbackKind.md)
+- [FeedbackSubmission](docs/Model/FeedbackSubmission.md)
+- [FeedbackTarget](docs/Model/FeedbackTarget.md)
 - [FlashData](docs/Model/FlashData.md)
 - [ForumPatch](docs/Model/ForumPatch.md)
 - [GameMode](docs/Model/GameMode.md)
@@ -299,6 +312,11 @@ Class | Method | HTTP request | Description
 - [JobStatus](docs/Model/JobStatus.md)
 - [KillDeathStats](docs/Model/KillDeathStats.md)
 - [LaneInfo](docs/Model/LaneInfo.md)
+- [LaneMatchupStat](docs/Model/LaneMatchupStat.md)
+- [LaneMatchupStats](docs/Model/LaneMatchupStats.md)
+- [LaneSoulCurve](docs/Model/LaneSoulCurve.md)
+- [LaneStatCurve](docs/Model/LaneStatCurve.md)
+- [LastRankedMatch](docs/Model/LastRankedMatch.md)
 - [Leaderboard](docs/Model/Leaderboard.md)
 - [LeaderboardEntry](docs/Model/LeaderboardEntry.md)
 - [ListServersResponse](docs/Model/ListServersResponse.md)
@@ -337,8 +355,8 @@ Class | Method | HTTP request | Description
 - [PlayerPerformanceCurvePoint](docs/Model/PlayerPerformanceCurvePoint.md)
 - [Rank](docs/Model/Rank.md)
 - [RankImages](docs/Model/RankImages.md)
-- [RankPredictResponse](docs/Model/RankPredictResponse.md)
-- [RankPrediction](docs/Model/RankPrediction.md)
+- [RankResponse](docs/Model/RankResponse.md)
+- [RankedSeason](docs/Model/RankedSeason.md)
 - [RawAbilityUpgrade](docs/Model/RawAbilityUpgrade.md)
 - [RawAbilityUpgradePropertyUpgrade](docs/Model/RawAbilityUpgradePropertyUpgrade.md)
 - [RawCustomCrosshairSettings](docs/Model/RawCustomCrosshairSettings.md)
@@ -352,6 +370,7 @@ Class | Method | HTTP request | Description
 - [RegionMode](docs/Model/RegionMode.md)
 - [RejuvParams](docs/Model/RejuvParams.md)
 - [ScriptValues](docs/Model/ScriptValues.md)
+- [SeasonInterval](docs/Model/SeasonInterval.md)
 - [ServerRegion](docs/Model/ServerRegion.md)
 - [ServerStatusRequest](docs/Model/ServerStatusRequest.md)
 - [ServerStatusResponse](docs/Model/ServerStatusResponse.md)
@@ -359,6 +378,7 @@ Class | Method | HTTP request | Description
 - [ShopStatDisplay](docs/Model/ShopStatDisplay.md)
 - [ShopVitalityStatsDisplay](docs/Model/ShopVitalityStatsDisplay.md)
 - [ShopWeaponStatsDisplay](docs/Model/ShopWeaponStatsDisplay.md)
+- [SourceLocation](docs/Model/SourceLocation.md)
 - [SpreadPenalty](docs/Model/SpreadPenalty.md)
 - [StartingStat](docs/Model/StartingStat.md)
 - [StartingStats](docs/Model/StartingStats.md)
@@ -402,6 +422,7 @@ Class | Method | HTTP request | Description
 - [VariableCategory](docs/Model/VariableCategory.md)
 - [VariableDescription](docs/Model/VariableDescription.md)
 - [VerticalRecoil](docs/Model/VerticalRecoil.md)
+- [Viewport](docs/Model/Viewport.md)
 - [Weapon](docs/Model/Weapon.md)
 - [WeaponInfo](docs/Model/WeaponInfo.md)
 - [ZiplanePath](docs/Model/ZiplanePath.md)
@@ -441,5 +462,5 @@ vendor/bin/phpunit
 This PHP package is automatically generated by the [OpenAPI Generator](https://openapi-generator.tech) project:
 
 - API version: `0.1.0`
-    - Generator version: `7.24.0`
+    - Generator version: `7.25.0`
 - Build package: `org.openapitools.codegen.languages.PhpClientCodegen`
